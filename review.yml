@@ -1,0 +1,147 @@
+aid: jane-app
+name: Jane
+review:
+  question: Does Jane expose a real, documented public API surface — and is it FHIR-based?
+  answer: true
+  fhirBased: false
+  date: '2026-07-24'
+  reviewer: API Evangelist
+findings:
+  summary: |
+    Jane operates a live, first-party developer portal at https://developers.jane.app/
+    (HTTP 200) — the Jane Developer Platform (JDP) — documenting a proprietary REST API,
+    NOT an HL7 FHIR / SMART-on-FHIR surface. No FHIR CapabilityStatement, no /metadata
+    endpoint, and no /.well-known/smart-configuration are served; probes to api.jane.app
+    and fhir.jane.app do not resolve. The API is per-clinic and date-versioned in the URL
+    path: https://<jane_clinic_url>/api/YYYY-MM-DD/ (current documented version 2026-01-01).
+    Partners build "Jane Extensions" — practitioner-authorized integrations — that read and
+    write clinic data across patients, appointments, locations, staff, disciplines,
+    treatments, medical records (observations, care plans, medications), document uploads,
+    webhooks, and extension management. Documentation is publicly readable (self-serve to
+    read), but issuing tokens and shipping an extension requires an approved Technology
+    Partner relationship (gated write access). Jane is a Canadian practice-management SaaS
+    (North Vancouver, BC) with regional data residency in Canada, the USA, the UK, and
+    Australia; its API is a commercial practice-management REST API rather than a pan-Canadian
+    interoperability (CA Core / CA Baseline) FHIR endpoint.
+  homeMarket: Canada
+  developerPortal:
+    url: https://developers.jane.app/
+    httpStatus: 200
+    platform: ReadMe.com (Cloudflare-fronted)
+  fhirCapabilityStatement:
+    present: false
+    note: >-
+      No FHIR base, /metadata CapabilityStatement, or SMART-on-FHIR configuration is
+      published. Jane's API is proprietary REST, not FHIR. api.jane.app and fhir.jane.app
+      do not resolve (curl exit 000); jane.app/.well-known/smart-configuration returns 404.
+  smartConfiguration:
+    present: false
+    probed:
+      - url: https://jane.app/.well-known/smart-configuration
+        httpStatus: 404
+      - url: https://api.jane.app/.well-known/smart-configuration
+        httpStatus: 000
+  downloadableSpecs:
+    openapiHarvested: false
+    count: 0
+    note: >-
+      No publicly downloadable OpenAPI/Swagger document could be harvested. The ReadMe.com
+      reference pages and llms-full.txt are Cloudflare challenge-gated (HTTP 429 / managed
+      challenge) and llms-full.txt returns the SPA shell (HTTP 404). No /openapi.json,
+      /openapi.yaml, /swagger.json, or /api-docs is exposed on the docs host (all 404). A
+      real, machine-readable endpoint INDEX was harvested verbatim from
+      https://developers.jane.app/llms.txt (HTTP 200) and saved to llms/jane-app-llms.txt;
+      it lists every documented endpoint but is not itself an OpenAPI definition, so no
+      spec was fabricated.
+  authModel:
+    scheme: OAuth 2.0 Authorization Code with PKCE, over OpenID Connect
+    identityProvider: Keycloak (realms/<realm>/protocol/openid-connect/{auth,token})
+    realms:
+      sandbox: jane_partner_sandbox
+      production: jane
+    token: RS256-signed JWT bearer access tokens
+    tokenLifetimes:
+      accessToken: 5 minutes
+      refreshToken: 30 minutes
+    scopes:
+      used: true
+      examples:
+        - observations:read
+        - observations:create
+    note: >-
+      Resource-scoped OAuth scopes gate access. This is standard OAuth2/OIDC, NOT
+      SMART-on-FHIR scopes (no patient/*.read or system/*.rw scope grammar is used).
+  standardsConformance:
+    fhir: false
+    usCore: false
+    ukCore: false
+    auCore: false
+    caCore: false
+    daVinci: false
+    carin: false
+    note: >-
+      Jane does not advertise conformance to any FHIR implementation guide (US Core, UK
+      Core, AU Core, CA Core/CA Baseline, Da Vinci, or CARIN). Despite operating in Canada
+      under Canada Health Infoway's pan-Canadian FHIR stewardship, Jane's public API is a
+      proprietary REST practice-management interface.
+  access:
+    docsReadable: self-serve
+    apiAccess: gated (approved Technology Partner required to obtain OAuth credentials)
+  rateLimits:
+    documented: true
+    perEndpoint: 100 requests per minute per endpoint per clinic
+    overall: 600 requests per 5 minutes per clinic
+    on429: Retry-After header returned
+transports:
+  - protocol: REST
+    scheme: https
+    baseURLPattern: https://<jane_clinic_url>/api/YYYY-MM-DD/
+    documented: true
+    note: Per-clinic host; date-based path versioning (e.g. 2026-01-01, beta suffixes -beta).
+  - protocol: Webhooks
+    scheme: https
+    documented: true
+    note: Signed outbound event notifications via partner-registered webhook subscriptions.
+  - protocol: FHIR
+    scheme: https
+    documented: false
+    note: No FHIR REST surface, CapabilityStatement, or SMART-on-FHIR configuration is published.
+  - protocol: WebSocket
+    scheme: wss
+    documented: false
+    note: No WebSocket/streaming endpoint is documented.
+sources:
+  - url: https://developers.jane.app/
+    type: DeveloperPortal
+    httpStatus: 200
+    note: Jane Developer Platform landing; OAuth 2.0 PKCE, REST, per-clinic date-versioned base URL.
+  - url: https://developers.jane.app/docs/getting-started
+    type: Documentation
+    httpStatus: 200
+    note: OAuth2 PKCE + OIDC (Keycloak) flow, RS256 JWT tokens, scopes, rate limits, extensions.
+  - url: https://developers.jane.app/reference
+    type: APIReference
+    httpStatus: 200
+    note: REST API reference (ReadMe.com); resource pages Cloudflare challenge-gated to direct fetch.
+  - url: https://developers.jane.app/llms.txt
+    type: LLMsTxt
+    httpStatus: 200
+    note: Machine-readable endpoint index; harvested verbatim to llms/jane-app-llms.txt.
+  - url: https://jane.app/
+    type: Website
+    httpStatus: 200
+    note: Practice management for health & wellness clinics; North Vancouver, Canada.
+actions:
+  openapiHarvested: false
+  llmsTxtSaved: llms/jane-app-llms.txt
+  apisYmlCreated: true
+  reason: |
+    A real live developer portal and fully documented proprietary REST API were captured.
+    No FHIR CapabilityStatement or SMART-on-FHIR configuration exists, and no downloadable
+    OpenAPI could be retrieved (Cloudflare-gated ReadMe host, no public spec endpoint). The
+    verbatim llms.txt endpoint index was saved as the machine-readable artifact; the seven
+    documented REST product areas were catalogued in apis.yml. Nothing behind the partner
+    gate was invented.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

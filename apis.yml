@@ -1,0 +1,201 @@
+aid: jane-app
+url: https://raw.githubusercontent.com/api-evangelist/jane-app/refs/heads/main/apis.yml
+name: Jane
+kind: company
+description: >-
+  Jane is a cloud-based practice management platform for health and wellness clinics,
+  headquartered in North Vancouver, Canada, with regional data residency across Canada,
+  the USA, the United Kingdom, and Australia. Jane combines online booking, scheduling,
+  charting and clinical documentation (including AI-assisted notes), insurance billing,
+  payments, patient intake, a patient mobile app, and telehealth in a single system used
+  by interdisciplinary clinics — physiotherapy, massage therapy, chiropractic, counselling,
+  midwifery, and more. The Jane Developer Platform (developers.jane.app) exposes a documented
+  REST API that lets approved Technology Partners build "Jane Extensions" — practitioner-authorized
+  integrations that read and write clinic data. Authentication is OAuth 2.0 with PKCE over
+  OpenID Connect (Keycloak realms), using RS256 JWT bearer access tokens and granular scopes
+  (e.g. observations:read). The API is date-versioned in the URL path and is per-clinic
+  (https://<clinic>/api/YYYY-MM-DD/), covering patients, appointments, locations, staff,
+  disciplines, treatments, medical records (observations, care plans, medications), document
+  uploads, webhooks, and extension management. Jane is not FHIR/HL7-based: it is a proprietary
+  REST practice-management API rather than a SMART-on-FHIR EHR interoperability surface.
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- Healthcare
+- Canada
+- Practice Management
+- EHR
+- EMR
+- Scheduling
+- Clinical Documentation
+- Telehealth
+- Health and Wellness
+- REST API
+- OAuth2
+- Webhooks
+created: '2026-07-24'
+modified: '2026-07-24'
+specificationVersion: '0.19'
+apis:
+- aid: jane-app:jane-patients-api
+  name: Jane Patients API
+  description: >-
+    Retrieve, list, and free-text search patient records for the practitioner's accessible
+    patients within a clinic. Free-text search is a POST-body endpoint so PII does not leak
+    into query strings. Part of the Jane Developer Platform REST API, authenticated with
+    OAuth 2.0 (PKCE) and scoped access.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - Patients
+  - Healthcare
+  properties:
+  - type: Documentation
+    url: https://developers.jane.app/docs/getting-started
+  - type: APIReference
+    url: https://developers.jane.app/reference/getpatients-1
+  - type: APIReference
+    url: https://developers.jane.app/reference/searchpatients
+- aid: jane-app:jane-appointments-api
+  name: Jane Appointments API
+  description: >-
+    Retrieve and list one-on-one appointment bookings for a clinic, with filtering by
+    patient, staff member, location, treatment, and time window. Part of the Jane Developer
+    Platform REST API.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - Appointments
+  - Scheduling
+  properties:
+  - type: Documentation
+    url: https://developers.jane.app/docs/getting-started
+  - type: APIReference
+    url: https://developers.jane.app/reference/listappointmentsversioned
+  - type: APIReference
+    url: https://developers.jane.app/reference/getanappointment
+- aid: jane-app:jane-scheduling-api
+  name: Jane Practice and Scheduling API
+  description: >-
+    Read clinic reference and scheduling data — locations, staff members, disciplines,
+    treatments, and company details — that underpin booking and practice configuration.
+    Part of the Jane Developer Platform REST API.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - Scheduling
+  - Locations
+  - Staff
+  - Treatments
+  properties:
+  - type: Documentation
+    url: https://developers.jane.app/docs/getting-started
+  - type: APIReference
+    url: https://developers.jane.app/reference/getlocations-1
+  - type: APIReference
+    url: https://developers.jane.app/reference/liststaffmembersversioned-1
+  - type: APIReference
+    url: https://developers.jane.app/reference/listtreatmentsversioned-1
+  - type: APIReference
+    url: https://developers.jane.app/reference/listdisciplinesversioned-1
+  - type: APIReference
+    url: https://developers.jane.app/reference/getcompany-1
+- aid: jane-app:jane-medical-records-api
+  name: Jane Medical Records API
+  description: >-
+    Create, read, update, and list clinical medical-record data for a patient — observations,
+    care plans and care plan activities, and medications (including full medication change
+    history). Part of the Jane Developer Platform REST API, gated by clinical scopes.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - Medical Records
+  - Clinical Documentation
+  - Healthcare
+  properties:
+  - type: Documentation
+    url: https://developers.jane.app/docs/getting-started
+  - type: APIReference
+    url: https://developers.jane.app/reference/listobservations
+  - type: APIReference
+    url: https://developers.jane.app/reference/listcareplans
+  - type: APIReference
+    url: https://developers.jane.app/reference/listmedications
+  - type: APIReference
+    url: https://developers.jane.app/reference/getmedicationhistory
+- aid: jane-app:jane-documents-api
+  name: Jane Documents API
+  description: >-
+    Upload document files (PDF, JPEG, PNG up to 50 MB) to receive a document ID that can be
+    referenced in other API calls, and retrieve a previously uploaded document. Part of the
+    Jane Developer Platform REST API.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - Documents
+  - Uploads
+  properties:
+  - type: Documentation
+    url: https://developers.jane.app/docs/getting-started
+  - type: APIReference
+    url: https://developers.jane.app/reference/postdocumentuploads-1
+  - type: APIReference
+    url: https://developers.jane.app/reference/getdocumentuploads-1
+- aid: jane-app:jane-webhooks-api
+  name: Jane Webhooks API
+  description: >-
+    Register, list, retrieve, and deregister webhook subscriptions so partners receive
+    signed event notifications for a clinic. The signing secret is returned only once at
+    registration. Part of the Jane Developer Platform REST API.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - Webhooks
+  - Events
+  properties:
+  - type: Documentation
+    url: https://developers.jane.app/docs/getting-started
+  - type: APIReference
+    url: https://developers.jane.app/reference/postwebhooks
+  - type: APIReference
+    url: https://developers.jane.app/reference/getwebhooks
+- aid: jane-app:jane-extensions-api
+  name: Jane Extensions API
+  description: >-
+    Create, read, update, delete, and list Jane Extensions, and browse the catalog of
+    approved extensions available to clinics. This is the management surface for the
+    partner integrations built on the Jane Developer Platform.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - Extensions
+  - Integrations
+  properties:
+  - type: Documentation
+    url: https://developers.jane.app/docs/getting-started
+  - type: APIReference
+    url: https://developers.jane.app/reference/getextensions
+  - type: APIReference
+    url: https://developers.jane.app/reference/getcatalogextensions
+common:
+- type: Website
+  url: https://jane.app/
+- type: DeveloperPortal
+  url: https://developers.jane.app/
+- type: Documentation
+  url: https://developers.jane.app/docs/getting-started
+- type: APIReference
+  url: https://developers.jane.app/reference
+- type: GettingStarted
+  url: https://developers.jane.app/docs/getting-started
+- type: GitHubOrganization
+  url: https://github.com/janeapp
+- type: Pricing
+  url: https://jane.app/pricing
+- type: Blog
+  url: https://jane.app/blog
+- type: Security
+  url: https://jane.app/security
+- type: PrivacyPolicy
+  url: https://jane.app/privacy
+- type: TermsOfService
+  url: https://jane.app/terms
+- type: Integrations
+  url: https://jane.app/integrations
+- type: LLMsTxt
+  url: llms/jane-app-llms.txt
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

@@ -1,0 +1,97 @@
+# Jane (jane-app)
+
+Jane is a cloud-based practice management platform for health and wellness clinics, headquartered in North Vancouver, Canada, with regional data residency across Canada, the USA, the United Kingdom, and Australia. It combines online booking, scheduling, charting and clinical documentation (with AI-assisted notes), insurance billing, payments, patient intake, a patient mobile app, and telehealth in one system for interdisciplinary clinics — physiotherapy, massage therapy, chiropractic, counselling, midwifery, and more.
+
+The **Jane Developer Platform** (developers.jane.app) exposes a documented, proprietary **REST API** that lets approved Technology Partners build **"Jane Extensions"** — practitioner-authorized integrations that read and write clinic data. It is **not** an HL7 FHIR / SMART-on-FHIR surface: authentication is OAuth 2.0 with PKCE over OpenID Connect (Keycloak), using RS256 JWT bearer tokens and granular scopes (e.g. `observations:read`). The API is per-clinic and date-versioned in the URL path (`https://<clinic>/api/YYYY-MM-DD/`).
+
+**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/jane-app/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/jane-app/refs/heads/main/apis.yml)
+
+## Tags
+
+- Healthcare
+- Canada
+- Practice Management
+- EHR
+- EMR
+- Scheduling
+- Clinical Documentation
+- Telehealth
+- Health and Wellness
+- REST API
+- OAuth2
+- Webhooks
+
+## Timestamps
+
+- **Created:** 2026-07-24
+- **Modified:** 2026-07-24
+
+## APIs
+
+### Jane Patients API
+
+Retrieve, list, and free-text search patient records for the practitioner's accessible patients within a clinic.
+
+- **Human URL:** [https://developers.jane.app/reference](https://developers.jane.app/reference)
+
+### Jane Appointments API
+
+Retrieve and list one-on-one appointment bookings, filtered by patient, staff member, location, treatment, and time window.
+
+- **Human URL:** [https://developers.jane.app/reference](https://developers.jane.app/reference)
+
+### Jane Practice and Scheduling API
+
+Read clinic reference and scheduling data — locations, staff members, disciplines, treatments, and company details.
+
+- **Human URL:** [https://developers.jane.app/reference](https://developers.jane.app/reference)
+
+### Jane Medical Records API
+
+Create, read, update, and list clinical medical-record data — observations, care plans and activities, and medications (with change history).
+
+- **Human URL:** [https://developers.jane.app/reference](https://developers.jane.app/reference)
+
+### Jane Documents API
+
+Upload documents (PDF, JPEG, PNG up to 50 MB) to receive a referenceable document ID, and retrieve previously uploaded documents.
+
+- **Human URL:** [https://developers.jane.app/reference](https://developers.jane.app/reference)
+
+### Jane Webhooks API
+
+Register, list, retrieve, and deregister signed webhook subscriptions for clinic event notifications.
+
+- **Human URL:** [https://developers.jane.app/reference](https://developers.jane.app/reference)
+
+### Jane Extensions API
+
+Create, read, update, delete, and list Jane Extensions, and browse the catalog of approved extensions.
+
+- **Human URL:** [https://developers.jane.app/reference](https://developers.jane.app/reference)
+
+## Authentication
+
+- **Scheme:** OAuth 2.0 Authorization Code with PKCE, over OpenID Connect
+- **Identity Provider:** Keycloak (`realms/<realm>/protocol/openid-connect/{auth,token}`)
+- **Tokens:** RS256-signed JWT bearer (access token 5 min, refresh token 30 min)
+- **Scopes:** resource-scoped, e.g. `observations:read`, `observations:create`
+- **Not FHIR:** no SMART-on-FHIR scope grammar, no FHIR CapabilityStatement
+
+## Common Properties
+
+- [Website](https://jane.app/)
+- [Developer Portal](https://developers.jane.app/)
+- [Documentation](https://developers.jane.app/docs/getting-started)
+- [API Reference](https://developers.jane.app/reference)
+- [GitHub Organization](https://github.com/janeapp)
+- [Pricing](https://jane.app/pricing)
+- [Blog](https://jane.app/blog)
+- [Security](https://jane.app/security)
+- [Integrations](https://jane.app/integrations)
+- [llms.txt endpoint index](llms/jane-app-llms.txt)
+
+## Maintainers
+
+**FN:** Kin Lane
+**Email:** kin@apievangelist.com
