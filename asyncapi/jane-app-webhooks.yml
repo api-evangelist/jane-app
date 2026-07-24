@@ -1,0 +1,49 @@
+generated: '2026-07-24'
+method: searched
+source: https://developers.jane.app/docs/webhooks
+spec_type: Webhooks
+transport: HTTPS POST to partner target_url
+delivery: notification-based payloads (no PII/PHI); fetch details via the JDP API
+signing:
+  header: X-Jane-Signature (sha256=<hmac>)
+  timestamp_header: X-Jane-Timestamp
+  algorithm: HMAC SHA-256
+  secret: returned once at subscription registration and never retrievable again
+subscription:
+  scoped_to:
+  - extension
+  - clinic
+  - event_topic
+  permissions: only owner / full-permission staff may register
+  manage_via:
+  - postWebhooks
+  - getWebhooks
+  - getWebhook
+  - deleteWebhook
+  scopes:
+  - webhooks:read
+  - webhooks:create
+  - webhooks:delete
+payload_fields:
+- field: event_id
+  type: UUID
+  note: unique per event; use for dedup/idempotency
+- field: event_topic
+  type: string
+- field: event_timestamp
+  type: ISO 8601 string
+- field: appointment_id
+  type: UUID
+- field: clinic_guid
+  type: integer
+- field: version
+  type: integer
+events:
+- topic: APPOINTMENT_BOOKED
+  description: A new appointment has been booked
+- topic: APPOINTMENT_CANCELLED
+  description: An existing appointment has been cancelled
+- topic: APPOINTMENT_RESCHEDULED
+  description: An existing appointment has been rescheduled to a new date or time
+- topic: APPOINTMENT_UNCANCELLED
+  description: A previously cancelled appointment has been restored

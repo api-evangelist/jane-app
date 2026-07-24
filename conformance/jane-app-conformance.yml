@@ -1,0 +1,36 @@
+generated: '2026-07-24'
+method: searched
+source: https://developers.jane.app/docs/getting-started
+standards:
+- id: oauth2
+  conforms: true
+  evidence: OpenAPI securitySchemes type oauth2 (authorizationCode); Keycloak IAM
+- id: oauth2.1
+  conforms: true
+  evidence: docs state conformance to OAuth 2.1 draft for token structure/handling
+- id: oidc
+  conforms: true
+  evidence: OIDC discovery live at login.id.janeapp.com/realms/{jane,jane_partner_sandbox}/.well-known/openid-configuration
+- id: rfc7636-pkce
+  conforms: true
+  evidence: PKCE (S256) required for all integrations; code_challenge_methods_supported includes S256
+- id: rfc8414-oauth-as-metadata
+  conforms: true
+  evidence: /.well-known/oauth-authorization-server served by the Keycloak realm
+- id: rfc9068-jwt-access-token
+  conforms: true
+  evidence: RS256-signed JWT bearer access tokens with exp/iat/iss/aud/sub/scope claims
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: errors use custom JSON envelopes, not application/problem+json
+- id: json:api
+  conforms: false
+- id: fhir-r4
+  conforms: false
+  evidence: proprietary REST practice-management API; no CapabilityStatement or SMART-on-FHIR
+- id: smart-on-fhir
+  conforms: false
+- id: hl7-us-core
+  conforms: false
+- id: scim2
+  conforms: false

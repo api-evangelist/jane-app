@@ -1,0 +1,24 @@
+generated: '2026-07-24'
+method: searched
+source: https://developers.jane.app/docs/getting-started
+versioning:
+  scheme: date-in-path
+  current: '2026-01-01'
+  pattern: /api/YYYY-MM-DD/
+  docs: https://developers.jane.app/docs/getting-started
+  prerelease: -beta suffix marks in-development versions whose contract may change
+deprecation:
+  policy_url: https://developers.jane.app/docs/getting-started
+  model: A new dated major version is published on breaking changes; -beta versions are explicitly unstable.
+    No RFC 8594 Sunset/Deprecation response headers are documented.
+  sunset_header: false
+status_page: https://jane.statuspage.io/
+sla:
+  url: null
+  uptime_target: null
+  note: No public numeric SLA/uptime target is published on the developer portal.
+rate_limits:
+  per_endpoint: 100/min/endpoint/clinic
+  overall: 600/5min/clinic
+deprecated_operations: []
+uptime_monitoring: 'Public uptime repos: github.com/janeapp/partner-sandbox-uptime and jane-websites-uptime'

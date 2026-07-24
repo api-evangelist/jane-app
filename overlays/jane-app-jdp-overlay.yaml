@@ -1,0 +1,22 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Jane Developer Platform (JDP) API
+  version: 1.0.0
+extends: openapi/jane-app-jdp-openapi.yml
+actions:
+- target: $.info
+  update:
+    x-apievangelist-provider: jane-app
+    x-apievangelist-harvest: Merged from per-operation OpenAPI blocks embedded in developers.jane.app
+      ReadMe reference pages
+    x-apievangelist-auth: OAuth2 Authorization Code + PKCE (S256) over OIDC (Keycloak)
+    x-apievangelist-versioning: date-in-path (/api/YYYY-MM-DD/)
+    x-apievangelist-rate-limit: 100/min/endpoint/clinic; 600/5min/clinic
+    x-apievangelist-not-fhir: true
+- target: $.servers
+  update:
+  - url: https://{clinic}/api/2026-01-01
+    description: Production per-clinic host (token aud must match)
+    variables:
+      clinic:
+        default: your-clinic.janeapp.com

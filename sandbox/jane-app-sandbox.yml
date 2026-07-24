@@ -1,0 +1,34 @@
+generated: '2026-07-24'
+method: searched
+source: https://developers.jane.app/docs/getting-started
+note: Jane provides a Partner Development environment separate from Production. Access requires an approved
+  Technology Partner relationship; credentials (client_id/secret) are issued per environment.
+environments:
+- name: Partner Development / Sandbox
+  oauth_realm: jane_partner_sandbox
+  iam: https://login.id.janeapp.com/realms/jane_partner_sandbox
+  playground_clinic: https://jdpdocsdemo.jane.qa
+  note: Reference-doc server; the OpenAPI servers[] entry points here as the partner playground clinic.
+- name: Production
+  oauth_realm: jane
+  iam: https://login.id.janeapp.com/realms/jane
+  clinic_host: https://<clinic>.janeapp.com
+  note: Per-clinic host; token aud must match the clinic URL.
+credentials:
+  issued:
+  - partner_client_id
+  - partner_client_secret
+  - API scopes
+  - IAM service URL
+  obtainment: gated — issued by Jane to approved Technology Partners; not self-serve
+  token_lifetimes:
+    access_token: 5 minutes (300s)
+    refresh_token: 30 minutes (1800s)
+context_variables:
+- '{patient_id}'
+- '{clinic_id}'
+- '{country}'
+- '{clinic_url}'
+- '{practitioner_id}'
+test_values_note: Jane publishes no fixed magic test card/patient identifiers; the sandbox is a live partner
+  playground clinic (jdpdocsdemo.jane.qa) seeded per partner.

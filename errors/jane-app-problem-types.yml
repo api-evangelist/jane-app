@@ -1,0 +1,102 @@
+generated: '2026-07-24'
+method: derived
+source: openapi/jane-app-jdp-openapi.yml
+format: custom
+note: 'Jane''s JDP API does NOT use RFC 9457 problem+json. Errors are returned as application/json with
+  one of several envelope shapes: (1) an `errors[]` array of {id, message, details} (errors_message_response,
+  e.g. id=DUPLICATE_RECORD on 409), (2) a flat {error: string} object (unauthorized/forbidden/not_found),
+  and (3) an {object:''error'', code, message} object. Rate-limited (429) responses carry X-Throttle-Match
+  and Retry-After headers.'
+envelope_shapes:
+- name: errors_message_response
+  shape: '{ errors: [ { id, message, details } ] }'
+  used_for: validation/business errors (400,409,422)
+- name: error_string
+  shape: '{ error: string }'
+  used_for: auth/not-found errors (401,403,404)
+- name: error_object
+  shape: '{ object: ''error'', code, message }'
+  used_for: generic operation failures
+problems:
+- status: 400
+  title: Bad Request
+  description: The care plan was not created
+  occurrences: 28
+  example_operations:
+  - createCarePlan
+  - createCarePlanActivity
+  - createExtension
+  - createMedication
+  - createObservation
+- status: 401
+  title: Unauthorized
+  description: Unauthorized
+  occurrences: 27
+  example_operations:
+  - createExtension
+  - createMedication
+  - deleteExtension
+  - deleteWebhook
+  - getCatalogExtension
+- status: 403
+  title: Forbidden
+  description: Forbidden - insufficient permissions
+  occurrences: 19
+  example_operations:
+  - createExtension
+  - createMedication
+  - deleteExtension
+  - deleteWebhook
+  - getCatalogExtension
+- status: 404
+  title: Not Found
+  description: Patient not found
+  occurrences: 24
+  example_operations:
+  - createMedication
+  - deleteExtension
+  - deleteWebhook
+  - getAStaffMember
+  - getAnAppointment
+- status: 409
+  title: Conflict
+  description: A subscription for this event topic already exists
+  occurrences: 1
+  example_operations:
+  - postWebhooks
+- status: 422
+  title: Unprocessable Entity
+  description: Unprocessable entity
+  occurrences: 8
+  example_operations:
+  - createExtension
+  - deleteWebhook
+  - postWebhooks
+  - updateCarePlan
+  - updateCarePlanActivity
+- status: 429
+  title: Rate Limit Exceeded
+  description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+  occurrences: 14
+  example_operations:
+  - getAStaffMember
+  - getAnAppointment
+  - getCompany
+  - getDiscipline
+  - getLocation
+- status: 500
+  title: Internal Server Error
+  description: Internal server error
+  occurrences: 2
+  example_operations:
+  - getTreatment
+  - listTreatmentsVersioned
+- status: 503
+  title: The service is temporarily unavailable
+  description: The service is temporarily unavailable
+  occurrences: 4
+  example_operations:
+  - deleteWebhook
+  - getWebhook
+  - getWebhooks
+  - postWebhooks

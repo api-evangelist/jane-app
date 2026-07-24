@@ -1,0 +1,4997 @@
+# Harvested + merged from the per-operation OpenAPI 3.1.0 definitions embedded in
+# each Jane Developer Platform ReadMe reference page (developers.jane.app/reference/*.md).
+# generated: '2026-07-24'  method: searched
+# source: https://developers.jane.app/reference (per-endpoint embedded OpenAPI blocks)
+openapi: 3.1.0
+info:
+  title: JDP API
+  description: 'Open API specification for the JDP API
+
+
+    ## Rate Limits
+
+
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
+
+
+    Rate limit information is returned in response headers:
+
+    - `X-Throttle-Match`: Rate limit identifier
+
+    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
+
+
+    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
+
+
+    ### Affected Endpoints:
+
+    - `/api/2026-01-01/treatments`
+
+    - `/api/2026-01-01/appointments`
+
+    - `/api/2026-01-01/locations`
+
+    - `/api/2026-01-01/disciplines`
+
+    - `/api/2026-01-01/patients`
+
+    - `/api/2026-01-01/staff_members`
+
+    - `/api/2026-01-01/company`
+
+    - `/api/2026-01-01/medical-record/medications`'
+  version: '2026-01-01'
+servers:
+- url: https://jdpdocsdemo.jane.qa
+  description: Partner playground clinic
+security:
+- OAuth2: []
+tags:
+- name: Appointments
+- name: CarePlans
+- name: Catalog
+- name: Company
+- name: Disciplines
+- name: DocumentUploads
+- name: Extensions
+- name: Locations
+- name: Medications
+- name: Observations
+- name: Patients
+- name: StaffMembers
+- name: Treatments
+- name: Webhooks
+paths:
+  /api/2026-01-01/medical-record/care-plans:
+    post:
+      operationId: createCarePlan
+      summary: Create a care plan
+      description: Create a care plan
+      security:
+      - OAuth2:
+        - care_plans:create
+      tags:
+      - CarePlans
+      requestBody:
+        description: The care plan to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/create_care_plan_request'
+      responses:
+        '201':
+          description: The care plan was created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/care_plan'
+        '400':
+          description: The care plan was not created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+    get:
+      operationId: listCarePlans
+      summary: List care plans
+      description: List medical record care plans for the current user's accessible patients.
+      security:
+      - OAuth2:
+        - care_plans:read
+      tags:
+      - CarePlans
+      parameters:
+      - $ref: '#/components/parameters/page_limit'
+      - $ref: '#/components/parameters/page_cursor'
+      - name: sort
+        in: query
+        required: false
+        description: 'Comma-separated sort fields. Prefix with `-` for descending order (e.g. `-created_at`).
+          Allowed: created_at, updated_at'
+        schema:
+          type: string
+          example: -created_at
+      - name: patient_id[eq]
+        in: query
+        required: false
+        description: Filter by patient public ID
+        schema:
+          type: string
+          format: uuid
+      - name: category[eq]
+        in: query
+        required: false
+        description: 'Filter by category. Allowed values: treatment_plan'
+        schema:
+          type: string
+          enum:
+          - treatment_plan
+      - name: encounter_id[eq]
+        in: query
+        required: false
+        description: Filter by encounter public ID
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: List of care plans
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/care_plans_response'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient permissions
+  /api/2026-01-01/medical-record/care-plans/{care_plan_id}/activities:
+    post:
+      operationId: createCarePlanActivity
+      summary: Create a care plan activity
+      description: Create a care plan activity
+      security:
+      - OAuth2:
+        - care_plans:create
+      parameters:
+      - name: care_plan_id
+        in: path
+        required: true
+        description: The ID of the care plan
+        schema:
+          type: string
+      tags:
+      - CarePlans
+      requestBody:
+        description: The care plan activity to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/create_care_plan_activity_request'
+      responses:
+        '201':
+          description: The care plan activity was created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/care_plan_activity'
+        '400':
+          description: The care plan activity was not created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+  /api/2025-02-28-beta/extensions:
+    post:
+      operationId: createExtension
+      summary: Create Extension
+      description: Creates a new extension
+      tags:
+      - Extensions
+      security:
+      - BearerAuth: []
+      requestBody:
+        description: Extension data to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/extension_request'
+      responses:
+        '201':
+          description: Extension created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/extension'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorized_error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbidden_error'
+        '422':
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unprocessable_entity_error'
+    get:
+      operationId: getExtensions
+      summary: List Extensions
+      description: Retrieves a list of extensions
+      tags:
+      - Extensions
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: List of extensions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/extensions_response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorized_error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbidden_error'
+  /api/2026-01-01/medical-record/medications:
+    post:
+      operationId: createMedication
+      summary: Create a medication
+      description: Create a new medication record for a patient
+      security:
+      - OAuth2:
+        - medications:create
+      tags:
+      - Medications
+      requestBody:
+        description: The medication to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/create_medication_request'
+      responses:
+        '201':
+          description: The medication was created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/medication'
+        '400':
+          description: The medication was not created - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient permissions
+        '404':
+          description: Patient not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+    get:
+      operationId: listMedications
+      summary: List medications
+      description: List medications for the current user's accessible patients
+      security:
+      - OAuth2:
+        - medications:read
+      tags:
+      - Medications
+      parameters:
+      - name: page[limit]
+        in: query
+        required: false
+        description: Maximum number of items to return (default 50)
+        schema:
+          type: integer
+          default: 50
+      - name: page[cursor]
+        in: query
+        required: false
+        description: Cursor for pagination
+        schema:
+          type: string
+      - name: sort
+        in: query
+        required: false
+        description: Sort field (default created_at)
+        schema:
+          type: string
+          default: created_at
+      responses:
+        '200':
+          description: List of medications
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/medications_response'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient permissions
+  /api/2026-01-01/medical-record/observations:
+    post:
+      operationId: createObservation
+      summary: Create an observation
+      description: Create an observation
+      security:
+      - OAuth2:
+        - observations:create
+      tags:
+      - Observations
+      requestBody:
+        description: The observation to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/create_observation_request'
+      responses:
+        '201':
+          description: The observation was created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/observation'
+        '400':
+          description: The observation was not created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+    get:
+      operationId: listObservations
+      summary: List observations
+      description: List medical record observations for the current user's accessible patients.
+      security:
+      - OAuth2:
+        - observations:read
+      tags:
+      - Observations
+      parameters:
+      - $ref: '#/components/parameters/page_limit'
+      - $ref: '#/components/parameters/page_cursor'
+      - name: sort
+        in: query
+        required: false
+        description: 'Comma-separated sort fields. Prefix with `-` for descending order (e.g. `-created_at`).
+          Allowed: created_at, updated_at, issued_at'
+        schema:
+          type: string
+          example: -created_at
+      - name: patient_id[eq]
+        in: query
+        required: false
+        description: Filter by patient public ID
+        schema:
+          type: string
+          format: uuid
+      - name: category[eq]
+        in: query
+        required: false
+        description: 'Filter by category. Allowed values: vital_signs, laboratory, exam'
+        schema:
+          type: string
+          enum:
+          - vital_signs
+          - laboratory
+          - exam
+      - name: encounter_id[eq]
+        in: query
+        required: false
+        description: Filter by encounter public ID
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: List of observations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/observations_response'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient permissions
+  /api/2025-02-28-beta/extensions/{extension_id}:
+    delete:
+      operationId: deleteExtension
+      summary: Delete Extension
+      description: Deletes an extension
+      tags:
+      - Extensions
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: extension_id
+        in: path
+        required: true
+        description: The ID of the extension
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Extension deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/extension_delete_response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorized_error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbidden_error'
+        '404':
+          description: Extension not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error'
+    get:
+      operationId: getExtension
+      summary: Get Extension
+      description: Retrieves a specific extension by ID
+      tags:
+      - Extensions
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: extension_id
+        in: path
+        required: true
+        description: The ID of the extension
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Extension details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/extension'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorized_error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbidden_error'
+        '404':
+          description: Extension not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error'
+    put:
+      operationId: updateExtension
+      summary: Update Extension
+      description: Updates an existing extension
+      tags:
+      - Extensions
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: extension_id
+        in: path
+        required: true
+        description: The ID of the extension
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        description: Extension data to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/extension_request'
+      responses:
+        '200':
+          description: Extension updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/extension'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorized_error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbidden_error'
+        '404':
+          description: Extension not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error'
+        '422':
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unprocessable_entity_error'
+  /api/2026-01-01/webhooks/{webhook_id}:
+    delete:
+      operationId: deleteWebhook
+      summary: Deregister a webhook subscription
+      description: Permanently removes a webhook subscription. The partner will no longer receive events
+        for this subscription.
+      security:
+      - OAuth2:
+        - webhooks:delete
+      tags:
+      - Webhooks
+      parameters:
+      - name: webhook_id
+        in: path
+        required: true
+        description: The ID of the webhook subscription
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '204':
+          description: The webhook subscription was deregistered
+        '401':
+          description: The request is not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '403':
+          description: The authenticated partner does not have permission to deregister this webhook subscription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '404':
+          description: The webhook subscription was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '422':
+          description: The webhook subscription could not be deregistered due to validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '503':
+          description: The service is temporarily unavailable
+    get:
+      operationId: getWebhook
+      summary: Retrieve a webhook subscription
+      description: Returns the details of a single webhook subscription by ID.
+      security:
+      - OAuth2:
+        - webhooks:read
+      tags:
+      - Webhooks
+      parameters:
+      - name: webhook_id
+        in: path
+        required: true
+        description: The ID of the webhook subscription
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: The webhook subscription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/webhook-subscription-response'
+        '401':
+          description: The request is not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '403':
+          description: The authenticated partner does not have permission to view this webhook subscription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '404':
+          description: The webhook subscription was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '503':
+          description: The service is temporarily unavailable
+  /api/2026-01-01/appointments/{appointment_id}:
+    get:
+      operationId: getAnAppointment
+      summary: Get an Appointment
+      description: Retrieve detailed appointment information using its unique identifier
+      tags:
+      - Appointments
+      security:
+      - OAuth2:
+        - appointments:read
+      parameters:
+      - name: appointment_id
+        in: path
+        required: true
+        description: The ID of the appointment
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: The appointment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/appointment'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '404':
+          description: The appointment was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+  /api/2026-01-01/staff_members/{staff_member_id}:
+    get:
+      operationId: getAStaffMember
+      summary: Get a Staff Member
+      description: Retrieve detailed staff member using their unique identifier
+      tags:
+      - StaffMembers
+      security:
+      - OAuth2:
+        - staff_members:read
+      parameters:
+      - name: staff_member_id
+        in: path
+        required: true
+        description: The ID of the staff member
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: The staff member
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/staff_member-2'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '404':
+          description: The staff member was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+  /api/2026-01-01/medical-record/care-plans/{care_plan_id}:
+    get:
+      operationId: getCarePlan
+      summary: Get a care plan
+      description: Get a care plan by its ID
+      security:
+      - OAuth2:
+        - care_plans:read
+      tags:
+      - CarePlans
+      parameters:
+      - name: care_plan_id
+        in: path
+        required: true
+        description: The ID of the care plan
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The care plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/care_plan'
+        '404':
+          description: The care plan was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+    patch:
+      operationId: updateCarePlan
+      summary: Update a care plan
+      description: Update a care plan by its ID
+      security:
+      - OAuth2:
+        - care_plans:update
+      tags:
+      - CarePlans
+      parameters:
+      - name: care_plan_id
+        in: path
+        required: true
+        description: The ID of the care plan
+        schema:
+          type: string
+      requestBody:
+        description: The care plan to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/update_care_plan_request'
+      responses:
+        '200':
+          description: The care plan was updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/care_plan'
+        '400':
+          description: The care plan was not updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '404':
+          description: The care plan was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+        '422':
+          description: The care plan validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+  /api/2026-01-01/medical-record/care-plans/{care_plan_id}/activities/{care_plan_activity_id}:
+    get:
+      operationId: getCarePlanActivity
+      summary: Get a care plan activity
+      description: Get a care plan activity by its ID
+      security:
+      - OAuth2:
+        - care_plans:read
+      tags:
+      - CarePlans
+      parameters:
+      - name: care_plan_id
+        in: path
+        required: true
+        description: The ID of the care plan
+        schema:
+          type: string
+      - name: care_plan_activity_id
+        in: path
+        required: true
+        description: The ID of the care plan activity
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The care plan activity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/care_plan_activity'
+        '404':
+          description: The care plan activity was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+    patch:
+      operationId: updateCarePlanActivity
+      summary: Update a care plan activity
+      description: Update a care plan activity by its ID
+      security:
+      - OAuth2:
+        - care_plans:update
+      tags:
+      - CarePlans
+      parameters:
+      - name: care_plan_id
+        in: path
+        required: true
+        description: The ID of the care plan
+        schema:
+          type: string
+      - name: care_plan_activity_id
+        in: path
+        required: true
+        description: The ID of the care plan activity
+        schema:
+          type: string
+      requestBody:
+        description: The care plan activity to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/update_care_plan_activity_request'
+      responses:
+        '200':
+          description: The care plan activity was updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/care_plan_activity'
+        '400':
+          description: The care plan activity was not updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '404':
+          description: The care plan activity was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+        '422':
+          description: The care plan activity validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+  /api/2025-02-28-beta/catalog/extensions/{id}:
+    get:
+      operationId: getCatalogExtension
+      summary: Get Catalog Extension
+      description: Retrieves a specific extension from the catalog
+      tags:
+      - Catalog
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Extension ID
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Catalog extension details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/catalog_extension'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorized_error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbidden_error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error'
+  /api/2025-02-28-beta/catalog/extensions:
+    get:
+      operationId: getCatalogExtensions
+      summary: Get Catalog Extensions
+      description: Retrieves the catalog with all available approved extensions
+      tags:
+      - Catalog
+      responses:
+        '200':
+          description: List of catalog extensions with pagination metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/catalog_extensions_response'
+  /api/2026-01-01/company:
+    get:
+      operationId: getCompany
+      summary: Get details about the company
+      description: Retrieve details about the company
+      tags:
+      - Company
+      security:
+      - OAuth2:
+        - companies:read
+      responses:
+        '200':
+          description: The company details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/company'
+        '400':
+          description: The request is invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invalid_request_error'
+        '401':
+          description: The request is not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorized_error'
+        '404':
+          description: The company was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error'
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+  /api/2026-01-01/disciplines/{discipline_id}:
+    get:
+      operationId: getDiscipline
+      summary: Get a Discipline
+      description: Get a Discipline by its ID
+      tags:
+      - Disciplines
+      security:
+      - OAuth2:
+        - disciplines:read
+      parameters:
+      - name: discipline_id
+        in: path
+        required: true
+        description: The Id of the discipline
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: The discipline
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/discipline'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '404':
+          description: The discipline was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+  /api/2026-01-01/document-uploads/{document_id}:
+    get:
+      operationId: getDocumentUploads
+      summary: Get an uploaded document
+      description: Retrieve a document previously uploaded by the authenticated user. Only the user who
+        originally uploaded the document can access it.
+      security:
+      - OAuth2:
+        - document_uploads:read
+      tags:
+      - DocumentUploads
+      parameters:
+      - name: document_id
+        in: path
+        required: true
+        description: The ID of the document
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/document_uploads_response'
+        '404':
+          description: The document was not found or does not belong to the authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+  /api/2026-01-01/locations/{location_id}:
+    get:
+      operationId: getLocation
+      summary: Get a Location
+      description: Retrieve detailed location information using the unique identifier
+      tags:
+      - Locations
+      security:
+      - OAuth2:
+        - locations:read
+      parameters:
+      - name: location_id
+        in: path
+        required: true
+        description: The ID of the location
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: The location
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/location'
+        '400':
+          description: Bad Request - Invalid ID Format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '403':
+          description: Forbidden - Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: The location was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+  /api/2026-01-01/locations:
+    get:
+      operationId: getLocations
+      summary: Get a list of locations
+      description: 'Retrieve a paginated list of locations.
+
+
+        Filtering:
+
+        Filter records by field values using the format: field[operator]=value
+
+
+        Available fields:
+
+        - `public_id`: string
+
+        - `created_at`: ISO 8601 datetime (e.g. 2025-01-01T12:00:00Z)
+
+        - `updated_at`: ISO 8601 datetime
+
+
+        Available operators:
+
+        - `eq`: Equals
+
+        - `gt`: Greater than
+
+        - `gte`: Greater than or equal
+
+        - `lt`: Less than
+
+        - `lte`: Less than or equal
+
+
+        Date-time filters (ex. `created_at`, `updated_at`) must:
+
+        - Use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date-time format
+
+        - Be **precise to the second** (e.g. `2025-01-01T12:00:00Z`)
+
+
+        Examples:
+
+        ```
+
+        /locations?public_id[eq]=abc123
+
+        /locations?created_at[gte]=2025-01-01T00:00:00Z&created_at[lt]=2025-01-02T00:00:00Z
+
+        ```
+
+        '
+      tags:
+      - Locations
+      security:
+      - OAuth2:
+        - locations:read
+      parameters:
+      - $ref: '#/components/parameters/page_cursor'
+      - $ref: '#/components/parameters/page_limit'
+      - name: sort
+        in: query
+        required: false
+        description: 'Comma-separated list of fields to sort by. Prefix a field with ''-'' for descending
+          order.
+
+
+          Examples:
+
+          - `sort=name,-created_at` sorts by `name` ascending, then `created_at` descending.
+
+          - `sort=-updated_at` sorts by `updated_at` descending.
+
+
+          Available fields:
+
+          - `name`
+
+          - `created_at`
+
+          - `updated_at`
+
+          '
+        schema:
+          type: string
+      - name: public_id
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `public_id`. Example: `public_id[eq]=123`'
+        schema:
+          $ref: '#/components/schemas/StringFilterSchema'
+      - name: created_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `created_at` timestamp (ISO 8601). Example: `created_at[gte]=2025-01-01T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      - name: updated_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `updated_at` timestamp (ISO 8601). Example: `updated_at[lt]=2025-01-02T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      responses:
+        '200':
+          description: A list of locations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/locations'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message explaining the issue
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '403':
+          description: Forbidden - Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+  /api/2026-01-01/medical-record/medications/{medication_id}:
+    get:
+      operationId: getMedication
+      summary: Get a medication
+      description: Get a medication by its ID
+      security:
+      - OAuth2:
+        - medications:read
+      tags:
+      - Medications
+      parameters:
+      - name: medication_id
+        in: path
+        required: true
+        description: The ID of the medication
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: The medication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/medication'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient permissions
+        '404':
+          description: The medication was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+    patch:
+      operationId: updateMedication
+      summary: Update a medication
+      description: Update a medication by its ID
+      security:
+      - OAuth2:
+        - medications:update
+      tags:
+      - Medications
+      parameters:
+      - name: medication_id
+        in: path
+        required: true
+        description: The ID of the medication
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        description: The medication fields to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/update_medication_request'
+      responses:
+        '200':
+          description: The medication was updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/medication'
+        '400':
+          description: The medication was not updated - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient permissions
+        '404':
+          description: The medication was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+        '422':
+          description: The medication validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+  /api/2026-01-01/medical-record/medications/{medication_id}/history:
+    get:
+      operationId: getMedicationHistory
+      summary: Get medication change history
+      description: 'Retrieves the complete change history for a medication, including:
+
+        - Who made each change
+
+        - What was modified
+
+        - When the change occurred
+
+        - Reason for the change (if provided)
+
+
+        Returns all history entries without pagination.
+
+        '
+      security:
+      - OAuth2:
+        - medications:read
+      tags:
+      - Medications
+      parameters:
+      - name: medication_id
+        in: path
+        required: true
+        description: The ID of the medication
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: The complete history of the medication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/medication_history_response'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient permissions
+        '404':
+          description: The medication was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+  /api/2026-01-01/medical-record/observations/{observation_id}:
+    get:
+      operationId: getObservation
+      summary: Get an observation
+      description: Get an observation by its ID
+      security:
+      - OAuth2:
+        - observations:read
+      tags:
+      - Observations
+      parameters:
+      - name: observation_id
+        in: path
+        required: true
+        description: The ID of the observation
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The observation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/observation'
+        '404':
+          description: The observation was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+    patch:
+      operationId: updateObservation
+      summary: Update an observation
+      description: Update an observation by its ID
+      security:
+      - OAuth2:
+        - observations:update
+      tags:
+      - Observations
+      parameters:
+      - name: observation_id
+        in: path
+        required: true
+        description: The ID of the observation
+        schema:
+          type: string
+      requestBody:
+        description: The observation to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/update_observation_request'
+      responses:
+        '200':
+          description: The observation was updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/observation'
+        '400':
+          description: The observation was not updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '404':
+          description: The observation was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+        '422':
+          description: The observation validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+  /api/2026-01-01/patients/{patient_id}:
+    get:
+      operationId: getPatient
+      summary: Get a Patient
+      description: Retrieve detailed patient information using their unique identifier
+      tags:
+      - Patients
+      security:
+      - OAuth2:
+        - patients:read
+      parameters:
+      - name: patient_id
+        in: path
+        required: true
+        description: The ID of the patient
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: The patient
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/patient-2'
+        '400':
+          description: The request was invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '401':
+          description: The request is not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorized_error'
+        '404':
+          description: The patient was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error'
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+  /api/2026-01-01/patients:
+    get:
+      operationId: getPatients
+      summary: Get a list of patients
+      description: 'Retrieve a list of patients.
+
+
+        Filtering:
+
+        Filter records by field values using the format: field[operator]=value
+
+
+        Available fields:
+
+        - `public_id`: string
+
+        - `created_at`: ISO 8601 datetime (e.g. 2025-01-01T12:00:00Z)
+
+        - `updated_at`: ISO 8601 datetime
+
+
+        Available operators:
+
+        - `eq`: Equals
+
+        - `gt`: Greater than
+
+        - `gte`: Greater than or equal
+
+        - `lt`: Less than
+
+        - `lte`: Less than or equal
+
+
+        Date-time filters (ex. `created_at`, `updated_at`) must:
+
+        - Use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date-time format
+
+        - Be **precise to the second** (e.g. `2025-01-01T12:00:00Z`)
+
+
+        Free-text search across name, email, phone, and patient number is available via `POST /patients/search`
+        (PII is not supported in query strings).
+
+
+        Examples:
+
+        ```
+
+        /patients?public_id[eq]=abc123
+
+        /patients?created_at[gte]=2025-01-01T00:00:00Z&created_at[lt]=2025-01-02T00:00:00Z
+
+        ```
+
+        '
+      tags:
+      - Patients
+      security:
+      - OAuth2:
+        - patients:read
+      parameters:
+      - $ref: '#/components/parameters/page_cursor'
+      - $ref: '#/components/parameters/page_limit'
+      - name: sort
+        in: query
+        required: false
+        description: 'Comma-separated list of fields to sort by. Prefix a field with ''-'' for descending
+          order.
+
+
+          Examples:
+
+          - `sort=updated_at,-public_id` sorts by `updated_at` ascending, then `public_id` descending.
+
+          - `sort=-created_at` sorts by `created_at` descending.
+
+
+          Available fields:
+
+          - `public_id`
+
+          - `created_at`
+
+          - `updated_at`
+
+          '
+        schema:
+          type: string
+      - name: public_id
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `public_id`. Example: `public_id[eq]=123`'
+        schema:
+          $ref: '#/components/schemas/StringFilterSchema'
+      - name: created_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `created_at` timestamp (ISO 8601). Example: `created_at[gte]=2025-01-01T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      - name: updated_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `updated_at` timestamp (ISO 8601). Example: `updated_at[lt]=2025-01-02T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      responses:
+        '200':
+          description: The paginated list of patients
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/patients'
+        '400':
+          description: The request was invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+  /api/2026-01-01/treatments/{id}:
+    get:
+      operationId: getTreatment
+      summary: Get a Treatment
+      description: Returns a treatment by its ID.
+      tags:
+      - Treatments
+      security:
+      - OAuth2:
+        - treatments:read
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: The ID of the treatment
+      responses:
+        '200':
+          description: Treatment retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/treatment'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '404':
+          description: Treatment not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+  /api/2026-01-01/webhooks:
+    get:
+      operationId: getWebhooks
+      summary: List webhook subscriptions
+      description: Returns all webhook subscriptions registered by the authenticated partner for the current
+        clinic.
+      security:
+      - OAuth2:
+        - webhooks:read
+      tags:
+      - Webhooks
+      responses:
+        '200':
+          description: A list of webhook subscriptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/webhook-subscription-response'
+        '401':
+          description: The request is not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '403':
+          description: The authenticated partner does not have permission to list webhook subscriptions
+            for this clinic
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '503':
+          description: The service is temporarily unavailable
+    post:
+      operationId: postWebhooks
+      summary: Register a webhook subscription
+      description: Registers a new webhook subscription for the authenticated partner. The signing secret
+        is returned only in this response and cannot be retrieved again — store it securely. The secret
+        is used to verify that webhook payloads are sent by Jane.
+      security:
+      - OAuth2:
+        - webhooks:create
+      tags:
+      - Webhooks
+      requestBody:
+        description: The webhook subscription to register
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/webhook-subscription-create'
+      responses:
+        '201':
+          description: The webhook subscription was registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/webhook-subscription-create-response'
+        '400':
+          description: The request body is invalid or missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '401':
+          description: The request is not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '403':
+          description: The authenticated partner does not have permission to register webhook subscriptions
+            for this clinic
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '409':
+          description: A subscription for this event topic already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - id
+                      - message
+                      - details
+                      properties:
+                        id:
+                          type: string
+                          example: DUPLICATE_RECORD
+                        message:
+                          type: string
+                        details:
+                          $ref: '#/components/schemas/webhook-subscription-response'
+        '422':
+          description: The webhook subscription could not be processed due to validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '503':
+          description: The service is temporarily unavailable
+  /api/2026-01-01/appointments:
+    get:
+      operationId: listAppointmentsVersioned
+      summary: List Appointments
+      description: 'List Appointments. This endpoint only returns one on one bookings. Excludes class
+        bookings, group appointments, etc.
+
+
+        Filtering:
+
+        Filter records by field values using the format: field[operator]=value
+
+
+        Available fields:
+
+        - `public_id`: string
+
+        - `start_at`: ISO 8601 datetime (e.g. 2025-01-01T12:00:00Z)
+
+        - `end_at`: ISO 8601 datetime
+
+        - `patient_id`: UUID String
+
+        - `staff_member_id`: UUID String
+
+        - `location_id`: UUID String
+
+        - `treatment_id`: UUID String
+
+        - `created_at`: ISO 8601 datetime
+
+        - `updated_at`: ISO 8601 datetime
+
+
+        Available operators:
+
+        - `eq`: Equals
+
+        - `gt`: Greater than
+
+        - `gte`: Greater than or equal
+
+        - `lt`: Less than
+
+        - `lte`: Less than or equal
+
+
+        Date-time filters (ex. `start_at`, `end_at`, `created_at`, `updated_at`) must:
+
+        - Use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date-time format
+
+        - Be **precise to the second** (e.g. `2025-01-01T12:00:00Z`)
+
+
+        Examples:
+
+        ```
+
+        /appointments?public_id[eq]=abc123
+
+        /appointments?created_at[gte]=2025-01-01T00:00:00Z&created_at[lt]=2025-01-02T00:00:00Z
+
+        ```
+
+        '
+      tags:
+      - Appointments
+      security:
+      - OAuth2:
+        - appointments:read
+      parameters:
+      - $ref: '#/components/parameters/page_cursor'
+      - $ref: '#/components/parameters/page_limit'
+      - name: sort
+        in: query
+        required: false
+        description: 'Comma-separated list of fields to sort by. Prefix a field with ''-'' for descending
+          order.
+
+
+          Examples:
+
+          - `sort=name,-created_at` sorts by `name` ascending, then `created_at` descending.
+
+          - `sort=-updated_at` sorts by `updated_at` descending.
+
+
+          Available fields:
+
+          - `start_at`
+
+          - `end_at`
+
+          - `booked_at`
+
+          - `created_at`
+
+          - `updated_at`
+
+          '
+        schema:
+          type: string
+      - name: public_id
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `public_id`. Example: `public_id[eq]=123`'
+        schema:
+          $ref: '#/components/schemas/StringFilterSchema'
+      - name: start_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `start_at` timestamp (ISO 8601). Example: `start_at[gte]=2025-01-01T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      - name: end_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `end_at` timestamp (ISO 8601). Example: `end_at[lte]=2025-01-02T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      - name: patient_id
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `patient_id`. Example: `patient_id[eq]=123`'
+        schema:
+          $ref: '#/components/schemas/IdFilterSchema'
+      - name: staff_member_id
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `staff_member_id`. Example: `staff_member_id[eq]=123`'
+        schema:
+          $ref: '#/components/schemas/IdFilterSchema'
+      - name: location_id
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `location_id`. Example: `location_id[eq]=123`'
+        schema:
+          $ref: '#/components/schemas/IdFilterSchema'
+      - name: treatment_id
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `treatment_id`. Example: `treatment_id[eq]=123`'
+        schema:
+          $ref: '#/components/schemas/IdFilterSchema'
+      - name: created_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `created_at` timestamp (ISO 8601). Example: `created_at[gte]=2025-01-01T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      - name: updated_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `updated_at` timestamp (ISO 8601). Example: `updated_at[lt]=2025-01-02T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      responses:
+        '200':
+          description: The appointments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/appointments_response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '401':
+          description: Unauthorized
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+  /api/2026-01-01/disciplines:
+    get:
+      operationId: listDisciplinesVersioned
+      summary: List Disciplines
+      description: 'List Disciplines.
+
+
+        Filtering:
+
+        Filter records by field values using the format: field[operator]=value
+
+
+        Available fields:
+
+        - `public_id`: string
+
+        - `created_at`: ISO 8601 datetime (e.g. 2025-01-01T12:00:00Z)
+
+        - `updated_at`: ISO 8601 datetime
+
+
+        Available operators:
+
+        - `eq`: Equals
+
+        - `gt`: Greater than
+
+        - `gte`: Greater than or equal
+
+        - `lt`: Less than
+
+        - `lte`: Less than or equal
+
+
+        Date-time filters (ex. `created_at`, `updated_at`) must:
+
+        - Use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date-time format
+
+        - Be **precise to the second** (e.g. `2025-01-01T12:00:00Z`)
+
+
+        Examples:
+
+        ```
+
+        /disciplines?public_id[eq]=abc123
+
+        /disciplines?created_at[gte]=2025-01-01T00:00:00Z&created_at[lt]=2025-01-02T00:00:00Z
+
+        ```
+
+        '
+      tags:
+      - Disciplines
+      security:
+      - OAuth2:
+        - disciplines:read
+      parameters:
+      - $ref: '#/components/parameters/page_cursor'
+      - $ref: '#/components/parameters/page_limit'
+      - name: sort
+        in: query
+        required: false
+        description: 'Comma-separated list of fields to sort by. Prefix a field with ''-'' for descending
+          order.
+
+
+          Examples:
+
+          - `sort=name,-created_at` sorts by `name` ascending, then `created_at` descending.
+
+          - `sort=-updated_at` sorts by `updated_at` descending.
+
+
+          Available fields:
+
+          - `name`
+
+          - `created_at`
+
+          - `updated_at`
+
+          '
+        schema:
+          type: string
+      - name: public_id
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `public_id`. Example: `public_id[eq]=123`'
+        schema:
+          $ref: '#/components/schemas/StringFilterSchema'
+      - name: created_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `created_at` timestamp (ISO 8601). Example: `created_at[gte]=2025-01-01T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      - name: updated_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `updated_at` timestamp (ISO 8601). Example: `updated_at[lt]=2025-01-02T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      responses:
+        '200':
+          description: The disciplines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/disciplines_response'
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '401':
+          description: Unauthorized
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+  /api/2026-01-01/staff_members:
+    get:
+      operationId: listStaffMembersVersioned
+      summary: List Staff Members
+      description: 'List Staff Members.
+
+
+        Filtering:
+
+        Filter records by field values using the format: field[operator]=value
+
+
+        Available fields:
+
+        - `public_id`: string
+
+        - `created_at`: ISO 8601 datetime (e.g. 2025-01-01T12:00:00Z)
+
+        - `updated_at`: ISO 8601 datetime
+
+
+        Available operators:
+
+        - `eq`: Equals
+
+        - `gt`: Greater than
+
+        - `gte`: Greater than or equal
+
+        - `lt`: Less than
+
+        - `lte`: Less than or equal
+
+
+        Date-time filters (ex. `created_at`, `updated_at`) must:
+
+        - Use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date-time format
+
+        - Be **precise to the second** (e.g. `2025-01-01T12:00:00Z`)
+
+
+        Examples:
+
+        ```
+
+        /staff_members?public_id[eq]=abc123
+
+        /staff_members?created_at[gte]=2025-01-01T00:00:00Z&created_at[lt]=2025-01-02T00:00:00Z
+
+        ```
+
+        '
+      tags:
+      - StaffMembers
+      security:
+      - OAuth2:
+        - staff_members:read
+      parameters:
+      - $ref: '#/components/parameters/page_cursor'
+      - $ref: '#/components/parameters/page_limit'
+      - name: sort
+        in: query
+        required: false
+        description: 'Comma-separated list of fields to sort by. Prefix a field with ''-'' for descending
+          order.
+
+
+          Examples:
+
+          - `sort=updated_at,-created_at` sorts by `updated_at` ascending, then `created_at` descending.
+
+          - `sort=-updated_at` sorts by `updated_at` descending.
+
+
+          Available fields:
+
+          - `created_at`
+
+          - `updated_at`
+
+          '
+        schema:
+          type: string
+      - name: public_id
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `public_id`. Example: `public_id[eq]=123`'
+        schema:
+          $ref: '#/components/schemas/StringFilterSchema'
+      - name: created_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `created_at` timestamp (ISO 8601). Example: `created_at[gte]=2025-01-01T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      - name: updated_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `updated_at` timestamp (ISO 8601). Example: `updated_at[lt]=2025-01-02T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      responses:
+        '200':
+          description: The staff members
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/staff_members_response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '401':
+          description: Unauthorized
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+  /api/2026-01-01/treatments:
+    get:
+      operationId: listTreatmentsVersioned
+      summary: List Treatments
+      description: 'Returns a list of treatments with pagination support.
+
+
+        Filtering:
+
+        Filter records by field values using the format: field[operator]=value
+
+
+        Available fields:
+
+        - `public_id`: string
+
+        - `staff_member_ids`: UUID string — returns treatments owned by or offered by the staff member
+        (via available treatments)
+
+        - `created_at`: ISO 8601 datetime (e.g. 2025-01-01T12:00:00Z)
+
+        - `updated_at`: ISO 8601 datetime
+
+
+        Available operators:
+
+        - `eq`: Equals
+
+        - `gt`: Greater than
+
+        - `gte`: Greater than or equal
+
+        - `lt`: Less than
+
+        - `lte`: Less than or equal
+
+
+        Operator restrictions:
+
+        - `public_id` and `staff_member_ids` only support `eq`
+
+        - `created_at` and `updated_at` support all operators above
+
+
+        Date-time filters (ex. `created_at`, `updated_at`) must:
+
+        - Use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date-time format
+
+        - Be **precise to the second** (e.g. `2025-01-01T12:00:00Z`)
+
+
+        Examples:
+
+        ```
+
+        /treatments?public_id[eq]=abc123
+
+        /treatments?created_at[gte]=2025-01-01T00:00:00Z&created_at[lt]=2025-01-02T00:00:00Z
+
+        ```
+
+        '
+      tags:
+      - Treatments
+      security:
+      - OAuth2:
+        - treatments:read
+      parameters:
+      - $ref: '#/components/parameters/page_cursor'
+      - $ref: '#/components/parameters/page_limit'
+      - name: sort
+        in: query
+        required: false
+        description: 'Comma-separated list of fields to sort by. Prefix a field with ''-'' for descending
+          order.
+
+
+          Examples:
+
+          - `sort=name,-created_at` sorts by `name` ascending, then `created_at` descending.
+
+          - `sort=-updated_at` sorts by `updated_at` descending.
+
+
+          Available fields:
+
+          - `name`
+
+          - `price`
+
+          - `created_at`
+
+          - `updated_at`
+
+          '
+        schema:
+          type: string
+      - name: public_id
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `public_id`. Only supports `eq`. Example: `public_id[eq]=123`'
+        schema:
+          $ref: '#/components/schemas/IdFilterSchema'
+      - name: staff_member_ids
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by staff member ID. Only supports `eq`. Returns treatments owned by or offered
+          by the staff member. Example: `staff_member_ids[eq]=019d8e34-8307-7b0e-b6c2-5d03ca0bfb37`'
+        schema:
+          $ref: '#/components/schemas/IdFilterSchema'
+      - name: created_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `created_at` timestamp (ISO 8601). Example: `created_at[gte]=2025-01-01T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      - name: updated_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `updated_at` timestamp (ISO 8601). Example: `updated_at[lt]=2025-01-02T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      responses:
+        '200':
+          description: Treatments retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/treatments_response'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '401':
+          description: Unauthorized
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+  /api/2026-01-01/document-uploads:
+    post:
+      operationId: postDocumentUploads
+      summary: Upload a document
+      description: Upload a document file to receive a document ID that can be referenced in other API
+        calls (e.g. attaching a document to a clinical record). The uploaded file is stored securely and
+        a presigned URL is returned in the response for temporary access. Accepted file types are PDF,
+        JPEG, and PNG. Maximum file size is 50 MB.
+      security:
+      - OAuth2:
+        - document_uploads:create
+      tags:
+      - DocumentUploads
+      requestBody:
+        description: The document to upload
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/document_uploads_request'
+            encoding:
+              file:
+                contentType: application/pdf, image/jpeg, image/png
+      responses:
+        '201':
+          description: The document was uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/document_uploads_response'
+        '400':
+          description: The document was not uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+  /api/2026-01-01/patients/search:
+    post:
+      operationId: searchPatients
+      summary: Search patients by free text
+      description: "Free-text patient search across name, email, phone number, and patient number.\n\n\
+        This is a POST-body endpoint specifically so PII (patient names, email, phone)\ndoes not leak\
+        \ into URL query strings, access logs, browser history, or referrer headers.\n\nScope is intentionally\
+        \ search-only: the body accepts `search`, `sort`, and `page`.\nStructured filters (`public_id`,\
+        \ `created_at`, `updated_at`) are not supported here —\nuse `GET /patients` for those. Combined\
+        \ search + structured filtering is a deliberate\nfollow-up if a consumer need materializes.\n\n\
+        Filter operators:\n- `search`: `co` (contains) only\n\nPagination: the response returns a `cursor`\
+        \ and `hasNextPage`. To fetch\nsubsequent pages, re-POST the same body with `page.cursor` set\
+        \ to the\nprevious response's `cursor`. The `links` object is omitted from this\nendpoint's response\
+        \ (GET-style pagination URLs would re-expose filter PII\nin query strings).\n\nExample body:\n\
+        ```json\n{\n  \"search\": { \"co\": \"Jane Smith\" },\n  \"sort\": \"-created_at\",\n  \"page\"\
+        : { \"limit\": 50 }\n}\n```\n"
+      tags:
+      - Patients
+      security:
+      - OAuth2:
+        - patients:read
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/patients_search_request'
+      responses:
+        '200':
+          description: The paginated list of matching patients
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/patients_search_response'
+        '400':
+          description: The request was invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+components:
+  schemas:
+    bad_request_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: bad_request_error_response.json
+      title: BadRequest
+      type: object
+      properties: {}
+    care_plan_activity:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: care_plan_activity.json
+      title: CarePlanActivity
+      type: object
+      required:
+      - category
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUIDv7 identifier for the component
+        category:
+          type: string
+          enum:
+          - appointment
+          - exercise
+          - medication
+          - nutrition
+          description: The classification of the type of care plan activity
+        description:
+          type: string
+          description: The description of the care plan activity
+        progress:
+          type: string
+          description: The progress of the care plan activity
+        created_at:
+          type: string
+          format: date-time
+          description: When the care plan activity record was created
+        updated_at:
+          type: string
+          format: date-time
+          description: When the care plan activity record was updated
+      additionalProperties: false
+    care_plan:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: care_plan.json
+      title: CarePlan
+      type: object
+      required:
+      - patient_id
+      - category
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUIDv7 identifier for the care plan
+        patient_id:
+          type: string
+          format: uuid
+          description: Reference to the patient
+        practitioner_id:
+          type: string
+          format: uuid
+          description: Reference to the practitioner who performed/recorded the observation
+        encounter_id:
+          type: string
+          format: uuid
+          description: Reference to the encounter where the care plan was made
+        category:
+          type: string
+          enum:
+          - treatment_plan
+          description: The classification of the type of care plan
+        title:
+          type: string
+          description: The title of the care plan
+        description:
+          type: string
+          description: The description of the care plan
+        status:
+          type: string
+          enum:
+          - draft
+          - active
+          - on-hold
+          - revoked
+          - completed
+          - entered-in-error
+          - unknown
+          description: The status of the care plan
+        created_at:
+          type: string
+          format: date-time
+          description: When the care plan record was created
+        updated_at:
+          type: string
+          format: date-time
+          description: When the care plan record was updated
+        activities:
+          type: array
+          items:
+            $ref: '#/components/schemas/care_plan_activity'
+          description: Array of care plan activities
+        document_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: Array of document upload IDs to attach to the care plan. All documents must exist
+            and be verified.
+      additionalProperties: false
+    create_care_plan_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: create_care_plan_request.json
+      title: Create Care Plan Request
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/care_plan'
+          description: The request data parameters
+    create_care_plan_activity_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: create_care_plan_activity_request.json
+      title: Create Care Plan Activity Request
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/care_plan_activity'
+          description: The request data parameters
+    extension:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: extension.json
+      title: Extension
+      description: An extension manifest configuration
+      type: object
+      required:
+      - name
+      - version
+      - description
+      - developer_name
+      properties:
+        id:
+          description: Unique identifier for the extension
+          type: string
+          format: uuid
+          readOnly: true
+        extension_id:
+          description: Unique identifier for the extension
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          description: Name of the extension
+          type: string
+        version:
+          description: Version of the extension
+          type: string
+        description:
+          description: Description of what the extension does
+          type: string
+        documentation_url:
+          description: URL to the extension's documentation
+          type: string
+          format: uri
+        developer_name:
+          description: Name of the developer or organization
+          type: string
+        homepage_url:
+          description: URL to the extension's homepage
+          type: string
+          format: uri
+        support_url:
+          description: URL for support related to this extension
+          type: string
+          format: uri
+        activation_url:
+          description: URL used to activate the extension
+          type: string
+          format: uri
+        signup_url:
+          description: URL for user signup through partner defined flow
+          type: string
+          format: uri
+        icon_url:
+          description: 'URL to the extension''s icon. Recommended: PNG format with transparent background,
+            128x128 pixels'
+          type: string
+          format: uri
+        logo_urls:
+          description: URLs to logo images at different sizes
+          type: array
+          items:
+            type: string
+            format: uri
+        extension_points:
+          description: List of extension points this extension provides
+          type: array
+          items:
+            type: object
+            required:
+            - type
+            - category
+            - label
+            - url
+            properties:
+              type:
+                type: string
+                enum:
+                - clinical
+              category:
+                type: string
+                enum:
+                - labs
+                - gfe
+                - hep
+                - rpm
+                - supplements
+                - extensions
+              label:
+                type: string
+              url:
+                type: string
+                pattern: ^https://
+                description: URL where the extension is hosted
+        created_at:
+          description: When the extension was created
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          description: When the extension was last updated
+          type: string
+          format: date-time
+          readOnly: true
+      additionalProperties: false
+    unauthorized_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/unauthorized_error.json
+      type: object
+      required:
+      - error
+      title: UnauthorizedError
+      description: Error response generated when the request is not authorized
+      properties:
+        error:
+          type: string
+          description: Error message.
+    forbidden_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/forbidden_error.json
+      type: object
+      required:
+      - error
+      title: ForbiddenError
+      description: Error response generated when the request is forbidden
+      properties:
+        error:
+          type: string
+          description: Error message.
+    extension_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: extension_request.json
+      title: ExtensionRequest
+      description: Request body for creating or updating an extension
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/extension'
+          description: The extension to create or update
+    unprocessable_entity_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/unprocessable_entity_error.json
+      type: object
+      required:
+      - error
+      title: UnprocessableEntityError
+      description: Error response generated when the request is not valid
+      properties:
+        error:
+          type: string
+          description: Error message.
+    not_found_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: not_found_error_response.json
+      title: NotFoundError
+      type: object
+      properties: {}
+    medication_code:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: medication_code.json
+      title: MedicationCode
+      type: object
+      required:
+      - text
+      properties:
+        coding:
+          type:
+          - array
+          - 'null'
+          items:
+            type: object
+            required:
+            - display
+            - code
+            - system
+            properties:
+              display:
+                type: string
+                description: Human-readable display name
+              code:
+                type: string
+                description: The medication code
+              system:
+                type: string
+                description: The coding system (e.g., 'http://snomed.info/sct')
+            additionalProperties: false
+          description: Array of coded values for the medication (optional — manually added meds won't
+            have formal codes)
+        text:
+          type: string
+          description: Plain text representation of the medication name
+      additionalProperties: false
+    ingredient:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: ingredient.json
+      title: Ingredient
+      type: object
+      properties:
+        name:
+          type:
+          - string
+          - 'null'
+          description: Name of the ingredient
+        strength:
+          type:
+          - string
+          - number
+          - 'null'
+          description: Strength or amount of the ingredient
+        strength_unit:
+          type:
+          - string
+          - 'null'
+          description: Unit of measurement for the strength (e.g., mg, mL, %)
+      additionalProperties: false
+    medication:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: medication.json
+      title: Medication
+      type: object
+      required:
+      - id
+      - patient_id
+      - practitioner_id
+      - medication_code
+      - status
+      - source
+      - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUIDv7 identifier for the medication
+        patient_id:
+          type: string
+          format: uuid
+          description: Reference to the patient
+        practitioner_id:
+          type: string
+          format: uuid
+          description: Reference to the practitioner
+        encounter_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: Reference to the encounter where medication was prescribed (optional)
+        medication_code:
+          $ref: '#/components/schemas/medication_code'
+        ingredients:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ingredient'
+          description: Array of ingredient objects (optional — not all medications have detailed ingredient
+            info)
+        dose_form:
+          type:
+          - string
+          - 'null'
+          description: Pharmaceutical form (tablet, capsule, suspension, etc.) (optional)
+        route:
+          type:
+          - string
+          - 'null'
+          description: Route of administration (oral, IV, topical, etc.) (optional)
+        frequency:
+          type:
+          - string
+          - 'null'
+          description: Textual frequency (daily, bid, etc.) (optional)
+        quantity:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          description: Number of units (e.g., tablets, capsules) dispensed
+        period_start:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: When the medication course starts (optional)
+        period_end:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Planned end date (if any) (optional)
+        instructions:
+          type:
+          - string
+          - 'null'
+          description: Free-text administration instructions for the patient (optional)
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+          description: Lifecycle state of the medication
+        source:
+          type: string
+          enum:
+          - prescribed
+          - patient_reported
+          description: Origin of record – prescribed (from practitioner) or reported (self-reported)
+        change_reason:
+          type:
+          - string
+          - 'null'
+          description: Selected reason for status change (e.g., adverse_reaction, completed, patient_request)
+        prescription_valid_until:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Expiry date after which repeats aren't valid (optional)
+        prescription_refills:
+          type:
+          - integer
+          - 'null'
+          minimum: 0
+          description: Allowed refill count (optional)
+        prescription_days_supply:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          description: Number of days that the dispensed medication is intended to last (optional)
+        prescription_reason:
+          type:
+          - string
+          - 'null'
+          description: Clinical indication or problem being treated (optional)
+        created_at:
+          type: string
+          format: date-time
+          description: When the medication record was created
+      additionalProperties: false
+    medication_editable_properties:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: medication_editable_properties.json
+      title: Medication Editable Properties
+      description: Common editable properties for medication create and update operations
+      type: object
+      properties:
+        encounter_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: Reference to the encounter where medication was prescribed
+        medication_code:
+          $ref: '#/components/schemas/medication_code'
+        ingredients:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ingredient'
+          description: Array of ingredient objects (optional — not all medications have detailed ingredient
+            info)
+        dose_form:
+          type:
+          - string
+          - 'null'
+          description: Pharmaceutical form (tablet, capsule, suspension, etc.)
+        route:
+          type:
+          - string
+          - 'null'
+          description: Route of administration (oral, IV, topical, etc.)
+        frequency:
+          type:
+          - string
+          - 'null'
+          description: Textual frequency (daily, bid, etc.)
+        quantity:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          description: Number of units (e.g., tablets, capsules) dispensed
+        period_start:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: When the medication course starts
+        period_end:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Planned end date (if any)
+        instructions:
+          type:
+          - string
+          - 'null'
+          description: Free-text administration instructions for the patient
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+          description: Lifecycle state of the medication
+        source:
+          type: string
+          enum:
+          - prescribed
+          - patient_reported
+          description: Origin of record – prescribed (from practitioner) or patient_reported (self-reported)
+        change_reason:
+          type:
+          - string
+          - 'null'
+          description: Selected reason for status change (e.g., adverse_reaction, completed, patient_request)
+        prescription_valid_until:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Expiry date after which repeats aren't valid
+        prescription_refills:
+          type:
+          - integer
+          - 'null'
+          minimum: 0
+          description: Allowed refill count
+        prescription_days_supply:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          description: Number of days that the dispensed medication is intended to last
+        prescription_reason:
+          type:
+          - string
+          - 'null'
+          description: Clinical indication or problem being treated
+    create_medication_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: create_medication_request.json
+      title: Create Medication Request
+      type: object
+      required:
+      - data
+      additionalProperties: true
+      properties:
+        data:
+          type: object
+          required:
+          - patient_id
+          - medication_code
+          - status
+          - source
+          allOf:
+          - $ref: '#/components/schemas/medication_editable_properties'
+          properties:
+            patient_id:
+              type: string
+              format: uuid
+              description: Reference to the patient
+            practitioner_id:
+              type: string
+              format: uuid
+              description: Reference to the practitioner
+          unevaluatedProperties: false
+    observation_value:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: observation_value.json
+      title: ObservationValue
+      type: object
+      required:
+      - code
+      - system
+      - value
+      - value_type
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUIDv7 identifier for the component
+        code:
+          type: string
+          description: The specific code for this component (e.g., LOINC or SNOMED CT code)
+        system:
+          type: string
+          description: The coding system used (e.g., 'http://loinc.org')
+        display:
+          type: string
+          description: Human-readable display name for the code
+        value:
+          type: string
+          description: The actual value of the component
+        value_type:
+          type: string
+          enum:
+          - string
+          - boolean
+          - numeric
+          description: The data type of the value
+        unit:
+          type: string
+          description: The unit for the value (if applicable)
+      additionalProperties: false
+    observation:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: observation.json
+      title: Observation
+      type: object
+      required:
+      - patient_id
+      - category
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUIDv7 identifier for the observation
+        patient_id:
+          type: string
+          format: uuid
+          description: Reference to the patient
+        practitioner_id:
+          type: string
+          format: uuid
+          description: Reference to the practitioner who performed/recorded the observation
+        encounter_id:
+          type: string
+          format: uuid
+          description: Reference to the encounter where the observation was made
+        category:
+          type: string
+          enum:
+          - vital_signs
+          - laboratory
+          - exam
+          description: The classification of the type of observation
+        created_at:
+          type: string
+          format: date-time
+          description: When the observation record was created
+        updated_at:
+          type: string
+          format: date-time
+          description: When the observation record was updated
+        issued_at:
+          type: string
+          format: date-time
+          description: When the observation was issued/reported
+        note:
+          type: string
+          description: Additional notes about the observation
+        values:
+          type: array
+          items:
+            $ref: '#/components/schemas/observation_value'
+          description: Array of observation components
+        document_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: Array of document upload IDs to attach to the observation. All documents must exist
+            and be verified.
+      additionalProperties: false
+    create_observation_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: create_observation_request.json
+      title: Create Observation Request
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/observation'
+          description: The request data parameters
+    not_found_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/not_found_error.json
+      type: object
+      required:
+      - error
+      title: NotFoundError
+      description: Error response when the requested resource is not found.
+      properties:
+        error:
+          type: string
+          description: Error message.
+    extension_delete_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: extension_delete_response.json
+      title: ExtensionDeleteResponse
+      description: Response for deleted extension
+      type: object
+      required:
+      - id
+      properties:
+        id:
+          description: ID of the deleted extension
+          type: string
+          format: uuid
+    errors_message_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/errors_message_response.json
+      type: object
+      required:
+      - errors
+      title: ErrorMessages
+      description: API Standard - Error response generated when an operations fails
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            required:
+            - message
+            properties:
+              id:
+                type: string
+                description: Optional error identifier for specific handling (e.g., PATIENT_CONVERSATION_EXISTS)
+              path:
+                type: string
+                format: json-pointer
+                description: JSON Pointer to the location of the error, per RFC 6901 (e.g., /data/attributes/name)
+              message:
+                type: string
+    errors:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/errors.json
+      type: object
+      required:
+      - object
+      - message
+      title: Error
+      description: Error response generated when an operations fails
+      properties:
+        object:
+          type: string
+          description: The string `error`
+        code:
+          type: string
+          description: Indicates the granularity of the error
+        message:
+          type: string
+          description: Indicates what the error is about
+    appointment:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      type: object
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          format: uuid
+        start_at:
+          type: string
+          format: date-time
+        end_at:
+          type: string
+          format: date-time
+        staff_member_id:
+          type: string
+          format: uuid
+        patient_id:
+          type: string
+          format: uuid
+        location_id:
+          type: string
+          format: uuid
+        treatment_id:
+          type: string
+          format: uuid
+        first_visit:
+          type: boolean
+        cancelled_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        cancelled_reason:
+          type:
+          - string
+          - 'null'
+          description: The reason the appointment was cancelled. Free-text reasons entered by staff are
+            mapped to 'Other' to prevent exposure of potentially sensitive information; only predefined
+            reasons are returned as-is.
+        booked_at:
+          type: string
+          format: date-time
+        no_show_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        arrived_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        archived_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        checked_in_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        state:
+          type: string
+          enum:
+          - reserved
+          - booked
+          - arrived
+          - no_show
+          - cancelled
+          - archived
+          description: The current state of the appointment.
+    staff_member-2:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/staff/schemas/staff_member-2.json
+      title: StaffMember
+      description: A staff member record.
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the staff member
+          type: string
+          format: uuid
+        first_name:
+          description: Staff member's first name
+          type: string
+        middle_name:
+          description: Staff member's middle name
+          type: string
+        last_name:
+          description: Staff member's last name
+          type: string
+        prefix:
+          description: Staff member's name prefix/title
+          type: string
+        preferred_name:
+          description: Staff member's preferred name or nickname
+          type: string
+        pronouns:
+          description: Staff member's preferred pronouns
+          type: string
+        bio:
+          description: Description of the staff member's experience and specialties
+          type: string
+        suffix:
+          description: Staff member's suffix or credentials
+          type: string
+        email:
+          description: Staff member's email address
+          type: string
+          format: email
+        work_phone:
+          description: Staff member's work phone number
+          type: string
+        fax_phone:
+          description: Staff member's fax phone number
+          type: string
+      required:
+      - id
+    catalog_extension:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: catalog_extension.json
+      title: CatalogExtension
+      description: An approved extension available in the catalog
+      type: object
+      required:
+      - extension_id
+      - name
+      - version
+      - description
+      - developer_name
+      properties:
+        extension_id:
+          description: Unique identifier for the extension
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          description: Name of the extension
+          type: string
+        version:
+          description: Version of the extension
+          type: string
+        description:
+          description: Description of what the extension does
+          type: string
+        developer_name:
+          description: Name of the developer or organization
+          type: string
+        documentation_url:
+          description: URL to the extension's documentation
+          type: string
+          format: uri
+        homepage_url:
+          description: URL to the extension's homepage
+          type: string
+          format: uri
+        support_url:
+          description: URL for support related to this extension
+          type: string
+          format: uri
+        logo_urls:
+          description: URLs to logo images at different sizes
+          type: array
+          items:
+            type: string
+            format: uri
+        activation_url:
+          description: URL used to activate the extension
+          type: string
+          format: uri
+        signup_url:
+          description: URL for user signup through partner defined flow
+          type: string
+          format: uri
+        icon_url:
+          description: 'URL to the extension''s icon. Recommended: PNG format with transparent background,
+            128x128 pixels'
+          type: string
+          format: uri
+        scopes:
+          description: OAuth scopes required by the extension
+          type: array
+          items:
+            type: string
+        extension_points:
+          description: Extension points where this extension can be used
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum:
+                - clinical
+              category:
+                type: string
+                enum:
+                - labs
+                - gfe
+                - hep
+                - rpm
+                - supplements
+                - extensions
+              label:
+                type: string
+              url:
+                type: string
+                format: uri
+        created_at:
+          description: When the extension was added to the catalog
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          description: When the extension was last updated in the catalog
+          type: string
+          format: date-time
+          readOnly: true
+      additionalProperties: false
+    catalog_extensions_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: catalog_extensions_response.json
+      title: CatalogExtensionsResponse
+      description: Response containing the catalog with all available approved extensions and pagination
+      type: object
+      required:
+      - items
+      properties:
+        items:
+          description: Catalog extensions
+          type: array
+          items:
+            $ref: '#/components/schemas/catalog_extension'
+        cursor:
+          description: Pagination cursor for the current page
+          type:
+          - string
+          - 'null'
+        limit:
+          description: Maximum number of items per page
+          type: integer
+          minimum: 1
+        links:
+          description: Pagination links
+          type: object
+          properties:
+            before:
+              description: Cursor for the previous page
+              type:
+              - string
+              - 'null'
+            after:
+              description: Cursor for the next page
+              type:
+              - string
+              - 'null'
+          required:
+          - before
+          - after
+        hasNextPage:
+          description: Whether there are more pages available
+          type: boolean
+    company:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/company/schemas/company.json
+      title: CompanyDetails
+      description: Company details.
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the company
+          type: string
+        name:
+          description: Company name
+          type: string
+        legal_name:
+          description: Company legal name
+          type: string
+        jane_url:
+          description: Jane URL
+          type: string
+        logo_url:
+          description: Company logo url
+          type: string
+        online_booking_enabled:
+          description: Online booking enabled
+          type: boolean
+        locale:
+          description: Locale. Ex. en, en-IN, fr-CA, etc.
+          type: string
+        email:
+          description: Email
+          type: string
+        phone_number:
+          description: Phone number
+          type: string
+        currency_format:
+          description: Currency format. Ex. en, en-IN, fr-CA, etc.
+          type: string
+        time_zone:
+          description: Time zone. Ex. America/Vancouver
+          type: string
+        theme_primary_color:
+          description: 'Hexadecimal theme primary color. Ex. #00c1ca'
+          type: string
+        theme_secondary_color:
+          description: 'Hexadecimal theme secondary color. Ex. #00c1ca'
+          type: string
+        street_address:
+          description: Street address
+          type: string
+        street_address_2:
+          description: Street address 2
+          type: string
+        city:
+          description: City
+          type: string
+        province:
+          description: Province
+          type: string
+        postal:
+          description: Postal code
+          type: string
+        country:
+          description: Country
+          type: string
+        map_coordinates:
+          description: 'Map coordinates. Format: latitude,longitude'
+          type: string
+        patient_terminology:
+          description: The clinic's preferred terminology for referring to patients. Defaults to 'Patient'/'Patients'
+            if not customized.
+          type: object
+          properties:
+            singular:
+              description: 'Singular form. Ex. Patient, Client, Customer. Default: Patient'
+              type: string
+            singular_lowercase:
+              description: 'Lowercase singular form. Ex. patient, client, customer. Default: patient'
+              type: string
+            plural:
+              description: 'Plural form. Ex. Patients, Clients, Customers. Default: Patients'
+              type: string
+            plural_lowercase:
+              description: 'Lowercase plural form. Ex. patients, clients, customers. Default: patients'
+              type: string
+    invalid_request_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/invalid_request_error.json
+      type: object
+      required:
+      - error
+      - messages
+      title: InvalidRequestError
+      description: Error response when the request is invalid.
+      properties:
+        error:
+          type: string
+          description: Error message.
+        messages:
+          type: array
+          description: Array of error messages.
+          items:
+            type: string
+    discipline:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/discipline/schemas/discipline.json
+      title: Discipline
+      description: A discipline record.
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the discipline
+          type: string
+          format: uuid
+        name:
+          description: The name of the discipline
+          type: string
+        professional_title:
+          description: The professional title of the discipline
+          type: string
+        description:
+          description: The description of the discipline
+          type: string
+        bookable_online:
+          description: Whether the discipline is bookable online
+          type: boolean
+        normalized_type:
+          description: The normalized type of the discipline
+          type: string
+      required:
+      - id
+    document_uploads_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: document_uploads_response.json
+      title: Document Uploads Response
+      type: object
+      required:
+      - id
+      - file_path
+      - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identifier for the document uploaded.
+        file_path:
+          type: string
+          format: uri
+          description: Presigned URL providing temporary access to the uploaded document. This URL expires
+            after 10 minutes. To retrieve a fresh URL, use the GET endpoint with the document ID.
+        created_at:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the document was uploaded.
+    extensions_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: extensions_response.json
+      title: ExtensionsResponse
+      description: Response containing a list of extensions
+      type: object
+      required:
+      - items
+      properties:
+        items:
+          description: List of extensions
+          type: array
+          items:
+            $ref: '#/components/schemas/extension'
+    location:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/location/schemas/location.json
+      title: Location
+      description: A location record.
+      type: object
+      properties:
+        id:
+          description: UUIDv7 identifier for the location
+          type: string
+          format: uuid
+        name:
+          description: Name of the location
+          type: string
+        street_address:
+          description: Street address of the location
+          type: string
+        street_address_2:
+          description: Additional street address information (suite, apt, unit, etc.)
+          type: string
+        city:
+          description: City where the location is situated
+          type: string
+        province:
+          description: Province/state where the location is situated
+          type: string
+        postal:
+          description: Postal/ZIP code
+          type: string
+        country:
+          description: Country code
+          type: string
+          pattern: ^[A-Z]{2}$
+        email:
+          description: Location's email address
+          type: string
+          format: email
+        phone:
+          description: Location's phone number
+          type: string
+        fax:
+          description: Location's fax number
+          type: string
+        hours:
+          description: Operating hours of the location
+          type: string
+        legal_name:
+          description: Legal name of the location
+          type: string
+        short_description:
+          description: Short description of the location
+          type: string
+        long_description:
+          description: Long description of the location
+          type: string
+        online_bookable:
+          description: Whether the location is bookable online
+          type: boolean
+      required:
+      - id
+    StringFilterSchema:
+      type: object
+      properties:
+        eq:
+          type: string
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2 (maximum
+            100 values)'
+        ne:
+          type: string
+          description: not equals
+        co:
+          type: string
+          description: 'contains. Performs partial match (case-insensitive for string fields). Example:
+            ?field[co]=search_term'
+        gt:
+          type: string
+          description: greater than
+        gte:
+          type: string
+          description: greater than or equal to
+        lt:
+          type: string
+          description: less than
+        lte:
+          type: string
+          description: less than or equal to
+        sw:
+          type: string
+          description: 'starts with. Performs case-insensitive partial match for words in a string that
+            begin with search term. Example: ?field[sw]=search_term'
+    DateTimeFilterSchema:
+      type: object
+      properties:
+        eq:
+          type: string
+          format: date-time
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
+        ne:
+          type: string
+          format: date-time
+          description: not equals
+        gt:
+          type: string
+          format: date-time
+          description: greater than
+        gte:
+          type: string
+          format: date-time
+          description: greater than or equal to
+        lt:
+          type: string
+          format: date-time
+          description: less than
+        lte:
+          type: string
+          format: date-time
+          description: less than or equal to
+    locations:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/location/schemas/locations.json
+      title: Locations
+      description: A list of locations.
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/location'
+        cursor:
+          description: The Base64 encoded cursor for the next page. null if this is the last page.
+          type:
+          - string
+          - 'null'
+          example: eyJwYWdlIjozLCJzaXplIjo1fQ==
+        limit:
+          type: integer
+        links:
+          type: object
+          properties:
+            after:
+              type:
+              - string
+              - 'null'
+              description: URL for the next page of results. null if this is the last page.
+              example: /api/2026-01-01/locations?page[cursor]=eyJwYWdlIjozLCJzaXplIjo1fQ==&page[limit]=5
+        hasNextPage:
+          description: Whether there is a next page of locations
+          type: boolean
+    medication_history_entry:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: medication_history_entry.json
+      title: Medication History Entry
+      type: object
+      required:
+      - event
+      - occurred_at
+      - changes
+      properties:
+        event:
+          type: string
+          enum:
+          - create
+          - update
+          - destroy
+          description: The type of change that occurred
+        occurred_at:
+          type: string
+          format: date-time
+          description: When this change occurred (ISO 8601 format)
+        modified_by:
+          type:
+          - object
+          - 'null'
+          description: Information about the user who made this change
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: User's ID
+            name:
+              type: string
+              description: User's full name
+            email:
+              type: string
+              format: email
+              description: User's email address
+          required:
+          - id
+          - name
+          - email
+          additionalProperties: false
+        changes:
+          type: array
+          description: Array of field changes with before/after values
+          items:
+            type: object
+            properties:
+              attribute:
+                type: string
+                description: The field name that changed (e.g., 'instructions', 'status')
+              from:
+                description: The value before the change
+              to:
+                description: The value after the change
+            required:
+            - attribute
+            - from
+            - to
+            additionalProperties: false
+        reason:
+          type:
+          - string
+          - 'null'
+          description: Reason for the change (if provided, typically for status changes)
+      additionalProperties: false
+    medication_history_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: medication_history_response.json
+      title: Medication History Response
+      type: object
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          description: Array of history entries for the medication
+          items:
+            $ref: '#/components/schemas/medication_history_entry'
+      additionalProperties: false
+    patient-2:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/patient/schemas/patient-2.json
+      title: PatientRecord
+      description: A patient record.
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the patient
+          type: string
+          format: uuid
+        first_name:
+          description: Patient's first name
+          type: string
+        middle_name:
+          description: Patient's middle name
+          type: string
+        last_name:
+          description: Patient's last name
+          type: string
+        prefix:
+          description: Patient's name prefix/title
+          type: string
+        preferred_name:
+          description: Patient's preferred name or nickname
+          type: string
+        sex:
+          description: Patient's sex which matches what is on their insurance policies
+          type: string
+          enum:
+          - male
+          - female
+          - x
+        gender:
+          description: Patient's current gender, which may differ from gender indicated on their insurance
+            policies
+          type: string
+        pronouns:
+          description: Patient's preferred pronouns
+          type: string
+        date_of_birth:
+          description: 'Patient''s date of birth. Format: YYYY-MM-DD'
+          type: string
+          format: date
+        guardian_name:
+          description: Patient's guardian name
+          type: string
+        patient_since:
+          description: Patient's date of registration
+          type: string
+          format: date
+        patient_number:
+          description: Patient's number
+          type: string
+        email:
+          description: Patient's email address
+          type: string
+          format: email
+        send_marketing_emails:
+          description: Patient's marketing email preferences
+          type: boolean
+        do_not_email:
+          description: Patient's general email opt-out preference
+          type: boolean
+        status:
+          description: Patient's current lifecycle state
+          type: string
+          enum:
+          - active
+          - discharged
+          - deceased
+          - archived
+        mobile_country_code:
+          description: Deprecated. Use the phone_numbers array instead. This field will be removed in
+            a future version.
+          type: string
+          deprecated: true
+        mobile_phone_number:
+          description: Deprecated. Use the phone_numbers array instead. This field will be removed in
+            a future version.
+          type: string
+          deprecated: true
+        phone_numbers:
+          description: All phone numbers associated with the patient. Only non-blank numbers are included.
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                description: The phone number type
+                type: string
+                enum:
+                - home
+                - mobile
+                - work
+                - fax
+              number:
+                description: The phone number
+                type: string
+              is_primary:
+                description: Whether this is the patient's primary phone number
+                type: boolean
+            required:
+            - type
+            - number
+            - is_primary
+            additionalProperties: false
+        street_address:
+          description: Patient's street address
+          type: string
+        street_address_2:
+          description: Additional street address information
+          type: string
+        city:
+          description: Patient's city of residence
+          type: string
+        province:
+          description: Patient's state/province
+          type: string
+        postal:
+          description: Postal/ZIP code
+          type: string
+        country:
+          description: Country code
+          type: string
+          pattern: ^[A-Z]{2}$
+        deep_links:
+          description: Platform-specific links for accessing this patient in different contexts (e.g.,
+            admin web app, mobile app)
+          type: object
+          properties:
+            profile:
+              type: object
+              description: Links to the patient profile resource
+              properties:
+                web:
+                  description: Direct link to the patient's profile in the Jane admin web UI
+                  type: string
+                  format: uri
+                  example: https://account.janeapp.com/admin#patients/0199173f-240f-7f6a-9bce-a9836f536f03
+              additionalProperties: false
+          additionalProperties: false
+      required:
+      - id
+    error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: error.json
+      title: Error
+      type: object
+      properties: {}
+    patients:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/patient/schemas/patients.json
+      title: PatientsList
+      description: A list of patients.
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/patient-2'
+        cursor:
+          description: The Base64 encoded cursor for the next page. null if this is the last page.
+          type:
+          - string
+          - 'null'
+          example: eyJwYWdlIjozLCJzaXplIjo1fQ==
+        limit:
+          type: integer
+        links:
+          type: object
+          properties:
+            after:
+              type:
+              - string
+              - 'null'
+              description: URL for the next page of results. null if this is the last page.
+              example: /api/2026-01-01/patients?page[cursor]=eyJwYWdlIjozLCJzaXplIjo1fQ==&page[limit]=5
+        hasNextPage:
+          description: Whether there is a next page of patients
+          type: boolean
+    treatment:
+      $schema: http://json-schema.org/draft-07/schema#
+      $id: /domains/treatment/schemas/treatment.json
+      title: Treatment
+      description: A treatment offered by a clinic
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The unique identifier for the treatment
+        name:
+          type: string
+          description: The name of the treatment
+        description:
+          type:
+          - string
+          - 'null'
+          description: A description of the treatment
+        treatment_duration:
+          type: integer
+          description: The duration of the treatment in seconds
+        scheduled_duration:
+          type: integer
+          description: The scheduled duration of the treatment in seconds, may include buffer time
+        price:
+          type: number
+          format: float
+          description: The price of the treatment
+        display_price:
+          type: boolean
+          description: Whether the price is displayed to customers
+        capacity:
+          type: integer
+          description: The maximum number of patients that can be booked for this treatment
+        booking_type:
+          type: string
+          enum:
+          - one_on_one_booking
+          - class_booking
+          - group_booking
+          description: The type of booking
+        booking_info:
+          type:
+          - string
+          - 'null'
+          description: Additional information about booking this treatment
+        discipline_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: The public ID of the discipline associated with this treatment
+        online_only:
+          type: boolean
+          description: Whether this treatment is offered online only
+        book_online:
+          type: boolean
+          description: Whether this treatment can be booked online
+        display_treatment_duration:
+          type: boolean
+          description: Whether the treatment duration is displayed to customers
+        price_includes_tax:
+          type: boolean
+          description: Whether the price includes tax
+    webhook-subscription-response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: webhook-subscription-response.json
+      title: Webhook Subscription
+      type: object
+      required:
+      - id
+      - event_topic
+      - target_url
+      - clinic_guid
+      - status
+      - updated_at
+      - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the webhook subscription
+        event_topic:
+          type: string
+          enum:
+          - APPOINTMENT_BOOKED
+          - APPOINTMENT_CANCELLED
+          - APPOINTMENT_UNCANCELLED
+          - APPOINTMENT_RESCHEDULED
+          description: The event topic this subscription receives
+        target_url:
+          type: string
+          description: The HTTPS URL that receives webhook event payloads
+        clinic_guid:
+          type: integer
+          description: The clinic identifier this subscription belongs to
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+          description: Whether the subscription is currently active
+        updated_at:
+          type: string
+          format: date-time
+          description: When the subscription was last updated
+        created_at:
+          type: string
+          format: date-time
+          description: When the subscription was created
+      additionalProperties: false
+    IdFilterSchema:
+      type: object
+      properties:
+        eq:
+          type: string
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2 (maximum
+            100 values)'
+    appointments_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/appointment/schemas/appointments_response.json
+      title: AppointmentsResponse
+      description: Response to a request for multiple appointments
+      type: object
+      properties:
+        items:
+          description: The list of appointments. Empty if there are none.
+          type: array
+          items:
+            $ref: '#/components/schemas/appointment'
+        limit:
+          description: The number of appointments to return
+          type: integer
+        links:
+          description: The links to the current and next pages of appointments
+          type: object
+          properties:
+            after:
+              type:
+              - string
+              - 'null'
+              description: URL for the next page of results. null if this is the last page.
+              example: /api/2026-01-01/appointments?page[cursor]=eyJwYWdlIjozLCJzaXplIjo1fQ==&page[limit]=5
+        hasNextPage:
+          description: Whether there is a next page of appointments
+          type: boolean
+        cursor:
+          description: The Base64 encoded cursor for the next page. null if this is the last page.
+          type:
+          - string
+          - 'null'
+          example: eyJwYWdlIjozLCJzaXplIjo1fQ==
+    care_plans_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: care_plans_response.json
+      title: CarePlansResponse
+      type: object
+      required:
+      - items
+      - limit
+      - hasNextPage
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/care_plan'
+          description: Array of care plan objects
+        cursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor for fetching the next page of results
+        limit:
+          type: integer
+          description: Maximum number of items returned
+        links:
+          type: object
+          properties:
+            before:
+              type:
+              - string
+              - 'null'
+              description: URL for the previous page
+            after:
+              type:
+              - string
+              - 'null'
+              description: URL for the next page
+          additionalProperties: false
+        hasNextPage:
+          type: boolean
+          description: Whether there are more items available
+      additionalProperties: false
+    disciplines_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/discipline/schemas/disciplines_response.json
+      title: DisciplinesResponse
+      description: Response to a request for multiple disciplines
+      type: object
+      properties:
+        items:
+          description: The list of disciplines. Empty if there are none.
+          type: array
+          items:
+            $ref: '#/components/schemas/discipline'
+        cursor:
+          description: The Base64 encoded cursor for the next page. null if this is the last page.
+          type:
+          - string
+          - 'null'
+          example: eyJwYWdlIjozLCJzaXplIjo1fQ==
+        limit:
+          description: The maximum number of items per page
+          type: integer
+        links:
+          description: Navigation links for pagination
+          type: object
+          properties:
+            after:
+              type:
+              - string
+              - 'null'
+              description: URL for the next page of results. null if this is the last page.
+              example: /api/2026-01-01/disciplines?page[cursor]=eyJwYWdlIjozLCJzaXplIjo1fQ==&page[limit]=5
+        hasNextPage:
+          description: Whether there is a next page of disciplines
+          type: boolean
+    medications_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: medications_response.json
+      title: MedicationsResponse
+      type: object
+      required:
+      - items
+      - pagination
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/medication'
+          description: Array of medication objects
+        pagination:
+          type: object
+          required:
+          - cursor
+          properties:
+            cursor:
+              type:
+              - string
+              - 'null'
+              description: Current cursor position
+            next_cursor:
+              type:
+              - string
+              - 'null'
+              description: Cursor for the next page
+            prev_cursor:
+              type:
+              - string
+              - 'null'
+              description: Cursor for the previous page
+            has_next_page:
+              type: boolean
+              description: Whether there are more items available
+          additionalProperties: false
+      additionalProperties: false
+    observations_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: observations_response.json
+      title: ObservationsResponse
+      type: object
+      required:
+      - items
+      - limit
+      - hasNextPage
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/observation'
+          description: Array of observation objects
+        cursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor for fetching the next page of results
+        limit:
+          type: integer
+          description: Maximum number of items returned
+        links:
+          type: object
+          properties:
+            before:
+              type:
+              - string
+              - 'null'
+              description: URL for the previous page
+            after:
+              type:
+              - string
+              - 'null'
+              description: URL for the next page
+          additionalProperties: false
+        hasNextPage:
+          type: boolean
+          description: Whether there are more items available
+      additionalProperties: false
+    staff_members_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/staff_member/schemas/staff_members_response.json
+      title: StaffMembersResponse
+      description: Response to a request for multiple staff members
+      type: object
+      properties:
+        items:
+          description: The list of staff members. Empty if there are none.
+          type: array
+          items:
+            $ref: '#/components/schemas/staff_member-2'
+        cursor:
+          description: The Base64 encoded cursor for the next page. null if this is the last page.
+          type:
+          - string
+          - 'null'
+          example: eyJwYWdlIjozLCJzaXplIjo1fQ==
+        limit:
+          description: The number of staff members to return
+          type: integer
+        links:
+          description: The links to the current and next pages of staff members
+          type: object
+          properties:
+            after:
+              type:
+              - string
+              - 'null'
+              description: URL for the next page of results. null if this is the last page.
+              example: /api/2026-01-01/staff_members?page[cursor]=eyJwYWdlIjozLCJzaXplIjo1fQ==&page[limit]=5
+        hasNextPage:
+          description: Whether there is a next page of staff members
+          type: boolean
+    treatments_response:
+      $schema: http://json-schema.org/draft-07/schema#
+      $id: /domains/treatment/schemas/treatments_response.json
+      title: TreatmentsResponse
+      description: Response for a list of treatments
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/treatment'
+          description: List of treatments
+        cursor:
+          description: The Base64 encoded cursor for the next page. null if this is the last page.
+          type:
+          - string
+          - 'null'
+          example: eyJwYWdlIjozLCJzaXplIjo1fQ==
+        limit:
+          type: integer
+          description: Number of items per page
+        links:
+          type: object
+          properties:
+            after:
+              type:
+              - string
+              - 'null'
+              description: URL for the next page of results. null if this is the last page.
+              example: /api/2026-01-01/treatments?page[cursor]=eyJwYWdlIjozLCJzaXplIjo1fQ==&page[limit]=5
+          description: Links for pagination
+        hasNextPage:
+          description: Whether there is a next page of treatments
+          type: boolean
+    document_uploads_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: document_uploads_request.json
+      title: Document Uploads Request
+      type: object
+      required:
+      - file
+      properties:
+        file:
+          type: string
+          format: binary
+          description: 'The document file to upload. Accepted formats: PDF, JPEG, PNG. Maximum size: 50
+            MB.'
+    webhook-subscription-create:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: webhook-subscription-create.json
+      title: Create Webhook Subscription Request
+      type: object
+      required:
+      - event_topic
+      - target_url
+      properties:
+        event_topic:
+          type: string
+          description: The event topic to subscribe to
+        target_url:
+          type: string
+          description: The HTTPS URL that will receive webhook event payloads
+    webhook-subscription-create-response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: webhook-subscription-create-response.json
+      title: Create Webhook Subscription Response
+      description: Returned on successful registration. The secret is only present here and cannot be
+        retrieved again.
+      type: object
+      required:
+      - id
+      - event_topic
+      - target_url
+      - clinic_guid
+      - status
+      - updated_at
+      - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the webhook subscription
+        event_topic:
+          type: string
+          description: The event topic this subscription receives
+          enum:
+          - APPOINTMENT_BOOKED
+          - APPOINTMENT_CANCELLED
+          - APPOINTMENT_UNCANCELLED
+          - APPOINTMENT_RESCHEDULED
+        target_url:
+          type: string
+          description: The HTTPS URL that receives webhook event payloads
+        clinic_guid:
+          type: integer
+          description: The clinic identifier this subscription belongs to
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+          description: Whether the subscription is currently active
+        updated_at:
+          type: string
+          format: date-time
+          description: When the subscription was last updated
+        created_at:
+          type: string
+          format: date-time
+          description: When the subscription was created
+        secret:
+          type: string
+          description: HMAC signing secret for verifying webhook payload authenticity. Present only on
+            initial registration.
+      additionalProperties: false
+    patients_search_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/patient/schemas/patients_search_request.json
+      title: PatientsSearchRequest
+      description: Request body for POST /patients/search. Free-text search across patient name, email,
+        phone, and patient number, carried in the body so PII does not leak into URLs. Only the `search`
+        field is accepted at this endpoint — structured filtering (public_id, created_at, updated_at)
+        belongs on GET /patients. Combined search + structured filtering is a deliberate follow-up if
+        a consumer need materializes.
+      type: object
+      additionalProperties: false
+      required:
+      - search
+      properties:
+        search:
+          type: object
+          description: Free-text search across patient name, email, phone number, and patient number.
+            Results follow the requested `sort` order (or default ordering when no `sort` is specified).
+          additionalProperties: false
+          properties:
+            co:
+              type: string
+              maxLength: 255
+              description: Contains-match search term. Maximum 255 characters.
+        sort:
+          type: string
+          description: 'Comma-separated list of fields to sort by. Prefix a field with ''-'' for descending
+            order. Example: `-created_at,updated_at`.'
+        page:
+          type: object
+          description: Cursor-based pagination controls.
+          additionalProperties: false
+          properties:
+            cursor:
+              type: string
+            limit:
+              type: integer
+              minimum: 1
+              maximum: 1000
+    patients_search_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/patient/schemas/patients_search_response.json
+      title: PatientsSearchResponse
+      description: 'Paginated list of matching patients from POST /patients/search. Omits the `links`
+        object that `GET /patients` returns: GET-style pagination URLs would re-serialize search terms
+        into query strings and re-expose PII, which is the whole reason search moved to a POST body. Clients
+        paginate by re-POSTing the same body with `page.cursor` set to the previous response''s `cursor`.'
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/patient-2'
+        cursor:
+          description: The Base64 encoded cursor for the next page. null if this is the last page.
+          type:
+          - string
+          - 'null'
+          example: eyJwYWdlIjozLCJzaXplIjo1fQ==
+        limit:
+          type: integer
+        hasNextPage:
+          description: Whether there is a next page of patients
+          type: boolean
+    update_care_plan_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: update_care_plan_request.json
+      title: Update Care Plan Request
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            encounter_id:
+              type: string
+              format: uuid
+            title:
+              type: string
+            description:
+              type: string
+            status:
+              type: string
+              enum:
+              - draft
+              - active
+              - on-hold
+              - revoked
+              - completed
+              - entered-in-error
+              - unknown
+            document_ids:
+              type: array
+              items:
+                type: string
+                format: uuid
+          additionalProperties: false
+    update_care_plan_activity_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: update_care_plan_activity_request.json
+      title: Update Care Plan Activity Request
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            category:
+              type: string
+              enum:
+              - appointment
+              - exercise
+              - medication
+              - nutrition
+            description:
+              type: string
+            progress:
+              type: string
+          additionalProperties: false
+    update_medication_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: update_medication_request.json
+      title: Update Medication Request
+      type: object
+      required:
+      - data
+      additionalProperties: true
+      properties:
+        data:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/medication_editable_properties'
+          unevaluatedProperties: false
+    update_observation_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: update_observation_request.json
+      title: Update Observation Request
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            encounter_id:
+              type: string
+              format: uuid
+            note:
+              type: string
+            issued_at:
+              type: string
+              format: date-time
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/observation_value'
+            document_ids:
+              type: array
+              items:
+                type: string
+                format: uuid
+          additionalProperties: false
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: 'OAuth2 authorization code flow with PKCE (Proof Key for Code Exchange) support.
+
+
+        **PKCE Flow Required**: All integrations must use PKCE flow for authentication.
+
+
+        **PKCE Benefits:**
+
+        - Enhanced security against authorization code interception attacks
+
+        - S256 code challenge method supported
+
+        - Industry best practice for OAuth2 implementations
+
+
+        **Implementation**: Use the authorization code flow with PKCE extension as defined in RFC 7636.
+
+        '
+      flows:
+        authorizationCode:
+          authorizationUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent
+          tokenUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token
+          scopes:
+            observations:read: Read observations
+            observations:create: Create observations
+            observations:update: Update observations
+            care_plans:read: Read care plans
+            care_plans:create: Create care plans
+            care_plans:update: Update care plans
+            patients:read: Read patient information
+            locations:read: Read location information
+            staff_members:read: Read staff member information
+            appointments:read: Read appointment information
+            companies:read: Read company information
+            document_uploads:read: Read document uploads
+            document_uploads:create: Create document uploads
+            disciplines:read: Read discipline information
+            treatments:read: Read treatment information
+            conversations:read: Read conversation information
+            conversations:write: Create and update conversations
+            messages:read: Read message information
+            messages:write: Create and update messages
+            partner_extensions:create: Create partner extensions
+            partner_extensions:delete: Delete partner extensions
+            extensions:install: Install extensions
+            extensions:uninstall: Uninstall extensions
+            webhooks:read: List webhook subscriptions
+            webhooks:create: Register a webhook subscription
+            webhooks:update: Update a webhook subscription
+            webhooks:delete: Deregister a webhook subscription
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

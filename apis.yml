@@ -170,6 +170,46 @@ apis:
   - type: APIReference
     url: https://developers.jane.app/reference/getcatalogextensions
 common:
+- type: TrustCenter
+  url: security/jane-app-trust-center.yml
+- type: DomainSecurity
+  url: security/jane-app-domain-security.yml
+- type: AgenticAccess
+  url: agentic-access/jane-app-agentic-access.yml
+- type: Authentication
+  url: authentication/jane-app-authentication.yml
+- type: OAuthScopes
+  url: scopes/jane-app-scopes.yml
+- type: OpenAPI
+  url: openapi/jane-app-jdp-openapi.yml
+- type: Conventions
+  url: conventions/jane-app-conventions.yml
+- type: Lifecycle
+  url: lifecycle/jane-app-lifecycle.yml
+- type: StatusPage
+  url: https://jane.statuspage.io/
+- type: ErrorCatalog
+  url: errors/jane-app-problem-types.yml
+- type: Conformance
+  url: conformance/jane-app-conformance.yml
+- type: Compliance
+  url: https://jane.app/security-and-trust
+- type: WellKnown
+  url: well-known/jane-app-well-known.yml
+- type: Sandbox
+  url: sandbox/jane-app-sandbox.yml
+- type: DataModel
+  url: data-model/jane-app-data-model.yml
+- type: Packages
+  url: packages/jane-app-packages.yml
+- type: Overlay
+  url: overlays/jane-app-jdp-overlay.yaml
+- type: Webhooks
+  url: asyncapi/jane-app-webhooks.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Support
+  url: https://jane.app/contact
 - type: Website
   url: https://jane.app/
 - type: DeveloperPortal

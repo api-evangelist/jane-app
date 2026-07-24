@@ -1,0 +1,31 @@
+generated: '2026-07-24'
+method: generated
+source: openapi/jane-app-jdp-openapi.yml
+skills:
+- file: jane-app-read-patient-appointments.md
+  name: Read a patient and their appointments
+  api: openapi/jane-app-jdp-openapi.yml
+  operations:
+  - searchPatients
+  - getPatients
+  - getPatient
+  - listAppointmentsVersioned
+  - getAnAppointment
+- file: jane-app-record-clinical-observation.md
+  name: Record a clinical observation and care plan
+  api: openapi/jane-app-jdp-openapi.yml
+  operations:
+  - createObservation
+  - getObservation
+  - updateObservation
+  - listObservations
+  - createCarePlan
+  - createCarePlanActivity
+- file: jane-app-subscribe-appointment-webhooks.md
+  name: Subscribe to appointment webhooks
+  api: openapi/jane-app-jdp-openapi.yml
+  operations:
+  - postWebhooks
+  - getWebhooks
+  - getWebhook
+  - deleteWebhook

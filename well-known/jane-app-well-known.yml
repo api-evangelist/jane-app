@@ -1,0 +1,35 @@
+generated: '2026-07-24'
+method: searched
+note: Jane Developer Platform authenticates via a Keycloak IAM at login.id.janeapp.com; OIDC/OAuth discovery
+  is realm-scoped and anonymous. The jane.app marketing host serves no discovery documents.
+hosts:
+- host: https://login.id.janeapp.com
+  documents:
+  - path: /realms/jane/.well-known/openid-configuration
+    status: 200
+    file: jane-app-prod-openid-configuration.json
+    note: Production realm (jane) OIDC discovery
+  - path: /realms/jane_partner_sandbox/.well-known/openid-configuration
+    status: 200
+    file: jane-app-sandbox-openid-configuration.json
+    note: Partner sandbox realm OIDC discovery
+  - path: /realms/jane/.well-known/oauth-authorization-server
+    status: 200
+    file: jane-app-oauth-authorization-server.json
+    note: RFC 8414 authorization-server metadata (production realm)
+- host: https://jane.app
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+- host: https://developers.jane.app
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404

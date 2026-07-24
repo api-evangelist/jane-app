@@ -1,0 +1,214 @@
+generated: '2026-07-24'
+method: searched
+source: openapi/jane-app-jdp-openapi.yml
+schemes:
+- name: OAuth2
+  source: openapi/jane-app-jdp-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent
+    tokenUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token
+  description: 'OAuth2 authorization code flow with PKCE (Proof Key for Code Exchange) support.
+
+
+    **PKCE Flow Required**: All integrations must use PKCE flow for authentication.
+
+
+    **PKCE Benefits:**
+
+    - Enhanced security against authorization code interception attacks
+
+    - S256 code challenge method supported
+
+    - Industry best practice for OAuth2 implementations
+
+
+    **Implementation**: Use the authorization code flow with PKCE extension as defined in RFC 7636.'
+scopes:
+- scope: appointments:read
+  description: Read appointment information
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: care_plans:create
+  description: Create care plans
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: care_plans:read
+  description: Read care plans
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: care_plans:update
+  description: Update care plans
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: companies:read
+  description: Read company information
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: conversations:read
+  description: Read conversation information
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: conversations:write
+  description: Create and update conversations
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: disciplines:read
+  description: Read discipline information
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: document_uploads:create
+  description: Create document uploads
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: document_uploads:read
+  description: Read document uploads
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: extensions:install
+  description: Install extensions
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: extensions:uninstall
+  description: Uninstall extensions
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: locations:read
+  description: Read location information
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: medications:create
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+  description: Create medication records
+  flows:
+  - authorizationCode
+- scope: medications:read
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+  description: Read medication information
+  flows:
+  - authorizationCode
+- scope: medications:update
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+  description: Update medication records
+  flows:
+  - authorizationCode
+- scope: messages:read
+  description: Read message information
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: messages:write
+  description: Create and update messages
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: observations:create
+  description: Create observations
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: observations:read
+  description: Read observations
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: observations:update
+  description: Update observations
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: partner_extensions:create
+  description: Create partner extensions
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: partner_extensions:delete
+  description: Delete partner extensions
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: patients:read
+  description: Read patient information
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: staff_members:read
+  description: Read staff member information
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: treatments:read
+  description: Read treatment information
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: webhooks:create
+  description: Register a webhook subscription
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: webhooks:delete
+  description: Deregister a webhook subscription
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: webhooks:read
+  description: List webhook subscriptions
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- scope: webhooks:update
+  description: Update a webhook subscription
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+docs: https://developers.jane.app/docs/getting-started
+production_realm:
+  authorizationUrl: https://login.id.janeapp.com/realms/jane/protocol/openid-connect/auth
+  tokenUrl: https://login.id.janeapp.com/realms/jane/protocol/openid-connect/token
+  note: Documented URLs in the OpenAPI use the jane_partner_sandbox realm; swap realm to `jane` for production.
+note: Scopes are resource:action OAuth2 scopes gated by user consent at authorization. This is standard
+  OAuth2/OIDC, not SMART-on-FHIR scope grammar.

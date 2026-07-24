@@ -1,0 +1,14 @@
+generated: '2026-07-24'
+method: searched
+probe: true
+source: https://jane.app/security-and-trust
+url: https://jane.app/security-and-trust
+certifications:
+- SOC 2
+- PCI DSS
+evidence:
+- source: https://jane.app/security-and-trust
+  keywords:
+  - soc 2
+  - soc2
+  - pci dss

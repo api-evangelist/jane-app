@@ -1,0 +1,175 @@
+generated: '2026-07-24'
+method: derived
+source: openapi/jane-app-jdp-openapi.yml
+note: Entity graph derived from the JDP OpenAPI 3.1.0 (43 operations, 60 schemas). IDs are UUID `public_id`
+  strings (not prefixed like Stripe). All clinical entities are scoped to the authenticated practitioner's
+  accessible patients within a single clinic (single-tenant per-clinic database).
+id_reference_fields:
+- clinic_guid
+- discipline_id
+- encounter_id
+- extension_id
+- location_id
+- patient_id
+- practitioner_id
+- staff_member_id
+- treatment_id
+entities:
+- name: patient
+  id_prefix: null
+  operations:
+  - getPatient
+  - getPatients
+  - searchPatients
+  scopes:
+  - patients:read
+- name: appointment
+  operations:
+  - getAnAppointment
+  - listAppointmentsVersioned
+  scopes:
+  - appointments:read
+- name: location
+  operations:
+  - getLocation
+  - getLocations
+  scopes:
+  - locations:read
+- name: staff_member
+  operations:
+  - getAStaffMember
+  - listStaffMembersVersioned
+  scopes:
+  - staff_members:read
+- name: discipline
+  operations:
+  - getDiscipline
+  - listDisciplinesVersioned
+  scopes:
+  - disciplines:read
+- name: treatment
+  operations:
+  - getTreatment
+  - listTreatmentsVersioned
+  scopes:
+  - treatments:read
+- name: observation
+  operations:
+  - getObservation
+  - listObservations
+  - createObservation
+  - updateObservation
+  scopes:
+  - observations:read
+  - observations:create
+  - observations:update
+- name: care_plan
+  operations:
+  - getCarePlan
+  - listCarePlans
+  - createCarePlan
+  - updateCarePlan
+  scopes:
+  - care_plans:read
+  - care_plans:create
+  - care_plans:update
+- name: care_plan_activity
+  operations:
+  - getCarePlanActivity
+  - createCarePlanActivity
+  - updateCarePlanActivity
+  scopes:
+  - care_plans:read
+  - care_plans:create
+  - care_plans:update
+- name: medication
+  operations:
+  - getMedication
+  - listMedications
+  - getMedicationHistory
+  - createMedication
+  - updateMedication
+  scopes:
+  - medications:read
+  - medications:create
+  - medications:update
+- name: document_upload
+  operations:
+  - getDocumentUploads
+  - postDocumentUploads
+  scopes:
+  - document_uploads:read
+  - document_uploads:create
+- name: company
+  operations:
+  - getCompany
+  scopes:
+  - companies:read
+- name: webhook_subscription
+  operations:
+  - getWebhooks
+  - getWebhook
+  - postWebhooks
+  - deleteWebhook
+  scopes:
+  - webhooks:read
+  - webhooks:create
+  - webhooks:delete
+- name: extension
+  operations:
+  - getExtensions
+  - getExtension
+  - createExtension
+  - updateExtension
+  - deleteExtension
+  scopes: []
+- name: catalog_extension
+  operations:
+  - getCatalogExtensions
+  - getCatalogExtension
+  scopes: []
+relationships:
+- from: appointment
+  to: patient
+  type: belongs_to
+  via: patient_id
+- from: appointment
+  to: staff_member
+  type: belongs_to
+  via: staff_member_id
+- from: appointment
+  to: location
+  type: belongs_to
+  via: location_id
+- from: appointment
+  to: treatment
+  type: belongs_to
+  via: treatment_id
+- from: treatment
+  to: staff_member
+  type: has_many
+  via: staff_member_ids
+- from: observation
+  to: patient
+  type: belongs_to
+  via: patient (accessible patient)
+- from: care_plan
+  to: patient
+  type: belongs_to
+  via: patient (accessible patient)
+- from: care_plan_activity
+  to: care_plan
+  type: belongs_to
+  via: care_plan_id
+- from: medication
+  to: patient
+  type: belongs_to
+  via: patient (accessible patient)
+- from: staff_member
+  to: discipline
+  type: has_many
+  via: disciplines
+- from: webhook_subscription
+  to: appointment
+  type: notifies_on
+  via: event_topic (APPOINTMENT_*)

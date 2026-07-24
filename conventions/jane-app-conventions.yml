@@ -1,0 +1,69 @@
+generated: '2026-07-24'
+method: searched
+source: https://developers.jane.app/docs/getting-started
+docs: https://developers.jane.app/docs/getting-started
+authentication:
+  style: OAuth 2.0 Authorization Code + PKCE (S256) over OpenID Connect (Keycloak); RS256 JWT bearer in
+    Authorization header
+  content_type: application/json required on requests
+  per_clinic: Access tokens are clinic- and practitioner-scoped; requests must target the clinic host
+    in the token aud claim
+  see: authentication/jane-app-authentication.yml
+versioning:
+  style: date-based, embedded in URL path (/api/YYYY-MM-DD/)
+  current: '2026-01-01'
+  semantics: the date is a MAJOR version; minor/patch changes occur within the same path; a -beta suffix
+    (e.g. /2024-06-15-beta/) marks an in-development contract that may change
+  see: lifecycle/jane-app-lifecycle.yml
+pagination:
+  style: cursor-based
+  request_params:
+  - page.limit
+  - page.cursor
+  response_fields:
+  - cursor
+  - hasNextPage
+  - links (omitted on PII-sensitive POST search)
+  note: To page, re-request with page.cursor set to the previous response cursor. Free-text patient search
+    omits the links object so filter PII is not re-exposed in URLs.
+filtering:
+  style: field[operator]=value query syntax on GET list endpoints
+  operators:
+  - eq
+  - gt
+  - gte
+  - lt
+  - lte
+  - co (contains, search only)
+  common_fields:
+  - public_id
+  - created_at
+  - updated_at
+  datetime: ISO 8601, precise to the second (e.g. 2025-01-01T12:00:00Z)
+sorting:
+  style: sort param, - prefix for descending (e.g. -created_at)
+identifiers:
+  style: UUID public_id strings; no type prefixes
+idempotency:
+  request_writes: Not documented — the JDP API does not publish an Idempotency-Key request header for
+    POST/PATCH writes.
+  event_delivery: Webhook deliveries carry a unique event_id (UUID) intended for consumer-side deduplication/idempotency.
+rate_limiting:
+  per_endpoint: 100 requests/minute per endpoint per clinic
+  overall: 600 requests / 5 minutes per clinic
+  headers:
+  - X-Throttle-Match (rate limit identifier)
+  - Retry-After (seconds, on 429)
+  on_exceed: HTTP 429 with Retry-After
+errors:
+  format: custom JSON (NOT RFC 9457)
+  envelopes:
+  - '{ errors: [ { id, message, details } ] }'
+  - '{ error: string }'
+  - '{ object: ''error'', code, message }'
+  see: errors/jane-app-problem-types.yml
+webhooks:
+  signing: HMAC SHA-256 in X-Jane-Signature header (sha256=...) plus X-Jane-Timestamp; verify with the
+    signing secret returned once at registration
+  payloads: notification-based (no PII/PHI); fetch details via the API
+  see: asyncapi/jane-app-webhooks.yml

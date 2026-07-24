@@ -1,0 +1,142 @@
+generated: '2026-07-24'
+method: derived
+status: candidate
+source: openapi/jane-app-jdp-openapi.yml
+note: No official hosted MCP server for the JDP API was found (the janeapp GitHub org publishes a general-purpose
+  `fast-mcp` Ruby framework, not a JDP MCP server). This is a DERIVED candidate tool list — one tool per
+  REST operationId; each tool inherits its real inputSchema from the backing OpenAPI operation. Tools
+  would inherit the OAuth2/PKCE per-clinic auth model.
+server:
+  name: jane-jdp
+  transport: http
+  url: null
+tools:
+- name: createCarePlan
+  description: Create a care plan
+  source_operation: openapi/jane-app-jdp-openapi.yml#createCarePlan
+- name: listCarePlans
+  description: List care plans
+  source_operation: openapi/jane-app-jdp-openapi.yml#listCarePlans
+- name: createCarePlanActivity
+  description: Create a care plan activity
+  source_operation: openapi/jane-app-jdp-openapi.yml#createCarePlanActivity
+- name: createExtension
+  description: Create Extension
+  source_operation: openapi/jane-app-jdp-openapi.yml#createExtension
+- name: getExtensions
+  description: List Extensions
+  source_operation: openapi/jane-app-jdp-openapi.yml#getExtensions
+- name: createMedication
+  description: Create a medication
+  source_operation: openapi/jane-app-jdp-openapi.yml#createMedication
+- name: listMedications
+  description: List medications
+  source_operation: openapi/jane-app-jdp-openapi.yml#listMedications
+- name: createObservation
+  description: Create an observation
+  source_operation: openapi/jane-app-jdp-openapi.yml#createObservation
+- name: listObservations
+  description: List observations
+  source_operation: openapi/jane-app-jdp-openapi.yml#listObservations
+- name: deleteExtension
+  description: Delete Extension
+  source_operation: openapi/jane-app-jdp-openapi.yml#deleteExtension
+- name: getExtension
+  description: Get Extension
+  source_operation: openapi/jane-app-jdp-openapi.yml#getExtension
+- name: updateExtension
+  description: Update Extension
+  source_operation: openapi/jane-app-jdp-openapi.yml#updateExtension
+- name: deleteWebhook
+  description: Deregister a webhook subscription
+  source_operation: openapi/jane-app-jdp-openapi.yml#deleteWebhook
+- name: getWebhook
+  description: Retrieve a webhook subscription
+  source_operation: openapi/jane-app-jdp-openapi.yml#getWebhook
+- name: getAnAppointment
+  description: Get an Appointment
+  source_operation: openapi/jane-app-jdp-openapi.yml#getAnAppointment
+- name: getAStaffMember
+  description: Get a Staff Member
+  source_operation: openapi/jane-app-jdp-openapi.yml#getAStaffMember
+- name: getCarePlan
+  description: Get a care plan
+  source_operation: openapi/jane-app-jdp-openapi.yml#getCarePlan
+- name: updateCarePlan
+  description: Update a care plan
+  source_operation: openapi/jane-app-jdp-openapi.yml#updateCarePlan
+- name: getCarePlanActivity
+  description: Get a care plan activity
+  source_operation: openapi/jane-app-jdp-openapi.yml#getCarePlanActivity
+- name: updateCarePlanActivity
+  description: Update a care plan activity
+  source_operation: openapi/jane-app-jdp-openapi.yml#updateCarePlanActivity
+- name: getCatalogExtension
+  description: Get Catalog Extension
+  source_operation: openapi/jane-app-jdp-openapi.yml#getCatalogExtension
+- name: getCatalogExtensions
+  description: Get Catalog Extensions
+  source_operation: openapi/jane-app-jdp-openapi.yml#getCatalogExtensions
+- name: getCompany
+  description: Get details about the company
+  source_operation: openapi/jane-app-jdp-openapi.yml#getCompany
+- name: getDiscipline
+  description: Get a Discipline
+  source_operation: openapi/jane-app-jdp-openapi.yml#getDiscipline
+- name: getDocumentUploads
+  description: Get an uploaded document
+  source_operation: openapi/jane-app-jdp-openapi.yml#getDocumentUploads
+- name: getLocation
+  description: Get a Location
+  source_operation: openapi/jane-app-jdp-openapi.yml#getLocation
+- name: getLocations
+  description: Get a list of locations
+  source_operation: openapi/jane-app-jdp-openapi.yml#getLocations
+- name: getMedication
+  description: Get a medication
+  source_operation: openapi/jane-app-jdp-openapi.yml#getMedication
+- name: updateMedication
+  description: Update a medication
+  source_operation: openapi/jane-app-jdp-openapi.yml#updateMedication
+- name: getMedicationHistory
+  description: Get medication change history
+  source_operation: openapi/jane-app-jdp-openapi.yml#getMedicationHistory
+- name: getObservation
+  description: Get an observation
+  source_operation: openapi/jane-app-jdp-openapi.yml#getObservation
+- name: updateObservation
+  description: Update an observation
+  source_operation: openapi/jane-app-jdp-openapi.yml#updateObservation
+- name: getPatient
+  description: Get a Patient
+  source_operation: openapi/jane-app-jdp-openapi.yml#getPatient
+- name: getPatients
+  description: Get a list of patients
+  source_operation: openapi/jane-app-jdp-openapi.yml#getPatients
+- name: getTreatment
+  description: Get a Treatment
+  source_operation: openapi/jane-app-jdp-openapi.yml#getTreatment
+- name: getWebhooks
+  description: List webhook subscriptions
+  source_operation: openapi/jane-app-jdp-openapi.yml#getWebhooks
+- name: postWebhooks
+  description: Register a webhook subscription
+  source_operation: openapi/jane-app-jdp-openapi.yml#postWebhooks
+- name: listAppointmentsVersioned
+  description: List Appointments
+  source_operation: openapi/jane-app-jdp-openapi.yml#listAppointmentsVersioned
+- name: listDisciplinesVersioned
+  description: List Disciplines
+  source_operation: openapi/jane-app-jdp-openapi.yml#listDisciplinesVersioned
+- name: listStaffMembersVersioned
+  description: List Staff Members
+  source_operation: openapi/jane-app-jdp-openapi.yml#listStaffMembersVersioned
+- name: listTreatmentsVersioned
+  description: List Treatments
+  source_operation: openapi/jane-app-jdp-openapi.yml#listTreatmentsVersioned
+- name: postDocumentUploads
+  description: Upload a document
+  source_operation: openapi/jane-app-jdp-openapi.yml#postDocumentUploads
+- name: searchPatients
+  description: Search patients by free text
+  source_operation: openapi/jane-app-jdp-openapi.yml#searchPatients

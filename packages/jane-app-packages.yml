@@ -1,0 +1,7 @@
+generated: '2026-07-24'
+method: searched
+source: https://github.com/janeapp
+note: No first-party JDP API client SDK is published on npm, PyPI, RubyGems, or the janeapp GitHub org
+  as of this round. Partners integrate directly against the REST API using standard OAuth2/PKCE + HTTP
+  clients. The janeapp org publishes general OSS (e.g. fast-mcp, react-tags) but no JDP API SDK.
+packages: []

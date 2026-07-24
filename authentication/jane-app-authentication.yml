@@ -1,0 +1,81 @@
+generated: '2026-07-24'
+method: searched
+source: openapi/jane-app-jdp-openapi.yml
+summary:
+  types:
+  - http
+  - oauth2
+  oauth2_flows:
+  - authorizationCode
+  pkce: required (S256)
+  identity_provider: Keycloak
+schemes:
+- name: OAuth2
+  type: oauth2
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent
+    tokenUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token
+    scopes: 27
+  description: 'OAuth2 authorization code flow with PKCE (Proof Key for Code Exchange) support.
+
+
+    **PKCE Flow Required**: All integrations must use PKCE flow for authentication.
+
+
+    **PKCE Benefits:**
+
+    - Enhanced security against authorization code interception attacks
+
+    - S256 code challenge method supported
+
+    - Industry best practice for OAuth2 implementations
+
+
+    **Implementation**: Use the authorization code flow with PK'
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+- name: BearerAuth
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  sources:
+  - openapi/jane-app-jdp-openapi.yml
+docs: https://developers.jane.app/docs/getting-started
+oidc_discovery:
+  production: https://login.id.janeapp.com/realms/jane/.well-known/openid-configuration
+  sandbox: https://login.id.janeapp.com/realms/jane_partner_sandbox/.well-known/openid-configuration
+  oauth_authorization_server: https://login.id.janeapp.com/realms/jane/.well-known/oauth-authorization-server
+  saved:
+  - well-known/jane-app-prod-openid-configuration.json
+  - well-known/jane-app-sandbox-openid-configuration.json
+  - well-known/jane-app-oauth-authorization-server.json
+endpoints:
+  authorization: https://login.id.janeapp.com/realms/{realm}/protocol/openid-connect/auth
+  token: https://login.id.janeapp.com/realms/{realm}/protocol/openid-connect/token
+  introspection: https://login.id.janeapp.com/realms/{realm}/protocol/openid-connect/token/introspect
+  revocation: https://login.id.janeapp.com/realms/{realm}/protocol/openid-connect/revoke
+  jwks: https://login.id.janeapp.com/realms/{realm}/protocol/openid-connect/certs
+  realms:
+    production: jane
+    sandbox: jane_partner_sandbox
+tokens:
+  format: RS256-signed JWT
+  type: Bearer
+  access_token_ttl: 300s (5 min)
+  refresh_token_ttl: 1800s (30 min)
+  code_challenge_methods:
+  - S256
+  claims:
+  - exp
+  - iat
+  - jti
+  - iss
+  - aud
+  - sub
+  - azp
+  - resource_access
+  - resource_owner
+  - scope
+note: OAuth 2.0 Authorization Code + PKCE over OIDC (Keycloak). BearerAuth (http/bearer JWT) is the resource-server
+  token presentation. Not SMART-on-FHIR.
