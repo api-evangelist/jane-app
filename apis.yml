@@ -39,10 +39,9 @@ apis:
 - aid: jane-app:jane-patients-api
   name: Jane Patients API
   description: >-
-    Retrieve, list, and free-text search patient records for the practitioner's accessible
-    patients within a clinic. Free-text search is a POST-body endpoint so PII does not leak
-    into query strings. Part of the Jane Developer Platform REST API, authenticated with
-    OAuth 2.0 (PKCE) and scoped access.
+    Retrieve, list, and free-text search patient records for the practitioner's accessible patients within
+    a clinic. Free-text search is a POST-body endpoint so PII does not leak into query strings. Part of
+    the Jane Developer Platform REST API, authenticated with OAuth 2.0 (PKCE) and scoped access.
   humanURL: https://developers.jane.app/reference
   tags:
   - Patients
@@ -57,9 +56,8 @@ apis:
 - aid: jane-app:jane-appointments-api
   name: Jane Appointments API
   description: >-
-    Retrieve and list one-on-one appointment bookings for a clinic, with filtering by
-    patient, staff member, location, treatment, and time window. Part of the Jane Developer
-    Platform REST API.
+    Retrieve and list one-on-one appointment bookings for a clinic, with filtering by patient, staff member,
+    location, treatment, and time window. Part of the Jane Developer Platform REST API.
   humanURL: https://developers.jane.app/reference
   tags:
   - Appointments
@@ -74,9 +72,9 @@ apis:
 - aid: jane-app:jane-scheduling-api
   name: Jane Practice and Scheduling API
   description: >-
-    Read clinic reference and scheduling data — locations, staff members, disciplines,
-    treatments, and company details — that underpin booking and practice configuration.
-    Part of the Jane Developer Platform REST API.
+    Read clinic reference and scheduling data — locations, staff members, disciplines, treatments, and
+    company details — that underpin booking and practice configuration. Part of the Jane Developer Platform
+    REST API.
   humanURL: https://developers.jane.app/reference
   tags:
   - Scheduling
@@ -99,9 +97,9 @@ apis:
 - aid: jane-app:jane-medical-records-api
   name: Jane Medical Records API
   description: >-
-    Create, read, update, and list clinical medical-record data for a patient — observations,
-    care plans and care plan activities, and medications (including full medication change
-    history). Part of the Jane Developer Platform REST API, gated by clinical scopes.
+    Create, read, update, and list clinical medical-record data for a patient — observations, care plans
+    and care plan activities, and medications (including full medication change history). Part of the
+    Jane Developer Platform REST API, gated by clinical scopes.
   humanURL: https://developers.jane.app/reference
   tags:
   - Medical Records
@@ -121,9 +119,9 @@ apis:
 - aid: jane-app:jane-documents-api
   name: Jane Documents API
   description: >-
-    Upload document files (PDF, JPEG, PNG up to 50 MB) to receive a document ID that can be
-    referenced in other API calls, and retrieve a previously uploaded document. Part of the
-    Jane Developer Platform REST API.
+    Upload document files (PDF, JPEG, PNG up to 50 MB) to receive a document ID that can be referenced
+    in other API calls, and retrieve a previously uploaded document. Part of the Jane Developer Platform
+    REST API.
   humanURL: https://developers.jane.app/reference
   tags:
   - Documents
@@ -138,9 +136,9 @@ apis:
 - aid: jane-app:jane-webhooks-api
   name: Jane Webhooks API
   description: >-
-    Register, list, retrieve, and deregister webhook subscriptions so partners receive
-    signed event notifications for a clinic. The signing secret is returned only once at
-    registration. Part of the Jane Developer Platform REST API.
+    Register, list, retrieve, and deregister webhook subscriptions so partners receive signed event notifications
+    for a clinic. The signing secret is returned only once at registration. Part of the Jane Developer
+    Platform REST API.
   humanURL: https://developers.jane.app/reference
   tags:
   - Webhooks
@@ -155,9 +153,9 @@ apis:
 - aid: jane-app:jane-extensions-api
   name: Jane Extensions API
   description: >-
-    Create, read, update, delete, and list Jane Extensions, and browse the catalog of
-    approved extensions available to clinics. This is the management surface for the
-    partner integrations built on the Jane Developer Platform.
+    Create, read, update, delete, and list Jane Extensions, and browse the catalog of approved extensions
+    available to clinics. This is the management surface for the partner integrations built on the Jane
+    Developer Platform.
   humanURL: https://developers.jane.app/reference
   tags:
   - Extensions
@@ -169,6 +167,13 @@ apis:
     url: https://developers.jane.app/reference/getextensions
   - type: APIReference
     url: https://developers.jane.app/reference/getcatalogextensions
+- aid: jane-app:jane-app-jdp-openapi
+  name: Jane JDP API
+  description: Jane JDP API from Jane — 31 path(s) described in OpenAPI.
+  humanURL: https://developers.jane.app/reference
+  properties:
+  - type: OpenAPI
+    url: openapi/jane-app-jdp-openapi.yml
 common:
 - type: TrustCenter
   url: security/jane-app-trust-center.yml
