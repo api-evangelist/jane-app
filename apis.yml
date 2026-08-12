@@ -175,6 +175,8 @@ apis:
   - type: OpenAPI
     url: openapi/jane-app-jdp-openapi.yml
 common:
+- type: MCPServer
+  url: mcp/jane-app-mcp.yml
 - type: TrustCenter
   url: security/jane-app-trust-center.yml
 - type: DomainSecurity
