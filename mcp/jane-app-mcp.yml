@@ -140,3 +140,9 @@ tools:
 - name: searchPatients
   description: Search patients by free text
   source_operation: openapi/jane-app-jdp-openapi.yml#searchPatients
+deployment:
+  mode: none
+  verified: derived
+  tools: 43
+  checked: '2026-08-12'
+  source: catalog MCP census

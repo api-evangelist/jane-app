@@ -1,0 +1,1509 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "JDP API",
+    "version": "2026-01-01"
+  },
+  "request": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "authorization_code",
+      "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+      "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+      "credentials": {
+        "clientId": "{{clientId}}",
+        "clientSecret": "{{clientSecret}}"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "CarePlans",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List care plans",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/medical-record/care-plans",
+            "params": [
+              {
+                "name": "sort",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated sort fields. Prefix with `-` for descending order (e.g. `-created_at`). Allowed: created_at, updated_at"
+              },
+              {
+                "name": "patient_id[eq]",
+                "value": "",
+                "type": "query",
+                "description": "Filter by patient public ID"
+              },
+              {
+                "name": "category[eq]",
+                "value": "",
+                "type": "query",
+                "description": "Filter by category. Allowed values: treatment_plan"
+              },
+              {
+                "name": "encounter_id[eq]",
+                "value": "",
+                "type": "query",
+                "description": "Filter by encounter public ID"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "List medical record care plans for the current user's accessible patients."
+        },
+        {
+          "info": {
+            "name": "Create a care plan",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/medical-record/care-plans",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Create a care plan"
+        },
+        {
+          "info": {
+            "name": "Create a care plan activity",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/medical-record/care-plans/:care_plan_id/activities",
+            "params": [
+              {
+                "name": "care_plan_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the care plan"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Create a care plan activity"
+        },
+        {
+          "info": {
+            "name": "Get a care plan",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/medical-record/care-plans/:care_plan_id",
+            "params": [
+              {
+                "name": "care_plan_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the care plan"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Get a care plan by its ID"
+        },
+        {
+          "info": {
+            "name": "Update a care plan",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/medical-record/care-plans/:care_plan_id",
+            "params": [
+              {
+                "name": "care_plan_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the care plan"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Update a care plan by its ID"
+        },
+        {
+          "info": {
+            "name": "Get a care plan activity",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/medical-record/care-plans/:care_plan_id/activities/:care_plan_activity_id",
+            "params": [
+              {
+                "name": "care_plan_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the care plan"
+              },
+              {
+                "name": "care_plan_activity_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the care plan activity"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Get a care plan activity by its ID"
+        },
+        {
+          "info": {
+            "name": "Update a care plan activity",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/medical-record/care-plans/:care_plan_id/activities/:care_plan_activity_id",
+            "params": [
+              {
+                "name": "care_plan_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the care plan"
+              },
+              {
+                "name": "care_plan_activity_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the care plan activity"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Update a care plan activity by its ID"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Extensions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Extensions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2025-02-28-beta/extensions",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Retrieves a list of extensions"
+        },
+        {
+          "info": {
+            "name": "Create Extension",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://jdpdocsdemo.jane.qa/api/2025-02-28-beta/extensions",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Creates a new extension"
+        },
+        {
+          "info": {
+            "name": "Get Extension",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2025-02-28-beta/extensions/:extension_id",
+            "params": [
+              {
+                "name": "extension_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the extension"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Retrieves a specific extension by ID"
+        },
+        {
+          "info": {
+            "name": "Update Extension",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://jdpdocsdemo.jane.qa/api/2025-02-28-beta/extensions/:extension_id",
+            "params": [
+              {
+                "name": "extension_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the extension"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Updates an existing extension"
+        },
+        {
+          "info": {
+            "name": "Delete Extension",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://jdpdocsdemo.jane.qa/api/2025-02-28-beta/extensions/:extension_id",
+            "params": [
+              {
+                "name": "extension_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the extension"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Deletes an extension"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Medications",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List medications",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/medical-record/medications",
+            "params": [
+              {
+                "name": "page[limit]",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of items to return (default 50)"
+              },
+              {
+                "name": "page[cursor]",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for pagination"
+              },
+              {
+                "name": "sort",
+                "value": "",
+                "type": "query",
+                "description": "Sort field (default created_at)"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "List medications for the current user's accessible patients"
+        },
+        {
+          "info": {
+            "name": "Create a medication",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/medical-record/medications",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Create a new medication record for a patient"
+        },
+        {
+          "info": {
+            "name": "Get a medication",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/medical-record/medications/:medication_id",
+            "params": [
+              {
+                "name": "medication_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the medication"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Get a medication by its ID"
+        },
+        {
+          "info": {
+            "name": "Update a medication",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/medical-record/medications/:medication_id",
+            "params": [
+              {
+                "name": "medication_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the medication"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Update a medication by its ID"
+        },
+        {
+          "info": {
+            "name": "Get medication change history",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/medical-record/medications/:medication_id/history",
+            "params": [
+              {
+                "name": "medication_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the medication"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Retrieves the complete change history for a medication, including:\n- Who made each change\n- What was modified\n- When the change occurred\n- Reason for the change (if provided)\n\nReturns all history entries without pagination.\n"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Observations",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List observations",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/medical-record/observations",
+            "params": [
+              {
+                "name": "sort",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated sort fields. Prefix with `-` for descending order (e.g. `-created_at`). Allowed: created_at, updated_at, issued_at"
+              },
+              {
+                "name": "patient_id[eq]",
+                "value": "",
+                "type": "query",
+                "description": "Filter by patient public ID"
+              },
+              {
+                "name": "category[eq]",
+                "value": "",
+                "type": "query",
+                "description": "Filter by category. Allowed values: vital_signs, laboratory, exam"
+              },
+              {
+                "name": "encounter_id[eq]",
+                "value": "",
+                "type": "query",
+                "description": "Filter by encounter public ID"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "List medical record observations for the current user's accessible patients."
+        },
+        {
+          "info": {
+            "name": "Create an observation",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/medical-record/observations",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Create an observation"
+        },
+        {
+          "info": {
+            "name": "Get an observation",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/medical-record/observations/:observation_id",
+            "params": [
+              {
+                "name": "observation_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the observation"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Get an observation by its ID"
+        },
+        {
+          "info": {
+            "name": "Update an observation",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/medical-record/observations/:observation_id",
+            "params": [
+              {
+                "name": "observation_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the observation"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Update an observation by its ID"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Webhooks",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Retrieve a webhook subscription",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/webhooks/:webhook_id",
+            "params": [
+              {
+                "name": "webhook_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the webhook subscription"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Returns the details of a single webhook subscription by ID."
+        },
+        {
+          "info": {
+            "name": "Deregister a webhook subscription",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/webhooks/:webhook_id",
+            "params": [
+              {
+                "name": "webhook_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the webhook subscription"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Permanently removes a webhook subscription. The partner will no longer receive events for this subscription."
+        },
+        {
+          "info": {
+            "name": "List webhook subscriptions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/webhooks",
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Returns all webhook subscriptions registered by the authenticated partner for the current clinic."
+        },
+        {
+          "info": {
+            "name": "Register a webhook subscription",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/webhooks",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Registers a new webhook subscription for the authenticated partner. The signing secret is returned only in this response and cannot be retrieved again — store it securely. The secret is used to verify that webhook payloads are sent by Jane."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Appointments",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get an Appointment",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/appointments/:appointment_id",
+            "params": [
+              {
+                "name": "appointment_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the appointment"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Retrieve detailed appointment information using its unique identifier"
+        },
+        {
+          "info": {
+            "name": "List Appointments",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/appointments",
+            "params": [
+              {
+                "name": "sort",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of fields to sort by. Prefix a field with '-' for descending order.\n\nExamples:\n- `sort=name,-created_at` sorts by `name` ascending, then `created_at` descending.\n- `sort=-updated_at` sorts by `updated_at` descending.\n\nAvailable fields:\n- `start_at`\n- `end_at`\n- `booked_at`\n- `created_at`\n- `updated_at`\n"
+              },
+              {
+                "name": "public_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `public_id`. Example: `public_id[eq]=123`"
+              },
+              {
+                "name": "start_at",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `start_at` timestamp (ISO 8601). Example: `start_at[gte]=2025-01-01T00:00:00Z`"
+              },
+              {
+                "name": "end_at",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `end_at` timestamp (ISO 8601). Example: `end_at[lte]=2025-01-02T00:00:00Z`"
+              },
+              {
+                "name": "patient_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `patient_id`. Example: `patient_id[eq]=123`"
+              },
+              {
+                "name": "staff_member_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `staff_member_id`. Example: `staff_member_id[eq]=123`"
+              },
+              {
+                "name": "location_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `location_id`. Example: `location_id[eq]=123`"
+              },
+              {
+                "name": "treatment_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `treatment_id`. Example: `treatment_id[eq]=123`"
+              },
+              {
+                "name": "created_at",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `created_at` timestamp (ISO 8601). Example: `created_at[gte]=2025-01-01T00:00:00Z`"
+              },
+              {
+                "name": "updated_at",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `updated_at` timestamp (ISO 8601). Example: `updated_at[lt]=2025-01-02T00:00:00Z`"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "List Appointments. This endpoint only returns one on one bookings. Excludes class bookings, group appointments, etc.\n\nFiltering:\nFilter records by field values using the format: field[operator]=value\n\nAvailable fields:\n- `public_id`: string\n- `start_at`: ISO 8601 datetime (e.g. 2025-01-01T12:00:00Z)\n- `end_at`: ISO 8601 datetime\n- `patient_id`: UUID String\n- `staff_member_id`: UUID String\n- `location_id`: UUID String\n- `treatment_id`: UUID String\n- `created_at`: ISO 8601 datetime\n- `updated_at`:"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "StaffMembers",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get a Staff Member",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/staff_members/:staff_member_id",
+            "params": [
+              {
+                "name": "staff_member_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the staff member"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Retrieve detailed staff member using their unique identifier"
+        },
+        {
+          "info": {
+            "name": "List Staff Members",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/staff_members",
+            "params": [
+              {
+                "name": "sort",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of fields to sort by. Prefix a field with '-' for descending order.\n\nExamples:\n- `sort=updated_at,-created_at` sorts by `updated_at` ascending, then `created_at` descending.\n- `sort=-updated_at` sorts by `updated_at` descending.\n\nAvailable fields:\n- `created_at`\n- `updated_at`\n"
+              },
+              {
+                "name": "public_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `public_id`. Example: `public_id[eq]=123`"
+              },
+              {
+                "name": "created_at",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `created_at` timestamp (ISO 8601). Example: `created_at[gte]=2025-01-01T00:00:00Z`"
+              },
+              {
+                "name": "updated_at",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `updated_at` timestamp (ISO 8601). Example: `updated_at[lt]=2025-01-02T00:00:00Z`"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "List Staff Members.\n\nFiltering:\nFilter records by field values using the format: field[operator]=value\n\nAvailable fields:\n- `public_id`: string\n- `created_at`: ISO 8601 datetime (e.g. 2025-01-01T12:00:00Z)\n- `updated_at`: ISO 8601 datetime\n\nAvailable operators:\n- `eq`: Equals\n- `gt`: Greater than\n- `gte`: Greater than or equal\n- `lt`: Less than\n- `lte`: Less than or equal\n\nDate-time filters (ex. `created_at`, `updated_at`) must:\n- Use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date-time "
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Catalog",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Catalog Extension",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2025-02-28-beta/catalog/extensions/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Extension ID"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Retrieves a specific extension from the catalog"
+        },
+        {
+          "info": {
+            "name": "Get Catalog Extensions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2025-02-28-beta/catalog/extensions"
+          },
+          "docs": "Retrieves the catalog with all available approved extensions"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Company",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get details about the company",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/company",
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Retrieve details about the company"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Disciplines",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get a Discipline",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/disciplines/:discipline_id",
+            "params": [
+              {
+                "name": "discipline_id",
+                "value": "",
+                "type": "path",
+                "description": "The Id of the discipline"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Get a Discipline by its ID"
+        },
+        {
+          "info": {
+            "name": "List Disciplines",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/disciplines",
+            "params": [
+              {
+                "name": "sort",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of fields to sort by. Prefix a field with '-' for descending order.\n\nExamples:\n- `sort=name,-created_at` sorts by `name` ascending, then `created_at` descending.\n- `sort=-updated_at` sorts by `updated_at` descending.\n\nAvailable fields:\n- `name`\n- `created_at`\n- `updated_at`\n"
+              },
+              {
+                "name": "public_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `public_id`. Example: `public_id[eq]=123`"
+              },
+              {
+                "name": "created_at",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `created_at` timestamp (ISO 8601). Example: `created_at[gte]=2025-01-01T00:00:00Z`"
+              },
+              {
+                "name": "updated_at",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `updated_at` timestamp (ISO 8601). Example: `updated_at[lt]=2025-01-02T00:00:00Z`"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "List Disciplines.\n\nFiltering:\nFilter records by field values using the format: field[operator]=value\n\nAvailable fields:\n- `public_id`: string\n- `created_at`: ISO 8601 datetime (e.g. 2025-01-01T12:00:00Z)\n- `updated_at`: ISO 8601 datetime\n\nAvailable operators:\n- `eq`: Equals\n- `gt`: Greater than\n- `gte`: Greater than or equal\n- `lt`: Less than\n- `lte`: Less than or equal\n\nDate-time filters (ex. `created_at`, `updated_at`) must:\n- Use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date-time fo"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "DocumentUploads",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get an uploaded document",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/document-uploads/:document_id",
+            "params": [
+              {
+                "name": "document_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the document"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Retrieve a document previously uploaded by the authenticated user. Only the user who originally uploaded the document can access it."
+        },
+        {
+          "info": {
+            "name": "Upload a document",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/document-uploads",
+            "body": {
+              "type": "multipart-form",
+              "data": []
+            },
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Upload a document file to receive a document ID that can be referenced in other API calls (e.g. attaching a document to a clinical record). The uploaded file is stored securely and a presigned URL is returned in the response for temporary access. Accepted file types are PDF, JPEG, and PNG. Maximum file size is 50 MB."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Locations",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get a Location",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/locations/:location_id",
+            "params": [
+              {
+                "name": "location_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the location"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Retrieve detailed location information using the unique identifier"
+        },
+        {
+          "info": {
+            "name": "Get a list of locations",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/locations",
+            "params": [
+              {
+                "name": "sort",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of fields to sort by. Prefix a field with '-' for descending order.\n\nExamples:\n- `sort=name,-created_at` sorts by `name` ascending, then `created_at` descending.\n- `sort=-updated_at` sorts by `updated_at` descending.\n\nAvailable fields:\n- `name`\n- `created_at`\n- `updated_at`\n"
+              },
+              {
+                "name": "public_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `public_id`. Example: `public_id[eq]=123`"
+              },
+              {
+                "name": "created_at",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `created_at` timestamp (ISO 8601). Example: `created_at[gte]=2025-01-01T00:00:00Z`"
+              },
+              {
+                "name": "updated_at",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `updated_at` timestamp (ISO 8601). Example: `updated_at[lt]=2025-01-02T00:00:00Z`"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Retrieve a paginated list of locations.\n\nFiltering:\nFilter records by field values using the format: field[operator]=value\n\nAvailable fields:\n- `public_id`: string\n- `created_at`: ISO 8601 datetime (e.g. 2025-01-01T12:00:00Z)\n- `updated_at`: ISO 8601 datetime\n\nAvailable operators:\n- `eq`: Equals\n- `gt`: Greater than\n- `gte`: Greater than or equal\n- `lt`: Less than\n- `lte`: Less than or equal\n\nDate-time filters (ex. `created_at`, `updated_at`) must:\n- Use [ISO 8601](https://en.wikipedia.org/wiki/"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Patients",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get a Patient",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/patients/:patient_id",
+            "params": [
+              {
+                "name": "patient_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the patient"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Retrieve detailed patient information using their unique identifier"
+        },
+        {
+          "info": {
+            "name": "Get a list of patients",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/patients",
+            "params": [
+              {
+                "name": "sort",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of fields to sort by. Prefix a field with '-' for descending order.\n\nExamples:\n- `sort=updated_at,-public_id` sorts by `updated_at` ascending, then `public_id` descending.\n- `sort=-created_at` sorts by `created_at` descending.\n\nAvailable fields:\n- `public_id`\n- `created_at`\n- `updated_at`\n"
+              },
+              {
+                "name": "public_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `public_id`. Example: `public_id[eq]=123`"
+              },
+              {
+                "name": "created_at",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `created_at` timestamp (ISO 8601). Example: `created_at[gte]=2025-01-01T00:00:00Z`"
+              },
+              {
+                "name": "updated_at",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `updated_at` timestamp (ISO 8601). Example: `updated_at[lt]=2025-01-02T00:00:00Z`"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Retrieve a list of patients.\n\nFiltering:\nFilter records by field values using the format: field[operator]=value\n\nAvailable fields:\n- `public_id`: string\n- `created_at`: ISO 8601 datetime (e.g. 2025-01-01T12:00:00Z)\n- `updated_at`: ISO 8601 datetime\n\nAvailable operators:\n- `eq`: Equals\n- `gt`: Greater than\n- `gte`: Greater than or equal\n- `lt`: Less than\n- `lte`: Less than or equal\n\nDate-time filters (ex. `created_at`, `updated_at`) must:\n- Use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) d"
+        },
+        {
+          "info": {
+            "name": "Search patients by free text",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/patients/search",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Free-text patient search across name, email, phone number, and patient number.\n\nThis is a POST-body endpoint specifically so PII (patient names, email, phone)\ndoes not leak into URL query strings, access logs, browser history, or referrer headers.\n\nScope is intentionally search-only: the body accepts `search`, `sort`, and `page`.\nStructured filters (`public_id`, `created_at`, `updated_at`) are not supported here —\nuse `GET /patients` for those. Combined search + structured filtering is a deliber"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Treatments",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get a Treatment",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/treatments/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the treatment"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Returns a treatment by its ID."
+        },
+        {
+          "info": {
+            "name": "List Treatments",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://jdpdocsdemo.jane.qa/api/2026-01-01/treatments",
+            "params": [
+              {
+                "name": "sort",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of fields to sort by. Prefix a field with '-' for descending order.\n\nExamples:\n- `sort=name,-created_at` sorts by `name` ascending, then `created_at` descending.\n- `sort=-updated_at` sorts by `updated_at` descending.\n\nAvailable fields:\n- `name`\n- `price`\n- `created_at`\n- `updated_at`\n"
+              },
+              {
+                "name": "public_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `public_id`. Only supports `eq`. Example: `public_id[eq]=123`"
+              },
+              {
+                "name": "staff_member_ids",
+                "value": "",
+                "type": "query",
+                "description": "Filter by staff member ID. Only supports `eq`. Returns treatments owned by or offered by the staff member. Example: `staff_member_ids[eq]=019d8e34-8307-7b0e-b6c2-5d03ca0bfb37`"
+              },
+              {
+                "name": "created_at",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `created_at` timestamp (ISO 8601). Example: `created_at[gte]=2025-01-01T00:00:00Z`"
+              },
+              {
+                "name": "updated_at",
+                "value": "",
+                "type": "query",
+                "description": "Filter by `updated_at` timestamp (ISO 8601). Example: `updated_at[lt]=2025-01-02T00:00:00Z`"
+              }
+            ],
+            "auth": {
+              "type": "oauth2",
+              "flow": "authorization_code",
+              "authorizationUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent",
+              "accessTokenUrl": "https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token",
+              "credentials": {
+                "clientId": "{{clientId}}",
+                "clientSecret": "{{clientSecret}}"
+              }
+            }
+          },
+          "docs": "Returns a list of treatments with pagination support.\n\nFiltering:\nFilter records by field values using the format: field[operator]=value\n\nAvailable fields:\n- `public_id`: string\n- `staff_member_ids`: UUID string — returns treatments owned by or offered by the staff member (via available treatments)\n- `created_at`: ISO 8601 datetime (e.g. 2025-01-01T12:00:00Z)\n- `updated_at`: ISO 8601 datetime\n\nAvailable operators:\n- `eq`: Equals\n- `gt`: Greater than\n- `gte`: Greater than or equal\n- `lt`: Less th"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
