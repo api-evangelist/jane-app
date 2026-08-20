@@ -30,6 +30,19 @@ tags:
 - Telehealth
 - Health and Wellness
 - REST API
+- Authentication
+- Webhook
+tags_raw:
+- Healthcare
+- Canada
+- Practice Management
+- EHR
+- EMR
+- Scheduling
+- Clinical Documentation
+- Telehealth
+- Health and Wellness
+- REST API
 - OAuth2
 - Webhooks
 created: '2026-07-24'
@@ -141,6 +154,9 @@ apis:
     Platform REST API.
   humanURL: https://developers.jane.app/reference
   tags:
+  - Webhook
+  - Event
+  tags_raw:
   - Webhooks
   - Events
   properties:
@@ -158,6 +174,9 @@ apis:
     Developer Platform.
   humanURL: https://developers.jane.app/reference
   tags:
+  - Extensions
+  - Integration
+  tags_raw:
   - Extensions
   - Integrations
   properties:
