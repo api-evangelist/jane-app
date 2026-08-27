@@ -186,13 +186,132 @@ apis:
     url: https://developers.jane.app/reference/getextensions
   - type: APIReference
     url: https://developers.jane.app/reference/getcatalogextensions
-- aid: jane-app:jane-app-jdp-openapi
-  name: Jane JDP API
-  description: Jane JDP API from Jane — 31 path(s) described in OpenAPI.
+- aid: jane-app:jane-app-appointments-api
+  name: Jane Appointments API
+  description: The Appointments API from Jane — 2 operation(s) for appointments.
   humanURL: https://developers.jane.app/reference
+  tags:
+  - Appointments
   properties:
   - type: OpenAPI
-    url: openapi/jane-app-jdp-openapi.yml
+    url: openapi/jane-app-appointments-api-openapi.yml
+- aid: jane-app:jane-app-careplans-api
+  name: Jane Care Plans API
+  description: The CarePlans API from Jane — 4 operation(s) for careplans.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - CarePlans
+  properties:
+  - type: OpenAPI
+    url: openapi/jane-app-careplans-api-openapi.yml
+- aid: jane-app:jane-app-catalog-api
+  name: Jane Catalog API
+  description: The Catalog API from Jane — 2 operation(s) for catalog.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - Catalog
+  properties:
+  - type: OpenAPI
+    url: openapi/jane-app-catalog-api-openapi.yml
+- aid: jane-app:jane-app-company-api
+  name: Jane Company API
+  description: The Company API from Jane — 1 operation(s) for company.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - Company
+  properties:
+  - type: OpenAPI
+    url: openapi/jane-app-company-api-openapi.yml
+- aid: jane-app:jane-app-disciplines-api
+  name: Jane Disciplines API
+  description: The Disciplines API from Jane — 2 operation(s) for disciplines.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - Disciplines
+  properties:
+  - type: OpenAPI
+    url: openapi/jane-app-disciplines-api-openapi.yml
+- aid: jane-app:jane-app-documentuploads-api
+  name: Jane Document Uploads API
+  description: The DocumentUploads API from Jane — 2 operation(s) for documentuploads.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - DocumentUploads
+  properties:
+  - type: OpenAPI
+    url: openapi/jane-app-documentuploads-api-openapi.yml
+- aid: jane-app:jane-app-extensions-api
+  name: Jane Extensions API
+  description: The Extensions API from Jane — 2 operation(s) for extensions.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - Extensions
+  properties:
+  - type: OpenAPI
+    url: openapi/jane-app-extensions-api-openapi.yml
+- aid: jane-app:jane-app-locations-api
+  name: Jane Locations API
+  description: The Locations API from Jane — 2 operation(s) for locations.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - Locations
+  properties:
+  - type: OpenAPI
+    url: openapi/jane-app-locations-api-openapi.yml
+- aid: jane-app:jane-app-medications-api
+  name: Jane Medications API
+  description: The Medications API from Jane — 3 operation(s) for medications.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - Medications
+  properties:
+  - type: OpenAPI
+    url: openapi/jane-app-medications-api-openapi.yml
+- aid: jane-app:jane-app-observations-api
+  name: Jane Observations API
+  description: The Observations API from Jane — 2 operation(s) for observations.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - Observations
+  properties:
+  - type: OpenAPI
+    url: openapi/jane-app-observations-api-openapi.yml
+- aid: jane-app:jane-app-patients-api
+  name: Jane Patients API
+  description: The Patients API from Jane — 3 operation(s) for patients.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - Patients
+  properties:
+  - type: OpenAPI
+    url: openapi/jane-app-patients-api-openapi.yml
+- aid: jane-app:jane-app-staffmembers-api
+  name: Jane Staff Members API
+  description: The StaffMembers API from Jane — 2 operation(s) for staffmembers.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - StaffMembers
+  properties:
+  - type: OpenAPI
+    url: openapi/jane-app-staffmembers-api-openapi.yml
+- aid: jane-app:jane-app-treatments-api
+  name: Jane Treatments API
+  description: The Treatments API from Jane — 2 operation(s) for treatments.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - Treatments
+  properties:
+  - type: OpenAPI
+    url: openapi/jane-app-treatments-api-openapi.yml
+- aid: jane-app:jane-app-webhooks-api
+  name: Jane Webhooks API
+  description: The Webhooks API from Jane — 2 operation(s) for webhooks.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/jane-app-webhooks-api-openapi.yml
 common:
 - type: MCPServer
   url: mcp/jane-app-mcp.yml
