@@ -18,6 +18,18 @@ description: >-
   disciplines, treatments, medical records (observations, care plans, medications), document
   uploads, webhooks, and extension management. Jane is not FHIR/HL7-based: it is a proprietary
   REST practice-management API rather than a SMART-on-FHIR EHR interoperability surface.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 tags:
 - Healthcare
