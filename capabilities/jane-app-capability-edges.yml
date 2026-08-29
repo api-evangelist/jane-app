@@ -11,7 +11,7 @@ capability_model:
   attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
     CC BY 4.0
   notice: NOTICE
-edge_count: 2
+edge_count: 4
 edges:
 - tag: Appointments
   spec_file: jane-app-appointments-api-openapi.yml
@@ -19,17 +19,38 @@ edges:
   capability_id_l1: BC-2800
   capability_name: Scheduling & Appointment Management
   confidence: 0.85
-  evidence: GET /api/2026-01-01/appointments/{appointment_id} "Get an Appointment"; schema "appointment"
-  reason: Practice-management appointment records for a clinic; Jane provides "online booking, scheduling".
-    Read surface over appointment booking data maps to Scheduling & Appointment Management.
-- tag: Webhooks
-  spec_file: jane-app-webhooks-api-openapi.yml
-  capability_id: BC-4270.80
-  capability_id_l1: BC-4270
-  capability_name: Webhook & Event Subscription Management
+  evidence: GET /api/2026-01-01/appointments  listAppointmentsVersioned  List Appointments; schema "appointment"
+    in a clinic practice-management platform with "online booking, scheduling"
+  reason: Appointment retrieval in a clinic practice management system maps to scheduling and appointment
+    management under patient access. Read-only surface but unambiguous domain.
+- tag: CarePlans
+  spec_file: jane-app-careplans-api-openapi.yml
+  capability_id: BC-2820.20
+  capability_id_l1: BC-2820
+  capability_name: Case & Care Management
+  confidence: 0.75
+  evidence: POST /api/2026-01-01/medical-record/care-plans  createCarePlan  Create a care plan; createCarePlanActivity
+  reason: Care plans with activities under the medical record are care planning/management artefacts;
+    closest fit is Case & Care Management. Some ambiguity versus clinical documentation, hence not higher.
+- tag: Medications
+  spec_file: jane-app-medications-api-openapi.yml
+  capability_id: BC-2850.40
+  capability_id_l1: BC-2850
+  capability_name: Medication Administration & Reconciliation
   confidence: 0.7
-  evidence: POST /api/2026-01-01/webhooks  postWebhooks  Register a webhook subscription; DELETE ... Deregister
-    a webhook subscription
-  reason: Pure lifecycle management of outbound webhook subscriptions for platform integrators — technical
-    plumbing whose only honest business framing is developer-platform event subscription management, not
-    any clinical capability.
+  evidence: 'POST /api/2026-01-01/medical-record/medications  createMedication  Create a medication; schemas:
+    medication_code, ingredient, medication_history_entry'
+  reason: Maintains a patient's medication list within the medical record with change history — closest
+    to medication reconciliation/medication list management. Could alternatively be read as clinical documentation,
+    so moderate confidence.
+- tag: Patients
+  spec_file: jane-app-patients-api-openapi.yml
+  capability_id: BC-2800.20
+  capability_id_l1: BC-2800
+  capability_name: Patient Registration Management
+  confidence: 0.7
+  evidence: GET /api/2026-01-01/patients  getPatients  Get a list of patients; POST /api/2026-01-01/patients/search  searchPatients  Search
+    patients by free text
+  reason: Patient demographic records retrieval/search in a practice management system supports patient
+    registration/demographic stewardship. Read-only, so could also be seen as master patient index; moderate
+    confidence.
