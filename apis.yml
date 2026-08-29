@@ -325,6 +325,9 @@ apis:
   - type: OpenAPI
     url: openapi/jane-app-webhooks-api-openapi.yml
 common:
+- type: CapabilityMap
+  url: capabilities/jane-app-capability-edges.yml
+  name: Jane Business Capability Map
 - type: MCPServer
   url: mcp/jane-app-mcp.yml
 - type: TrustCenter

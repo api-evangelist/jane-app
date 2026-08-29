@@ -1,0 +1,35 @@
+slug: jane-app
+provider: Jane
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Healthcare Providers
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 2
+edges:
+- tag: Appointments
+  spec_file: jane-app-appointments-api-openapi.yml
+  capability_id: BC-2800.10
+  capability_id_l1: BC-2800
+  capability_name: Scheduling & Appointment Management
+  confidence: 0.85
+  evidence: GET /api/2026-01-01/appointments/{appointment_id} "Get an Appointment"; schema "appointment"
+  reason: Practice-management appointment records for a clinic; Jane provides "online booking, scheduling".
+    Read surface over appointment booking data maps to Scheduling & Appointment Management.
+- tag: Webhooks
+  spec_file: jane-app-webhooks-api-openapi.yml
+  capability_id: BC-4270.80
+  capability_id_l1: BC-4270
+  capability_name: Webhook & Event Subscription Management
+  confidence: 0.7
+  evidence: POST /api/2026-01-01/webhooks  postWebhooks  Register a webhook subscription; DELETE ... Deregister
+    a webhook subscription
+  reason: Pure lifecycle management of outbound webhook subscriptions for platform integrators — technical
+    plumbing whose only honest business framing is developer-platform event subscription management, not
+    any clinical capability.
