@@ -212,6 +212,8 @@ apis:
   description: The CarePlans API from Jane — 4 operation(s) for careplans.
   humanURL: https://developers.jane.app/reference
   tags:
+  - Care Plans
+  tags_raw:
   - CarePlans
   properties:
   - type: OpenAPI
@@ -320,6 +322,8 @@ apis:
   description: The Webhooks API from Jane — 2 operation(s) for webhooks.
   humanURL: https://developers.jane.app/reference
   tags:
+  - Webhook
+  tags_raw:
   - Webhooks
   properties:
   - type: OpenAPI
