@@ -1,0 +1,461 @@
+openapi: 3.2.0
+info:
+  title: JDP Observations API
+  description: 'Open API specification for the JDP API
+
+
+    ## Rate Limits
+
+
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
+
+
+    Rate limit information is returned in response headers:
+
+    - `X-Throttle-Match`: Rate limit identifier
+
+    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
+
+
+    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
+
+
+    ### Affected Endpoints:
+
+    - `/api/2026-01-01/treatments`
+
+    - `/api/2026-01-01/appointments`
+
+    - `/api/2026-01-01/locations`
+
+    - `/api/2026-01-01/disciplines`
+
+    - `/api/2026-01-01/patients`
+
+    - `/api/2026-01-01/staff_members`
+
+    - `/api/2026-01-01/company`
+
+    - `/api/2026-01-01/medical-record/medications`'
+  version: '2026-01-01'
+servers:
+- url: https://jdpdocsdemo.jane.qa
+  description: Partner playground clinic
+security:
+- OAuth2: []
+tags:
+- name: Observations
+paths:
+  /api/2026-01-01/medical-record/observations:
+    post:
+      operationId: createObservation
+      summary: Create an observation
+      description: Create an observation
+      security:
+      - OAuth2:
+        - observations:create
+      tags:
+      - Observations
+      requestBody:
+        description: The observation to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/create_observation_request'
+      responses:
+        '201':
+          description: The observation was created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/observation'
+        '400':
+          description: The observation was not created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+    get:
+      operationId: listObservations
+      summary: List observations
+      description: List medical record observations for the current user's accessible patients.
+      security:
+      - OAuth2:
+        - observations:read
+      tags:
+      - Observations
+      parameters:
+      - $ref: '#/components/parameters/page_limit'
+      - $ref: '#/components/parameters/page_cursor'
+      - name: sort
+        in: query
+        required: false
+        description: 'Comma-separated sort fields. Prefix with `-` for descending order (e.g. `-created_at`). Allowed: created_at, updated_at, issued_at'
+        schema:
+          type: string
+          example: -created_at
+      - name: patient_id[eq]
+        in: query
+        required: false
+        description: Filter by patient public ID
+        schema:
+          type: string
+          format: uuid
+      - name: category[eq]
+        in: query
+        required: false
+        description: 'Filter by category. Allowed values: vital_signs, laboratory, exam'
+        schema:
+          type: string
+          enum:
+          - vital_signs
+          - laboratory
+          - exam
+      - name: encounter_id[eq]
+        in: query
+        required: false
+        description: Filter by encounter public ID
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: List of observations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/observations_response'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient permissions
+  /api/2026-01-01/medical-record/observations/{observation_id}:
+    get:
+      operationId: getObservation
+      summary: Get an observation
+      description: Get an observation by its ID
+      security:
+      - OAuth2:
+        - observations:read
+      tags:
+      - Observations
+      parameters:
+      - name: observation_id
+        in: path
+        required: true
+        description: The ID of the observation
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The observation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/observation'
+        '404':
+          description: The observation was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+    patch:
+      operationId: updateObservation
+      summary: Update an observation
+      description: Update an observation by its ID
+      security:
+      - OAuth2:
+        - observations:update
+      tags:
+      - Observations
+      parameters:
+      - name: observation_id
+        in: path
+        required: true
+        description: The ID of the observation
+        schema:
+          type: string
+      requestBody:
+        description: The observation to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/update_observation_request'
+      responses:
+        '200':
+          description: The observation was updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/observation'
+        '400':
+          description: The observation was not updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '404':
+          description: The observation was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+        '422':
+          description: The observation validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+components:
+  schemas:
+    observations_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: observations_response.json
+      title: ObservationsResponse
+      type: object
+      required:
+      - items
+      - limit
+      - hasNextPage
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/observation'
+          description: Array of observation objects
+        cursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor for fetching the next page of results
+        limit:
+          type: integer
+          description: Maximum number of items returned
+        links:
+          type: object
+          properties:
+            before:
+              type:
+              - string
+              - 'null'
+              description: URL for the previous page
+            after:
+              type:
+              - string
+              - 'null'
+              description: URL for the next page
+          additionalProperties: false
+        hasNextPage:
+          type: boolean
+          description: Whether there are more items available
+      additionalProperties: false
+    create_observation_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: create_observation_request.json
+      title: Create Observation Request
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/observation'
+          description: The request data parameters
+    observation_value:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: observation_value.json
+      title: ObservationValue
+      type: object
+      required:
+      - code
+      - system
+      - value
+      - value_type
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUIDv7 identifier for the component
+        code:
+          type: string
+          description: The specific code for this component (e.g., LOINC or SNOMED CT code)
+        system:
+          type: string
+          description: The coding system used (e.g., 'http://loinc.org')
+        display:
+          type: string
+          description: Human-readable display name for the code
+        value:
+          type: string
+          description: The actual value of the component
+        value_type:
+          type: string
+          enum:
+          - string
+          - boolean
+          - numeric
+          description: The data type of the value
+        unit:
+          type: string
+          description: The unit for the value (if applicable)
+      additionalProperties: false
+    update_observation_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: update_observation_request.json
+      title: Update Observation Request
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            encounter_id:
+              type: string
+              format: uuid
+            note:
+              type: string
+            issued_at:
+              type: string
+              format: date-time
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/observation_value'
+            document_ids:
+              type: array
+              items:
+                type: string
+                format: uuid
+          additionalProperties: false
+    bad_request_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: bad_request_error_response.json
+      title: BadRequest
+      type: object
+      properties: {}
+    observation:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: observation.json
+      title: Observation
+      type: object
+      required:
+      - patient_id
+      - category
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUIDv7 identifier for the observation
+        patient_id:
+          type: string
+          format: uuid
+          description: Reference to the patient
+        practitioner_id:
+          type: string
+          format: uuid
+          description: Reference to the practitioner who performed/recorded the observation
+        encounter_id:
+          type: string
+          format: uuid
+          description: Reference to the encounter where the observation was made
+        category:
+          type: string
+          enum:
+          - vital_signs
+          - laboratory
+          - exam
+          description: The classification of the type of observation
+        created_at:
+          type: string
+          format: date-time
+          description: When the observation record was created
+        updated_at:
+          type: string
+          format: date-time
+          description: When the observation record was updated
+        issued_at:
+          type: string
+          format: date-time
+          description: When the observation was issued/reported
+        note:
+          type: string
+          description: Additional notes about the observation
+        values:
+          type: array
+          items:
+            $ref: '#/components/schemas/observation_value'
+          description: Array of observation components
+        document_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: Array of document upload IDs to attach to the observation. All documents must exist and be verified.
+      additionalProperties: false
+    not_found_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: not_found_error_response.json
+      title: NotFoundError
+      type: object
+      properties: {}
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: 'OAuth2 authorization code flow with PKCE (Proof Key for Code Exchange) support.
+
+
+        **PKCE Flow Required**: All integrations must use PKCE flow for authentication.
+
+
+        **PKCE Benefits:**
+
+        - Enhanced security against authorization code interception attacks
+
+        - S256 code challenge method supported
+
+        - Industry best practice for OAuth2 implementations
+
+
+        **Implementation**: Use the authorization code flow with PKCE extension as defined in RFC 7636.
+
+        '
+      flows:
+        authorizationCode:
+          authorizationUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent
+          tokenUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token
+          scopes:
+            observations:read: Read observations
+            observations:create: Create observations
+            observations:update: Update observations
+            care_plans:read: Read care plans
+            care_plans:create: Create care plans
+            care_plans:update: Update care plans
+            patients:read: Read patient information
+            locations:read: Read location information
+            staff_members:read: Read staff member information
+            appointments:read: Read appointment information
+            companies:read: Read company information
+            document_uploads:read: Read document uploads
+            document_uploads:create: Create document uploads
+            disciplines:read: Read discipline information
+            treatments:read: Read treatment information
+            conversations:read: Read conversation information
+            conversations:write: Create and update conversations
+            messages:read: Read message information
+            messages:write: Create and update messages
+            partner_extensions:create: Create partner extensions
+            partner_extensions:delete: Delete partner extensions
+            extensions:install: Install extensions
+            extensions:uninstall: Uninstall extensions
+            webhooks:read: List webhook subscriptions
+            webhooks:create: Register a webhook subscription
+            webhooks:update: Update a webhook subscription
+            webhooks:delete: Deregister a webhook subscription
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

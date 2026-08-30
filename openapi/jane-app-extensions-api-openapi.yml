@@ -1,0 +1,520 @@
+openapi: 3.2.0
+info:
+  title: JDP Extensions API
+  description: 'Open API specification for the JDP API
+
+
+    ## Rate Limits
+
+
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
+
+
+    Rate limit information is returned in response headers:
+
+    - `X-Throttle-Match`: Rate limit identifier
+
+    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
+
+
+    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
+
+
+    ### Affected Endpoints:
+
+    - `/api/2026-01-01/treatments`
+
+    - `/api/2026-01-01/appointments`
+
+    - `/api/2026-01-01/locations`
+
+    - `/api/2026-01-01/disciplines`
+
+    - `/api/2026-01-01/patients`
+
+    - `/api/2026-01-01/staff_members`
+
+    - `/api/2026-01-01/company`
+
+    - `/api/2026-01-01/medical-record/medications`'
+  version: '2026-01-01'
+servers:
+- url: https://jdpdocsdemo.jane.qa
+  description: Partner playground clinic
+security:
+- OAuth2: []
+tags:
+- name: Extensions
+paths:
+  /api/2025-02-28-beta/extensions:
+    post:
+      operationId: createExtension
+      summary: Create Extension
+      description: Creates a new extension
+      tags:
+      - Extensions
+      security:
+      - BearerAuth: []
+      requestBody:
+        description: Extension data to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/extension_request'
+      responses:
+        '201':
+          description: Extension created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/extension'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorized_error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbidden_error'
+        '422':
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unprocessable_entity_error'
+    get:
+      operationId: getExtensions
+      summary: List Extensions
+      description: Retrieves a list of extensions
+      tags:
+      - Extensions
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: List of extensions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/extensions_response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorized_error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbidden_error'
+  /api/2025-02-28-beta/extensions/{extension_id}:
+    delete:
+      operationId: deleteExtension
+      summary: Delete Extension
+      description: Deletes an extension
+      tags:
+      - Extensions
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: extension_id
+        in: path
+        required: true
+        description: The ID of the extension
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Extension deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/extension_delete_response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorized_error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbidden_error'
+        '404':
+          description: Extension not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error'
+    get:
+      operationId: getExtension
+      summary: Get Extension
+      description: Retrieves a specific extension by ID
+      tags:
+      - Extensions
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: extension_id
+        in: path
+        required: true
+        description: The ID of the extension
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Extension details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/extension'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorized_error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbidden_error'
+        '404':
+          description: Extension not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error'
+    put:
+      operationId: updateExtension
+      summary: Update Extension
+      description: Updates an existing extension
+      tags:
+      - Extensions
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: extension_id
+        in: path
+        required: true
+        description: The ID of the extension
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        description: Extension data to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/extension_request'
+      responses:
+        '200':
+          description: Extension updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/extension'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorized_error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbidden_error'
+        '404':
+          description: Extension not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error'
+        '422':
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unprocessable_entity_error'
+components:
+  schemas:
+    unprocessable_entity_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/unprocessable_entity_error.json
+      type: object
+      required:
+      - error
+      title: UnprocessableEntityError
+      description: Error response generated when the request is not valid
+      properties:
+        error:
+          type: string
+          description: Error message.
+    forbidden_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/forbidden_error.json
+      type: object
+      required:
+      - error
+      title: ForbiddenError
+      description: Error response generated when the request is forbidden
+      properties:
+        error:
+          type: string
+          description: Error message.
+    extension:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: extension.json
+      title: Extension
+      description: An extension manifest configuration
+      type: object
+      required:
+      - name
+      - version
+      - description
+      - developer_name
+      properties:
+        id:
+          description: Unique identifier for the extension
+          type: string
+          format: uuid
+          readOnly: true
+        extension_id:
+          description: Unique identifier for the extension
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          description: Name of the extension
+          type: string
+        version:
+          description: Version of the extension
+          type: string
+        description:
+          description: Description of what the extension does
+          type: string
+        documentation_url:
+          description: URL to the extension's documentation
+          type: string
+          format: uri
+        developer_name:
+          description: Name of the developer or organization
+          type: string
+        homepage_url:
+          description: URL to the extension's homepage
+          type: string
+          format: uri
+        support_url:
+          description: URL for support related to this extension
+          type: string
+          format: uri
+        activation_url:
+          description: URL used to activate the extension
+          type: string
+          format: uri
+        signup_url:
+          description: URL for user signup through partner defined flow
+          type: string
+          format: uri
+        icon_url:
+          description: 'URL to the extension''s icon. Recommended: PNG format with transparent background, 128x128 pixels'
+          type: string
+          format: uri
+        logo_urls:
+          description: URLs to logo images at different sizes
+          type: array
+          items:
+            type: string
+            format: uri
+        extension_points:
+          description: List of extension points this extension provides
+          type: array
+          items:
+            type: object
+            required:
+            - type
+            - category
+            - label
+            - url
+            properties:
+              type:
+                type: string
+                enum:
+                - clinical
+              category:
+                type: string
+                enum:
+                - labs
+                - gfe
+                - hep
+                - rpm
+                - supplements
+                - extensions
+              label:
+                type: string
+              url:
+                type: string
+                pattern: ^https://
+                description: URL where the extension is hosted
+        created_at:
+          description: When the extension was created
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          description: When the extension was last updated
+          type: string
+          format: date-time
+          readOnly: true
+      additionalProperties: false
+    bad_request_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: bad_request_error_response.json
+      title: BadRequest
+      type: object
+      properties: {}
+    extension_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: extension_request.json
+      title: ExtensionRequest
+      description: Request body for creating or updating an extension
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/extension'
+          description: The extension to create or update
+    not_found_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/not_found_error.json
+      type: object
+      required:
+      - error
+      title: NotFoundError
+      description: Error response when the requested resource is not found.
+      properties:
+        error:
+          type: string
+          description: Error message.
+    extensions_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: extensions_response.json
+      title: ExtensionsResponse
+      description: Response containing a list of extensions
+      type: object
+      required:
+      - items
+      properties:
+        items:
+          description: List of extensions
+          type: array
+          items:
+            $ref: '#/components/schemas/extension'
+    unauthorized_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/unauthorized_error.json
+      type: object
+      required:
+      - error
+      title: UnauthorizedError
+      description: Error response generated when the request is not authorized
+      properties:
+        error:
+          type: string
+          description: Error message.
+    extension_delete_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: extension_delete_response.json
+      title: ExtensionDeleteResponse
+      description: Response for deleted extension
+      type: object
+      required:
+      - id
+      properties:
+        id:
+          description: ID of the deleted extension
+          type: string
+          format: uuid
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: 'OAuth2 authorization code flow with PKCE (Proof Key for Code Exchange) support.
+
+
+        **PKCE Flow Required**: All integrations must use PKCE flow for authentication.
+
+
+        **PKCE Benefits:**
+
+        - Enhanced security against authorization code interception attacks
+
+        - S256 code challenge method supported
+
+        - Industry best practice for OAuth2 implementations
+
+
+        **Implementation**: Use the authorization code flow with PKCE extension as defined in RFC 7636.
+
+        '
+      flows:
+        authorizationCode:
+          authorizationUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent
+          tokenUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token
+          scopes:
+            observations:read: Read observations
+            observations:create: Create observations
+            observations:update: Update observations
+            care_plans:read: Read care plans
+            care_plans:create: Create care plans
+            care_plans:update: Update care plans
+            patients:read: Read patient information
+            locations:read: Read location information
+            staff_members:read: Read staff member information
+            appointments:read: Read appointment information
+            companies:read: Read company information
+            document_uploads:read: Read document uploads
+            document_uploads:create: Create document uploads
+            disciplines:read: Read discipline information
+            treatments:read: Read treatment information
+            conversations:read: Read conversation information
+            conversations:write: Create and update conversations
+            messages:read: Read message information
+            messages:write: Create and update messages
+            partner_extensions:create: Create partner extensions
+            partner_extensions:delete: Delete partner extensions
+            extensions:install: Install extensions
+            extensions:uninstall: Uninstall extensions
+            webhooks:read: List webhook subscriptions
+            webhooks:create: Register a webhook subscription
+            webhooks:update: Update a webhook subscription
+            webhooks:delete: Deregister a webhook subscription
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

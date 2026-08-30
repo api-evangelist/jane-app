@@ -1,0 +1,448 @@
+openapi: 3.2.0
+info:
+  title: JDP Disciplines API
+  description: 'Open API specification for the JDP API
+
+
+    ## Rate Limits
+
+
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
+
+
+    Rate limit information is returned in response headers:
+
+    - `X-Throttle-Match`: Rate limit identifier
+
+    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
+
+
+    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
+
+
+    ### Affected Endpoints:
+
+    - `/api/2026-01-01/treatments`
+
+    - `/api/2026-01-01/appointments`
+
+    - `/api/2026-01-01/locations`
+
+    - `/api/2026-01-01/disciplines`
+
+    - `/api/2026-01-01/patients`
+
+    - `/api/2026-01-01/staff_members`
+
+    - `/api/2026-01-01/company`
+
+    - `/api/2026-01-01/medical-record/medications`'
+  version: '2026-01-01'
+servers:
+- url: https://jdpdocsdemo.jane.qa
+  description: Partner playground clinic
+security:
+- OAuth2: []
+tags:
+- name: Disciplines
+paths:
+  /api/2026-01-01/disciplines/{discipline_id}:
+    get:
+      operationId: getDiscipline
+      summary: Get a Discipline
+      description: Get a Discipline by its ID
+      tags:
+      - Disciplines
+      security:
+      - OAuth2:
+        - disciplines:read
+      parameters:
+      - name: discipline_id
+        in: path
+        required: true
+        description: The Id of the discipline
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: The discipline
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/discipline'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '404':
+          description: The discipline was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+  /api/2026-01-01/disciplines:
+    get:
+      operationId: listDisciplinesVersioned
+      summary: List Disciplines
+      description: 'List Disciplines.
+
+
+        Filtering:
+
+        Filter records by field values using the format: field[operator]=value
+
+
+        Available fields:
+
+        - `public_id`: string
+
+        - `created_at`: ISO 8601 datetime (e.g. 2025-01-01T12:00:00Z)
+
+        - `updated_at`: ISO 8601 datetime
+
+
+        Available operators:
+
+        - `eq`: Equals
+
+        - `gt`: Greater than
+
+        - `gte`: Greater than or equal
+
+        - `lt`: Less than
+
+        - `lte`: Less than or equal
+
+
+        Date-time filters (ex. `created_at`, `updated_at`) must:
+
+        - Use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date-time format
+
+        - Be **precise to the second** (e.g. `2025-01-01T12:00:00Z`)
+
+
+        Examples:
+
+        ```
+
+        /disciplines?public_id[eq]=abc123
+
+        /disciplines?created_at[gte]=2025-01-01T00:00:00Z&created_at[lt]=2025-01-02T00:00:00Z
+
+        ```
+
+        '
+      tags:
+      - Disciplines
+      security:
+      - OAuth2:
+        - disciplines:read
+      parameters:
+      - $ref: '#/components/parameters/page_cursor'
+      - $ref: '#/components/parameters/page_limit'
+      - name: sort
+        in: query
+        required: false
+        description: 'Comma-separated list of fields to sort by. Prefix a field with ''-'' for descending order.
+
+
+          Examples:
+
+          - `sort=name,-created_at` sorts by `name` ascending, then `created_at` descending.
+
+          - `sort=-updated_at` sorts by `updated_at` descending.
+
+
+          Available fields:
+
+          - `name`
+
+          - `created_at`
+
+          - `updated_at`
+
+          '
+        schema:
+          type: string
+      - name: public_id
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `public_id`. Example: `public_id[eq]=123`'
+        schema:
+          $ref: '#/components/schemas/StringFilterSchema'
+      - name: created_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `created_at` timestamp (ISO 8601). Example: `created_at[gte]=2025-01-01T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      - name: updated_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `updated_at` timestamp (ISO 8601). Example: `updated_at[lt]=2025-01-02T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      responses:
+        '200':
+          description: The disciplines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/disciplines_response'
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '401':
+          description: Unauthorized
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+components:
+  schemas:
+    DateTimeFilterSchema:
+      type: object
+      properties:
+        eq:
+          type: string
+          format: date-time
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
+        ne:
+          type: string
+          format: date-time
+          description: not equals
+        gt:
+          type: string
+          format: date-time
+          description: greater than
+        gte:
+          type: string
+          format: date-time
+          description: greater than or equal to
+        lt:
+          type: string
+          format: date-time
+          description: less than
+        lte:
+          type: string
+          format: date-time
+          description: less than or equal to
+    not_found_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: not_found_error_response.json
+      title: NotFoundError
+      type: object
+      properties: {}
+    bad_request_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: bad_request_error_response.json
+      title: BadRequest
+      type: object
+      properties: {}
+    StringFilterSchema:
+      type: object
+      properties:
+        eq:
+          type: string
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2 (maximum 100 values)'
+        ne:
+          type: string
+          description: not equals
+        co:
+          type: string
+          description: 'contains. Performs partial match (case-insensitive for string fields). Example: ?field[co]=search_term'
+        gt:
+          type: string
+          description: greater than
+        gte:
+          type: string
+          description: greater than or equal to
+        lt:
+          type: string
+          description: less than
+        lte:
+          type: string
+          description: less than or equal to
+        sw:
+          type: string
+          description: 'starts with. Performs case-insensitive partial match for words in a string that begin with search term. Example: ?field[sw]=search_term'
+    errors:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/errors.json
+      type: object
+      required:
+      - object
+      - message
+      title: Error
+      description: Error response generated when an operations fails
+      properties:
+        object:
+          type: string
+          description: The string `error`
+        code:
+          type: string
+          description: Indicates the granularity of the error
+        message:
+          type: string
+          description: Indicates what the error is about
+    discipline:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/discipline/schemas/discipline.json
+      title: Discipline
+      description: A discipline record.
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the discipline
+          type: string
+          format: uuid
+        name:
+          description: The name of the discipline
+          type: string
+        professional_title:
+          description: The professional title of the discipline
+          type: string
+        description:
+          description: The description of the discipline
+          type: string
+        bookable_online:
+          description: Whether the discipline is bookable online
+          type: boolean
+        normalized_type:
+          description: The normalized type of the discipline
+          type: string
+      required:
+      - id
+    disciplines_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/discipline/schemas/disciplines_response.json
+      title: DisciplinesResponse
+      description: Response to a request for multiple disciplines
+      type: object
+      properties:
+        items:
+          description: The list of disciplines. Empty if there are none.
+          type: array
+          items:
+            $ref: '#/components/schemas/discipline'
+        cursor:
+          description: The Base64 encoded cursor for the next page. null if this is the last page.
+          type:
+          - string
+          - 'null'
+          example: eyJwYWdlIjozLCJzaXplIjo1fQ==
+        limit:
+          description: The maximum number of items per page
+          type: integer
+        links:
+          description: Navigation links for pagination
+          type: object
+          properties:
+            after:
+              type:
+              - string
+              - 'null'
+              description: URL for the next page of results. null if this is the last page.
+              example: /api/2026-01-01/disciplines?page[cursor]=eyJwYWdlIjozLCJzaXplIjo1fQ==&page[limit]=5
+        hasNextPage:
+          description: Whether there is a next page of disciplines
+          type: boolean
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: 'OAuth2 authorization code flow with PKCE (Proof Key for Code Exchange) support.
+
+
+        **PKCE Flow Required**: All integrations must use PKCE flow for authentication.
+
+
+        **PKCE Benefits:**
+
+        - Enhanced security against authorization code interception attacks
+
+        - S256 code challenge method supported
+
+        - Industry best practice for OAuth2 implementations
+
+
+        **Implementation**: Use the authorization code flow with PKCE extension as defined in RFC 7636.
+
+        '
+      flows:
+        authorizationCode:
+          authorizationUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent
+          tokenUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token
+          scopes:
+            observations:read: Read observations
+            observations:create: Create observations
+            observations:update: Update observations
+            care_plans:read: Read care plans
+            care_plans:create: Create care plans
+            care_plans:update: Update care plans
+            patients:read: Read patient information
+            locations:read: Read location information
+            staff_members:read: Read staff member information
+            appointments:read: Read appointment information
+            companies:read: Read company information
+            document_uploads:read: Read document uploads
+            document_uploads:create: Create document uploads
+            disciplines:read: Read discipline information
+            treatments:read: Read treatment information
+            conversations:read: Read conversation information
+            conversations:write: Create and update conversations
+            messages:read: Read message information
+            messages:write: Create and update messages
+            partner_extensions:create: Create partner extensions
+            partner_extensions:delete: Delete partner extensions
+            extensions:install: Install extensions
+            extensions:uninstall: Uninstall extensions
+            webhooks:read: List webhook subscriptions
+            webhooks:create: Register a webhook subscription
+            webhooks:update: Update a webhook subscription
+            webhooks:delete: Deregister a webhook subscription
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

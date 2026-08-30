@@ -1,0 +1,491 @@
+openapi: 3.2.0
+info:
+  title: JDP Locations API
+  description: 'Open API specification for the JDP API
+
+
+    ## Rate Limits
+
+
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
+
+
+    Rate limit information is returned in response headers:
+
+    - `X-Throttle-Match`: Rate limit identifier
+
+    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
+
+
+    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
+
+
+    ### Affected Endpoints:
+
+    - `/api/2026-01-01/treatments`
+
+    - `/api/2026-01-01/appointments`
+
+    - `/api/2026-01-01/locations`
+
+    - `/api/2026-01-01/disciplines`
+
+    - `/api/2026-01-01/patients`
+
+    - `/api/2026-01-01/staff_members`
+
+    - `/api/2026-01-01/company`
+
+    - `/api/2026-01-01/medical-record/medications`'
+  version: '2026-01-01'
+servers:
+- url: https://jdpdocsdemo.jane.qa
+  description: Partner playground clinic
+security:
+- OAuth2: []
+tags:
+- name: Locations
+paths:
+  /api/2026-01-01/locations/{location_id}:
+    get:
+      operationId: getLocation
+      summary: Get a Location
+      description: Retrieve detailed location information using the unique identifier
+      tags:
+      - Locations
+      security:
+      - OAuth2:
+        - locations:read
+      parameters:
+      - name: location_id
+        in: path
+        required: true
+        description: The ID of the location
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: The location
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/location'
+        '400':
+          description: Bad Request - Invalid ID Format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '403':
+          description: Forbidden - Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: The location was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+  /api/2026-01-01/locations:
+    get:
+      operationId: getLocations
+      summary: Get a list of locations
+      description: 'Retrieve a paginated list of locations.
+
+
+        Filtering:
+
+        Filter records by field values using the format: field[operator]=value
+
+
+        Available fields:
+
+        - `public_id`: string
+
+        - `created_at`: ISO 8601 datetime (e.g. 2025-01-01T12:00:00Z)
+
+        - `updated_at`: ISO 8601 datetime
+
+
+        Available operators:
+
+        - `eq`: Equals
+
+        - `gt`: Greater than
+
+        - `gte`: Greater than or equal
+
+        - `lt`: Less than
+
+        - `lte`: Less than or equal
+
+
+        Date-time filters (ex. `created_at`, `updated_at`) must:
+
+        - Use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date-time format
+
+        - Be **precise to the second** (e.g. `2025-01-01T12:00:00Z`)
+
+
+        Examples:
+
+        ```
+
+        /locations?public_id[eq]=abc123
+
+        /locations?created_at[gte]=2025-01-01T00:00:00Z&created_at[lt]=2025-01-02T00:00:00Z
+
+        ```
+
+        '
+      tags:
+      - Locations
+      security:
+      - OAuth2:
+        - locations:read
+      parameters:
+      - $ref: '#/components/parameters/page_cursor'
+      - $ref: '#/components/parameters/page_limit'
+      - name: sort
+        in: query
+        required: false
+        description: 'Comma-separated list of fields to sort by. Prefix a field with ''-'' for descending order.
+
+
+          Examples:
+
+          - `sort=name,-created_at` sorts by `name` ascending, then `created_at` descending.
+
+          - `sort=-updated_at` sorts by `updated_at` descending.
+
+
+          Available fields:
+
+          - `name`
+
+          - `created_at`
+
+          - `updated_at`
+
+          '
+        schema:
+          type: string
+      - name: public_id
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `public_id`. Example: `public_id[eq]=123`'
+        schema:
+          $ref: '#/components/schemas/StringFilterSchema'
+      - name: created_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `created_at` timestamp (ISO 8601). Example: `created_at[gte]=2025-01-01T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      - name: updated_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `updated_at` timestamp (ISO 8601). Example: `updated_at[lt]=2025-01-02T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      responses:
+        '200':
+          description: A list of locations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/locations'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message explaining the issue
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '403':
+          description: Forbidden - Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+components:
+  schemas:
+    DateTimeFilterSchema:
+      type: object
+      properties:
+        eq:
+          type: string
+          format: date-time
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
+        ne:
+          type: string
+          format: date-time
+          description: not equals
+        gt:
+          type: string
+          format: date-time
+          description: greater than
+        gte:
+          type: string
+          format: date-time
+          description: greater than or equal to
+        lt:
+          type: string
+          format: date-time
+          description: less than
+        lte:
+          type: string
+          format: date-time
+          description: less than or equal to
+    location:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/location/schemas/location.json
+      title: Location
+      description: A location record.
+      type: object
+      properties:
+        id:
+          description: UUIDv7 identifier for the location
+          type: string
+          format: uuid
+        name:
+          description: Name of the location
+          type: string
+        street_address:
+          description: Street address of the location
+          type: string
+        street_address_2:
+          description: Additional street address information (suite, apt, unit, etc.)
+          type: string
+        city:
+          description: City where the location is situated
+          type: string
+        province:
+          description: Province/state where the location is situated
+          type: string
+        postal:
+          description: Postal/ZIP code
+          type: string
+        country:
+          description: Country code
+          type: string
+          pattern: ^[A-Z]{2}$
+        email:
+          description: Location's email address
+          type: string
+          format: email
+        phone:
+          description: Location's phone number
+          type: string
+        fax:
+          description: Location's fax number
+          type: string
+        hours:
+          description: Operating hours of the location
+          type: string
+        legal_name:
+          description: Legal name of the location
+          type: string
+        short_description:
+          description: Short description of the location
+          type: string
+        long_description:
+          description: Long description of the location
+          type: string
+        online_bookable:
+          description: Whether the location is bookable online
+          type: boolean
+      required:
+      - id
+    StringFilterSchema:
+      type: object
+      properties:
+        eq:
+          type: string
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2 (maximum 100 values)'
+        ne:
+          type: string
+          description: not equals
+        co:
+          type: string
+          description: 'contains. Performs partial match (case-insensitive for string fields). Example: ?field[co]=search_term'
+        gt:
+          type: string
+          description: greater than
+        gte:
+          type: string
+          description: greater than or equal to
+        lt:
+          type: string
+          description: less than
+        lte:
+          type: string
+          description: less than or equal to
+        sw:
+          type: string
+          description: 'starts with. Performs case-insensitive partial match for words in a string that begin with search term. Example: ?field[sw]=search_term'
+    errors:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/errors.json
+      type: object
+      required:
+      - object
+      - message
+      title: Error
+      description: Error response generated when an operations fails
+      properties:
+        object:
+          type: string
+          description: The string `error`
+        code:
+          type: string
+          description: Indicates the granularity of the error
+        message:
+          type: string
+          description: Indicates what the error is about
+    locations:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/location/schemas/locations.json
+      title: Locations
+      description: A list of locations.
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/location'
+        cursor:
+          description: The Base64 encoded cursor for the next page. null if this is the last page.
+          type:
+          - string
+          - 'null'
+          example: eyJwYWdlIjozLCJzaXplIjo1fQ==
+        limit:
+          type: integer
+        links:
+          type: object
+          properties:
+            after:
+              type:
+              - string
+              - 'null'
+              description: URL for the next page of results. null if this is the last page.
+              example: /api/2026-01-01/locations?page[cursor]=eyJwYWdlIjozLCJzaXplIjo1fQ==&page[limit]=5
+        hasNextPage:
+          description: Whether there is a next page of locations
+          type: boolean
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: 'OAuth2 authorization code flow with PKCE (Proof Key for Code Exchange) support.
+
+
+        **PKCE Flow Required**: All integrations must use PKCE flow for authentication.
+
+
+        **PKCE Benefits:**
+
+        - Enhanced security against authorization code interception attacks
+
+        - S256 code challenge method supported
+
+        - Industry best practice for OAuth2 implementations
+
+
+        **Implementation**: Use the authorization code flow with PKCE extension as defined in RFC 7636.
+
+        '
+      flows:
+        authorizationCode:
+          authorizationUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent
+          tokenUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token
+          scopes:
+            observations:read: Read observations
+            observations:create: Create observations
+            observations:update: Update observations
+            care_plans:read: Read care plans
+            care_plans:create: Create care plans
+            care_plans:update: Update care plans
+            patients:read: Read patient information
+            locations:read: Read location information
+            staff_members:read: Read staff member information
+            appointments:read: Read appointment information
+            companies:read: Read company information
+            document_uploads:read: Read document uploads
+            document_uploads:create: Create document uploads
+            disciplines:read: Read discipline information
+            treatments:read: Read treatment information
+            conversations:read: Read conversation information
+            conversations:write: Create and update conversations
+            messages:read: Read message information
+            messages:write: Create and update messages
+            partner_extensions:create: Create partner extensions
+            partner_extensions:delete: Delete partner extensions
+            extensions:install: Install extensions
+            extensions:uninstall: Uninstall extensions
+            webhooks:read: List webhook subscriptions
+            webhooks:create: Register a webhook subscription
+            webhooks:update: Update a webhook subscription
+            webhooks:delete: Deregister a webhook subscription
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,303 @@
+openapi: 3.2.0
+info:
+  title: JDP Company API
+  description: 'Open API specification for the JDP API
+
+
+    ## Rate Limits
+
+
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
+
+
+    Rate limit information is returned in response headers:
+
+    - `X-Throttle-Match`: Rate limit identifier
+
+    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
+
+
+    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
+
+
+    ### Affected Endpoints:
+
+    - `/api/2026-01-01/treatments`
+
+    - `/api/2026-01-01/appointments`
+
+    - `/api/2026-01-01/locations`
+
+    - `/api/2026-01-01/disciplines`
+
+    - `/api/2026-01-01/patients`
+
+    - `/api/2026-01-01/staff_members`
+
+    - `/api/2026-01-01/company`
+
+    - `/api/2026-01-01/medical-record/medications`'
+  version: '2026-01-01'
+servers:
+- url: https://jdpdocsdemo.jane.qa
+  description: Partner playground clinic
+security:
+- OAuth2: []
+tags:
+- name: Company
+paths:
+  /api/2026-01-01/company:
+    get:
+      operationId: getCompany
+      summary: Get details about the company
+      description: Retrieve details about the company
+      tags:
+      - Company
+      security:
+      - OAuth2:
+        - companies:read
+      responses:
+        '200':
+          description: The company details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/company'
+        '400':
+          description: The request is invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invalid_request_error'
+        '401':
+          description: The request is not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorized_error'
+        '404':
+          description: The company was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error'
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+components:
+  schemas:
+    company:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/company/schemas/company.json
+      title: CompanyDetails
+      description: Company details.
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the company
+          type: string
+        name:
+          description: Company name
+          type: string
+        legal_name:
+          description: Company legal name
+          type: string
+        jane_url:
+          description: Jane URL
+          type: string
+        logo_url:
+          description: Company logo url
+          type: string
+        online_booking_enabled:
+          description: Online booking enabled
+          type: boolean
+        locale:
+          description: Locale. Ex. en, en-IN, fr-CA, etc.
+          type: string
+        email:
+          description: Email
+          type: string
+        phone_number:
+          description: Phone number
+          type: string
+        currency_format:
+          description: Currency format. Ex. en, en-IN, fr-CA, etc.
+          type: string
+        time_zone:
+          description: Time zone. Ex. America/Vancouver
+          type: string
+        theme_primary_color:
+          description: 'Hexadecimal theme primary color. Ex. #00c1ca'
+          type: string
+        theme_secondary_color:
+          description: 'Hexadecimal theme secondary color. Ex. #00c1ca'
+          type: string
+        street_address:
+          description: Street address
+          type: string
+        street_address_2:
+          description: Street address 2
+          type: string
+        city:
+          description: City
+          type: string
+        province:
+          description: Province
+          type: string
+        postal:
+          description: Postal code
+          type: string
+        country:
+          description: Country
+          type: string
+        map_coordinates:
+          description: 'Map coordinates. Format: latitude,longitude'
+          type: string
+        patient_terminology:
+          description: The clinic's preferred terminology for referring to patients. Defaults to 'Patient'/'Patients' if not customized.
+          type: object
+          properties:
+            singular:
+              description: 'Singular form. Ex. Patient, Client, Customer. Default: Patient'
+              type: string
+            singular_lowercase:
+              description: 'Lowercase singular form. Ex. patient, client, customer. Default: patient'
+              type: string
+            plural:
+              description: 'Plural form. Ex. Patients, Clients, Customers. Default: Patients'
+              type: string
+            plural_lowercase:
+              description: 'Lowercase plural form. Ex. patients, clients, customers. Default: patients'
+              type: string
+    errors:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/errors.json
+      type: object
+      required:
+      - object
+      - message
+      title: Error
+      description: Error response generated when an operations fails
+      properties:
+        object:
+          type: string
+          description: The string `error`
+        code:
+          type: string
+          description: Indicates the granularity of the error
+        message:
+          type: string
+          description: Indicates what the error is about
+    not_found_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/not_found_error.json
+      type: object
+      required:
+      - error
+      title: NotFoundError
+      description: Error response when the requested resource is not found.
+      properties:
+        error:
+          type: string
+          description: Error message.
+    unauthorized_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/unauthorized_error.json
+      type: object
+      required:
+      - error
+      title: UnauthorizedError
+      description: Error response generated when the request is not authorized
+      properties:
+        error:
+          type: string
+          description: Error message.
+    invalid_request_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/invalid_request_error.json
+      type: object
+      required:
+      - error
+      - messages
+      title: InvalidRequestError
+      description: Error response when the request is invalid.
+      properties:
+        error:
+          type: string
+          description: Error message.
+        messages:
+          type: array
+          description: Array of error messages.
+          items:
+            type: string
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: 'OAuth2 authorization code flow with PKCE (Proof Key for Code Exchange) support.
+
+
+        **PKCE Flow Required**: All integrations must use PKCE flow for authentication.
+
+
+        **PKCE Benefits:**
+
+        - Enhanced security against authorization code interception attacks
+
+        - S256 code challenge method supported
+
+        - Industry best practice for OAuth2 implementations
+
+
+        **Implementation**: Use the authorization code flow with PKCE extension as defined in RFC 7636.
+
+        '
+      flows:
+        authorizationCode:
+          authorizationUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent
+          tokenUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token
+          scopes:
+            observations:read: Read observations
+            observations:create: Create observations
+            observations:update: Update observations
+            care_plans:read: Read care plans
+            care_plans:create: Create care plans
+            care_plans:update: Update care plans
+            patients:read: Read patient information
+            locations:read: Read location information
+            staff_members:read: Read staff member information
+            appointments:read: Read appointment information
+            companies:read: Read company information
+            document_uploads:read: Read document uploads
+            document_uploads:create: Create document uploads
+            disciplines:read: Read discipline information
+            treatments:read: Read treatment information
+            conversations:read: Read conversation information
+            conversations:write: Create and update conversations
+            messages:read: Read message information
+            messages:write: Create and update messages
+            partner_extensions:create: Create partner extensions
+            partner_extensions:delete: Delete partner extensions
+            extensions:install: Install extensions
+            extensions:uninstall: Uninstall extensions
+            webhooks:read: List webhook subscriptions
+            webhooks:create: Register a webhook subscription
+            webhooks:update: Update a webhook subscription
+            webhooks:delete: Deregister a webhook subscription
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

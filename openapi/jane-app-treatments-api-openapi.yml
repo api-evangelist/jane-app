@@ -1,0 +1,508 @@
+openapi: 3.2.0
+info:
+  title: JDP Treatments API
+  description: 'Open API specification for the JDP API
+
+
+    ## Rate Limits
+
+
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
+
+
+    Rate limit information is returned in response headers:
+
+    - `X-Throttle-Match`: Rate limit identifier
+
+    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
+
+
+    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
+
+
+    ### Affected Endpoints:
+
+    - `/api/2026-01-01/treatments`
+
+    - `/api/2026-01-01/appointments`
+
+    - `/api/2026-01-01/locations`
+
+    - `/api/2026-01-01/disciplines`
+
+    - `/api/2026-01-01/patients`
+
+    - `/api/2026-01-01/staff_members`
+
+    - `/api/2026-01-01/company`
+
+    - `/api/2026-01-01/medical-record/medications`'
+  version: '2026-01-01'
+servers:
+- url: https://jdpdocsdemo.jane.qa
+  description: Partner playground clinic
+security:
+- OAuth2: []
+tags:
+- name: Treatments
+paths:
+  /api/2026-01-01/treatments/{id}:
+    get:
+      operationId: getTreatment
+      summary: Get a Treatment
+      description: Returns a treatment by its ID.
+      tags:
+      - Treatments
+      security:
+      - OAuth2:
+        - treatments:read
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: The ID of the treatment
+      responses:
+        '200':
+          description: Treatment retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/treatment'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '404':
+          description: Treatment not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+  /api/2026-01-01/treatments:
+    get:
+      operationId: listTreatmentsVersioned
+      summary: List Treatments
+      description: 'Returns a list of treatments with pagination support.
+
+
+        Filtering:
+
+        Filter records by field values using the format: field[operator]=value
+
+
+        Available fields:
+
+        - `public_id`: string
+
+        - `staff_member_ids`: UUID string — returns treatments owned by or offered by the staff member (via available treatments)
+
+        - `created_at`: ISO 8601 datetime (e.g. 2025-01-01T12:00:00Z)
+
+        - `updated_at`: ISO 8601 datetime
+
+
+        Available operators:
+
+        - `eq`: Equals
+
+        - `gt`: Greater than
+
+        - `gte`: Greater than or equal
+
+        - `lt`: Less than
+
+        - `lte`: Less than or equal
+
+
+        Operator restrictions:
+
+        - `public_id` and `staff_member_ids` only support `eq`
+
+        - `created_at` and `updated_at` support all operators above
+
+
+        Date-time filters (ex. `created_at`, `updated_at`) must:
+
+        - Use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date-time format
+
+        - Be **precise to the second** (e.g. `2025-01-01T12:00:00Z`)
+
+
+        Examples:
+
+        ```
+
+        /treatments?public_id[eq]=abc123
+
+        /treatments?created_at[gte]=2025-01-01T00:00:00Z&created_at[lt]=2025-01-02T00:00:00Z
+
+        ```
+
+        '
+      tags:
+      - Treatments
+      security:
+      - OAuth2:
+        - treatments:read
+      parameters:
+      - $ref: '#/components/parameters/page_cursor'
+      - $ref: '#/components/parameters/page_limit'
+      - name: sort
+        in: query
+        required: false
+        description: 'Comma-separated list of fields to sort by. Prefix a field with ''-'' for descending order.
+
+
+          Examples:
+
+          - `sort=name,-created_at` sorts by `name` ascending, then `created_at` descending.
+
+          - `sort=-updated_at` sorts by `updated_at` descending.
+
+
+          Available fields:
+
+          - `name`
+
+          - `price`
+
+          - `created_at`
+
+          - `updated_at`
+
+          '
+        schema:
+          type: string
+      - name: public_id
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `public_id`. Only supports `eq`. Example: `public_id[eq]=123`'
+        schema:
+          $ref: '#/components/schemas/IdFilterSchema'
+      - name: staff_member_ids
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by staff member ID. Only supports `eq`. Returns treatments owned by or offered by the staff member. Example: `staff_member_ids[eq]=019d8e34-8307-7b0e-b6c2-5d03ca0bfb37`'
+        schema:
+          $ref: '#/components/schemas/IdFilterSchema'
+      - name: created_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `created_at` timestamp (ISO 8601). Example: `created_at[gte]=2025-01-01T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      - name: updated_at
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Filter by `updated_at` timestamp (ISO 8601). Example: `updated_at[lt]=2025-01-02T00:00:00Z`'
+        schema:
+          $ref: '#/components/schemas/DateTimeFilterSchema'
+      responses:
+        '200':
+          description: Treatments retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/treatments_response'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '401':
+          description: Unauthorized
+        '429':
+          description: Rate limit exceeded - 100 requests per minute per endpoint per clinic
+          headers:
+            X-Throttle-Match:
+              description: Rate limit identifier
+              schema:
+                type: string
+              example: marketing_api/ip/clinic
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+              example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+components:
+  schemas:
+    IdFilterSchema:
+      type: object
+      properties:
+        eq:
+          type: string
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2 (maximum 100 values)'
+    DateTimeFilterSchema:
+      type: object
+      properties:
+        eq:
+          type: string
+          format: date-time
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
+        ne:
+          type: string
+          format: date-time
+          description: not equals
+        gt:
+          type: string
+          format: date-time
+          description: greater than
+        gte:
+          type: string
+          format: date-time
+          description: greater than or equal to
+        lt:
+          type: string
+          format: date-time
+          description: less than
+        lte:
+          type: string
+          format: date-time
+          description: less than or equal to
+    treatment:
+      $schema: http://json-schema.org/draft-07/schema#
+      $id: /domains/treatment/schemas/treatment.json
+      title: Treatment
+      description: A treatment offered by a clinic
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The unique identifier for the treatment
+        name:
+          type: string
+          description: The name of the treatment
+        description:
+          type:
+          - string
+          - 'null'
+          description: A description of the treatment
+        treatment_duration:
+          type: integer
+          description: The duration of the treatment in seconds
+        scheduled_duration:
+          type: integer
+          description: The scheduled duration of the treatment in seconds, may include buffer time
+        price:
+          type: number
+          format: float
+          description: The price of the treatment
+        display_price:
+          type: boolean
+          description: Whether the price is displayed to customers
+        capacity:
+          type: integer
+          description: The maximum number of patients that can be booked for this treatment
+        booking_type:
+          type: string
+          enum:
+          - one_on_one_booking
+          - class_booking
+          - group_booking
+          description: The type of booking
+        booking_info:
+          type:
+          - string
+          - 'null'
+          description: Additional information about booking this treatment
+        discipline_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: The public ID of the discipline associated with this treatment
+        online_only:
+          type: boolean
+          description: Whether this treatment is offered online only
+        book_online:
+          type: boolean
+          description: Whether this treatment can be booked online
+        display_treatment_duration:
+          type: boolean
+          description: Whether the treatment duration is displayed to customers
+        price_includes_tax:
+          type: boolean
+          description: Whether the price includes tax
+    errors:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/errors.json
+      type: object
+      required:
+      - object
+      - message
+      title: Error
+      description: Error response generated when an operations fails
+      properties:
+        object:
+          type: string
+          description: The string `error`
+        code:
+          type: string
+          description: Indicates the granularity of the error
+        message:
+          type: string
+          description: Indicates what the error is about
+    treatments_response:
+      $schema: http://json-schema.org/draft-07/schema#
+      $id: /domains/treatment/schemas/treatments_response.json
+      title: TreatmentsResponse
+      description: Response for a list of treatments
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/treatment'
+          description: List of treatments
+        cursor:
+          description: The Base64 encoded cursor for the next page. null if this is the last page.
+          type:
+          - string
+          - 'null'
+          example: eyJwYWdlIjozLCJzaXplIjo1fQ==
+        limit:
+          type: integer
+          description: Number of items per page
+        links:
+          type: object
+          properties:
+            after:
+              type:
+              - string
+              - 'null'
+              description: URL for the next page of results. null if this is the last page.
+              example: /api/2026-01-01/treatments?page[cursor]=eyJwYWdlIjozLCJzaXplIjo1fQ==&page[limit]=5
+          description: Links for pagination
+        hasNextPage:
+          description: Whether there is a next page of treatments
+          type: boolean
+    errors_message_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/errors_message_response.json
+      type: object
+      required:
+      - errors
+      title: ErrorMessages
+      description: API Standard - Error response generated when an operations fails
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            required:
+            - message
+            properties:
+              id:
+                type: string
+                description: Optional error identifier for specific handling (e.g., PATIENT_CONVERSATION_EXISTS)
+              path:
+                type: string
+                format: json-pointer
+                description: JSON Pointer to the location of the error, per RFC 6901 (e.g., /data/attributes/name)
+              message:
+                type: string
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: 'OAuth2 authorization code flow with PKCE (Proof Key for Code Exchange) support.
+
+
+        **PKCE Flow Required**: All integrations must use PKCE flow for authentication.
+
+
+        **PKCE Benefits:**
+
+        - Enhanced security against authorization code interception attacks
+
+        - S256 code challenge method supported
+
+        - Industry best practice for OAuth2 implementations
+
+
+        **Implementation**: Use the authorization code flow with PKCE extension as defined in RFC 7636.
+
+        '
+      flows:
+        authorizationCode:
+          authorizationUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent
+          tokenUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token
+          scopes:
+            observations:read: Read observations
+            observations:create: Create observations
+            observations:update: Update observations
+            care_plans:read: Read care plans
+            care_plans:create: Create care plans
+            care_plans:update: Update care plans
+            patients:read: Read patient information
+            locations:read: Read location information
+            staff_members:read: Read staff member information
+            appointments:read: Read appointment information
+            companies:read: Read company information
+            document_uploads:read: Read document uploads
+            document_uploads:create: Create document uploads
+            disciplines:read: Read discipline information
+            treatments:read: Read treatment information
+            conversations:read: Read conversation information
+            conversations:write: Create and update conversations
+            messages:read: Read message information
+            messages:write: Create and update messages
+            partner_extensions:create: Create partner extensions
+            partner_extensions:delete: Delete partner extensions
+            extensions:install: Install extensions
+            extensions:uninstall: Uninstall extensions
+            webhooks:read: List webhook subscriptions
+            webhooks:create: Register a webhook subscription
+            webhooks:update: Update a webhook subscription
+            webhooks:delete: Deregister a webhook subscription
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

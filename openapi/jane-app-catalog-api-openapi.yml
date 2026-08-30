@@ -1,0 +1,342 @@
+openapi: 3.2.0
+info:
+  title: JDP Catalog API
+  description: 'Open API specification for the JDP API
+
+
+    ## Rate Limits
+
+
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
+
+
+    Rate limit information is returned in response headers:
+
+    - `X-Throttle-Match`: Rate limit identifier
+
+    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
+
+
+    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
+
+
+    ### Affected Endpoints:
+
+    - `/api/2026-01-01/treatments`
+
+    - `/api/2026-01-01/appointments`
+
+    - `/api/2026-01-01/locations`
+
+    - `/api/2026-01-01/disciplines`
+
+    - `/api/2026-01-01/patients`
+
+    - `/api/2026-01-01/staff_members`
+
+    - `/api/2026-01-01/company`
+
+    - `/api/2026-01-01/medical-record/medications`'
+  version: '2026-01-01'
+servers:
+- url: https://jdpdocsdemo.jane.qa
+  description: Partner playground clinic
+security:
+- OAuth2: []
+tags:
+- name: Catalog
+paths:
+  /api/2025-02-28-beta/catalog/extensions/{id}:
+    get:
+      operationId: getCatalogExtension
+      summary: Get Catalog Extension
+      description: Retrieves a specific extension from the catalog
+      tags:
+      - Catalog
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Extension ID
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Catalog extension details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/catalog_extension'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorized_error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbidden_error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error'
+  /api/2025-02-28-beta/catalog/extensions:
+    get:
+      operationId: getCatalogExtensions
+      summary: Get Catalog Extensions
+      description: Retrieves the catalog with all available approved extensions
+      tags:
+      - Catalog
+      responses:
+        '200':
+          description: List of catalog extensions with pagination metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/catalog_extensions_response'
+components:
+  schemas:
+    forbidden_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/forbidden_error.json
+      type: object
+      required:
+      - error
+      title: ForbiddenError
+      description: Error response generated when the request is forbidden
+      properties:
+        error:
+          type: string
+          description: Error message.
+    catalog_extension:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: catalog_extension.json
+      title: CatalogExtension
+      description: An approved extension available in the catalog
+      type: object
+      required:
+      - extension_id
+      - name
+      - version
+      - description
+      - developer_name
+      properties:
+        extension_id:
+          description: Unique identifier for the extension
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          description: Name of the extension
+          type: string
+        version:
+          description: Version of the extension
+          type: string
+        description:
+          description: Description of what the extension does
+          type: string
+        developer_name:
+          description: Name of the developer or organization
+          type: string
+        documentation_url:
+          description: URL to the extension's documentation
+          type: string
+          format: uri
+        homepage_url:
+          description: URL to the extension's homepage
+          type: string
+          format: uri
+        support_url:
+          description: URL for support related to this extension
+          type: string
+          format: uri
+        logo_urls:
+          description: URLs to logo images at different sizes
+          type: array
+          items:
+            type: string
+            format: uri
+        activation_url:
+          description: URL used to activate the extension
+          type: string
+          format: uri
+        signup_url:
+          description: URL for user signup through partner defined flow
+          type: string
+          format: uri
+        icon_url:
+          description: 'URL to the extension''s icon. Recommended: PNG format with transparent background, 128x128 pixels'
+          type: string
+          format: uri
+        scopes:
+          description: OAuth scopes required by the extension
+          type: array
+          items:
+            type: string
+        extension_points:
+          description: Extension points where this extension can be used
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum:
+                - clinical
+              category:
+                type: string
+                enum:
+                - labs
+                - gfe
+                - hep
+                - rpm
+                - supplements
+                - extensions
+              label:
+                type: string
+              url:
+                type: string
+                format: uri
+        created_at:
+          description: When the extension was added to the catalog
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          description: When the extension was last updated in the catalog
+          type: string
+          format: date-time
+          readOnly: true
+      additionalProperties: false
+    not_found_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/not_found_error.json
+      type: object
+      required:
+      - error
+      title: NotFoundError
+      description: Error response when the requested resource is not found.
+      properties:
+        error:
+          type: string
+          description: Error message.
+    catalog_extensions_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: catalog_extensions_response.json
+      title: CatalogExtensionsResponse
+      description: Response containing the catalog with all available approved extensions and pagination
+      type: object
+      required:
+      - items
+      properties:
+        items:
+          description: Catalog extensions
+          type: array
+          items:
+            $ref: '#/components/schemas/catalog_extension'
+        cursor:
+          description: Pagination cursor for the current page
+          type:
+          - string
+          - 'null'
+        limit:
+          description: Maximum number of items per page
+          type: integer
+          minimum: 1
+        links:
+          description: Pagination links
+          type: object
+          properties:
+            before:
+              description: Cursor for the previous page
+              type:
+              - string
+              - 'null'
+            after:
+              description: Cursor for the next page
+              type:
+              - string
+              - 'null'
+          required:
+          - before
+          - after
+        hasNextPage:
+          description: Whether there are more pages available
+          type: boolean
+    unauthorized_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/unauthorized_error.json
+      type: object
+      required:
+      - error
+      title: UnauthorizedError
+      description: Error response generated when the request is not authorized
+      properties:
+        error:
+          type: string
+          description: Error message.
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: 'OAuth2 authorization code flow with PKCE (Proof Key for Code Exchange) support.
+
+
+        **PKCE Flow Required**: All integrations must use PKCE flow for authentication.
+
+
+        **PKCE Benefits:**
+
+        - Enhanced security against authorization code interception attacks
+
+        - S256 code challenge method supported
+
+        - Industry best practice for OAuth2 implementations
+
+
+        **Implementation**: Use the authorization code flow with PKCE extension as defined in RFC 7636.
+
+        '
+      flows:
+        authorizationCode:
+          authorizationUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent
+          tokenUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token
+          scopes:
+            observations:read: Read observations
+            observations:create: Create observations
+            observations:update: Update observations
+            care_plans:read: Read care plans
+            care_plans:create: Create care plans
+            care_plans:update: Update care plans
+            patients:read: Read patient information
+            locations:read: Read location information
+            staff_members:read: Read staff member information
+            appointments:read: Read appointment information
+            companies:read: Read company information
+            document_uploads:read: Read document uploads
+            document_uploads:create: Create document uploads
+            disciplines:read: Read discipline information
+            treatments:read: Read treatment information
+            conversations:read: Read conversation information
+            conversations:write: Create and update conversations
+            messages:read: Read message information
+            messages:write: Create and update messages
+            partner_extensions:create: Create partner extensions
+            partner_extensions:delete: Delete partner extensions
+            extensions:install: Install extensions
+            extensions:uninstall: Uninstall extensions
+            webhooks:read: List webhook subscriptions
+            webhooks:create: Register a webhook subscription
+            webhooks:update: Update a webhook subscription
+            webhooks:delete: Deregister a webhook subscription
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

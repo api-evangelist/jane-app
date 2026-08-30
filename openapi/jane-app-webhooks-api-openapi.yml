@@ -1,0 +1,441 @@
+openapi: 3.2.0
+info:
+  title: JDP Webhooks API
+  description: 'Open API specification for the JDP API
+
+
+    ## Rate Limits
+
+
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
+
+
+    Rate limit information is returned in response headers:
+
+    - `X-Throttle-Match`: Rate limit identifier
+
+    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
+
+
+    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
+
+
+    ### Affected Endpoints:
+
+    - `/api/2026-01-01/treatments`
+
+    - `/api/2026-01-01/appointments`
+
+    - `/api/2026-01-01/locations`
+
+    - `/api/2026-01-01/disciplines`
+
+    - `/api/2026-01-01/patients`
+
+    - `/api/2026-01-01/staff_members`
+
+    - `/api/2026-01-01/company`
+
+    - `/api/2026-01-01/medical-record/medications`'
+  version: '2026-01-01'
+servers:
+- url: https://jdpdocsdemo.jane.qa
+  description: Partner playground clinic
+security:
+- OAuth2: []
+tags:
+- name: Webhooks
+paths:
+  /api/2026-01-01/webhooks/{webhook_id}:
+    delete:
+      operationId: deleteWebhook
+      summary: Deregister a webhook subscription
+      description: Permanently removes a webhook subscription. The partner will no longer receive events for this subscription.
+      security:
+      - OAuth2:
+        - webhooks:delete
+      tags:
+      - Webhooks
+      parameters:
+      - name: webhook_id
+        in: path
+        required: true
+        description: The ID of the webhook subscription
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '204':
+          description: The webhook subscription was deregistered
+        '401':
+          description: The request is not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '403':
+          description: The authenticated partner does not have permission to deregister this webhook subscription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '404':
+          description: The webhook subscription was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '422':
+          description: The webhook subscription could not be deregistered due to validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '503':
+          description: The service is temporarily unavailable
+    get:
+      operationId: getWebhook
+      summary: Retrieve a webhook subscription
+      description: Returns the details of a single webhook subscription by ID.
+      security:
+      - OAuth2:
+        - webhooks:read
+      tags:
+      - Webhooks
+      parameters:
+      - name: webhook_id
+        in: path
+        required: true
+        description: The ID of the webhook subscription
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: The webhook subscription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/webhook-subscription-response'
+        '401':
+          description: The request is not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '403':
+          description: The authenticated partner does not have permission to view this webhook subscription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '404':
+          description: The webhook subscription was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '503':
+          description: The service is temporarily unavailable
+  /api/2026-01-01/webhooks:
+    get:
+      operationId: getWebhooks
+      summary: List webhook subscriptions
+      description: Returns all webhook subscriptions registered by the authenticated partner for the current clinic.
+      security:
+      - OAuth2:
+        - webhooks:read
+      tags:
+      - Webhooks
+      responses:
+        '200':
+          description: A list of webhook subscriptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/webhook-subscription-response'
+        '401':
+          description: The request is not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '403':
+          description: The authenticated partner does not have permission to list webhook subscriptions for this clinic
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '503':
+          description: The service is temporarily unavailable
+    post:
+      operationId: postWebhooks
+      summary: Register a webhook subscription
+      description: Registers a new webhook subscription for the authenticated partner. The signing secret is returned only in this response and cannot be retrieved again — store it securely. The secret is used to verify that webhook payloads are sent by Jane.
+      security:
+      - OAuth2:
+        - webhooks:create
+      tags:
+      - Webhooks
+      requestBody:
+        description: The webhook subscription to register
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/webhook-subscription-create'
+      responses:
+        '201':
+          description: The webhook subscription was registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/webhook-subscription-create-response'
+        '400':
+          description: The request body is invalid or missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '401':
+          description: The request is not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '403':
+          description: The authenticated partner does not have permission to register webhook subscriptions for this clinic
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '409':
+          description: A subscription for this event topic already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - id
+                      - message
+                      - details
+                      properties:
+                        id:
+                          type: string
+                          example: DUPLICATE_RECORD
+                        message:
+                          type: string
+                        details:
+                          $ref: '#/components/schemas/webhook-subscription-response'
+        '422':
+          description: The webhook subscription could not be processed due to validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors_message_response'
+        '503':
+          description: The service is temporarily unavailable
+components:
+  schemas:
+    webhook-subscription-create-response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: webhook-subscription-create-response.json
+      title: Create Webhook Subscription Response
+      description: Returned on successful registration. The secret is only present here and cannot be retrieved again.
+      type: object
+      required:
+      - id
+      - event_topic
+      - target_url
+      - clinic_guid
+      - status
+      - updated_at
+      - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the webhook subscription
+        event_topic:
+          type: string
+          description: The event topic this subscription receives
+          enum:
+          - APPOINTMENT_BOOKED
+          - APPOINTMENT_CANCELLED
+          - APPOINTMENT_UNCANCELLED
+          - APPOINTMENT_RESCHEDULED
+        target_url:
+          type: string
+          description: The HTTPS URL that receives webhook event payloads
+        clinic_guid:
+          type: integer
+          description: The clinic identifier this subscription belongs to
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+          description: Whether the subscription is currently active
+        updated_at:
+          type: string
+          format: date-time
+          description: When the subscription was last updated
+        created_at:
+          type: string
+          format: date-time
+          description: When the subscription was created
+        secret:
+          type: string
+          description: HMAC signing secret for verifying webhook payload authenticity. Present only on initial registration.
+      additionalProperties: false
+    webhook-subscription-response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: webhook-subscription-response.json
+      title: Webhook Subscription
+      type: object
+      required:
+      - id
+      - event_topic
+      - target_url
+      - clinic_guid
+      - status
+      - updated_at
+      - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the webhook subscription
+        event_topic:
+          type: string
+          enum:
+          - APPOINTMENT_BOOKED
+          - APPOINTMENT_CANCELLED
+          - APPOINTMENT_UNCANCELLED
+          - APPOINTMENT_RESCHEDULED
+          description: The event topic this subscription receives
+        target_url:
+          type: string
+          description: The HTTPS URL that receives webhook event payloads
+        clinic_guid:
+          type: integer
+          description: The clinic identifier this subscription belongs to
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+          description: Whether the subscription is currently active
+        updated_at:
+          type: string
+          format: date-time
+          description: When the subscription was last updated
+        created_at:
+          type: string
+          format: date-time
+          description: When the subscription was created
+      additionalProperties: false
+    errors_message_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/errors_message_response.json
+      type: object
+      required:
+      - errors
+      title: ErrorMessages
+      description: API Standard - Error response generated when an operations fails
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            required:
+            - message
+            properties:
+              id:
+                type: string
+                description: Optional error identifier for specific handling (e.g., PATIENT_CONVERSATION_EXISTS)
+              path:
+                type: string
+                format: json-pointer
+                description: JSON Pointer to the location of the error, per RFC 6901 (e.g., /data/attributes/name)
+              message:
+                type: string
+    webhook-subscription-create:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: webhook-subscription-create.json
+      title: Create Webhook Subscription Request
+      type: object
+      required:
+      - event_topic
+      - target_url
+      properties:
+        event_topic:
+          type: string
+          description: The event topic to subscribe to
+        target_url:
+          type: string
+          description: The HTTPS URL that will receive webhook event payloads
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: 'OAuth2 authorization code flow with PKCE (Proof Key for Code Exchange) support.
+
+
+        **PKCE Flow Required**: All integrations must use PKCE flow for authentication.
+
+
+        **PKCE Benefits:**
+
+        - Enhanced security against authorization code interception attacks
+
+        - S256 code challenge method supported
+
+        - Industry best practice for OAuth2 implementations
+
+
+        **Implementation**: Use the authorization code flow with PKCE extension as defined in RFC 7636.
+
+        '
+      flows:
+        authorizationCode:
+          authorizationUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent
+          tokenUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token
+          scopes:
+            observations:read: Read observations
+            observations:create: Create observations
+            observations:update: Update observations
+            care_plans:read: Read care plans
+            care_plans:create: Create care plans
+            care_plans:update: Update care plans
+            patients:read: Read patient information
+            locations:read: Read location information
+            staff_members:read: Read staff member information
+            appointments:read: Read appointment information
+            companies:read: Read company information
+            document_uploads:read: Read document uploads
+            document_uploads:create: Create document uploads
+            disciplines:read: Read discipline information
+            treatments:read: Read treatment information
+            conversations:read: Read conversation information
+            conversations:write: Create and update conversations
+            messages:read: Read message information
+            messages:write: Create and update messages
+            partner_extensions:create: Create partner extensions
+            partner_extensions:delete: Delete partner extensions
+            extensions:install: Install extensions
+            extensions:uninstall: Uninstall extensions
+            webhooks:read: List webhook subscriptions
+            webhooks:create: Register a webhook subscription
+            webhooks:update: Update a webhook subscription
+            webhooks:delete: Deregister a webhook subscription
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

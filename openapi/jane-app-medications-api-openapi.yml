@@ -1,0 +1,779 @@
+openapi: 3.2.0
+info:
+  title: JDP Medications API
+  description: 'Open API specification for the JDP API
+
+
+    ## Rate Limits
+
+
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
+
+
+    Rate limit information is returned in response headers:
+
+    - `X-Throttle-Match`: Rate limit identifier
+
+    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
+
+
+    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
+
+
+    ### Affected Endpoints:
+
+    - `/api/2026-01-01/treatments`
+
+    - `/api/2026-01-01/appointments`
+
+    - `/api/2026-01-01/locations`
+
+    - `/api/2026-01-01/disciplines`
+
+    - `/api/2026-01-01/patients`
+
+    - `/api/2026-01-01/staff_members`
+
+    - `/api/2026-01-01/company`
+
+    - `/api/2026-01-01/medical-record/medications`'
+  version: '2026-01-01'
+servers:
+- url: https://jdpdocsdemo.jane.qa
+  description: Partner playground clinic
+security:
+- OAuth2: []
+tags:
+- name: Medications
+paths:
+  /api/2026-01-01/medical-record/medications:
+    post:
+      operationId: createMedication
+      summary: Create a medication
+      description: Create a new medication record for a patient
+      security:
+      - OAuth2:
+        - medications:create
+      tags:
+      - Medications
+      requestBody:
+        description: The medication to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/create_medication_request'
+      responses:
+        '201':
+          description: The medication was created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/medication'
+        '400':
+          description: The medication was not created - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient permissions
+        '404':
+          description: Patient not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+    get:
+      operationId: listMedications
+      summary: List medications
+      description: List medications for the current user's accessible patients
+      security:
+      - OAuth2:
+        - medications:read
+      tags:
+      - Medications
+      parameters:
+      - name: page[limit]
+        in: query
+        required: false
+        description: Maximum number of items to return (default 50)
+        schema:
+          type: integer
+          default: 50
+      - name: page[cursor]
+        in: query
+        required: false
+        description: Cursor for pagination
+        schema:
+          type: string
+      - name: sort
+        in: query
+        required: false
+        description: Sort field (default created_at)
+        schema:
+          type: string
+          default: created_at
+      responses:
+        '200':
+          description: List of medications
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/medications_response'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient permissions
+  /api/2026-01-01/medical-record/medications/{medication_id}:
+    get:
+      operationId: getMedication
+      summary: Get a medication
+      description: Get a medication by its ID
+      security:
+      - OAuth2:
+        - medications:read
+      tags:
+      - Medications
+      parameters:
+      - name: medication_id
+        in: path
+        required: true
+        description: The ID of the medication
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: The medication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/medication'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient permissions
+        '404':
+          description: The medication was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+    patch:
+      operationId: updateMedication
+      summary: Update a medication
+      description: Update a medication by its ID
+      security:
+      - OAuth2:
+        - medications:update
+      tags:
+      - Medications
+      parameters:
+      - name: medication_id
+        in: path
+        required: true
+        description: The ID of the medication
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        description: The medication fields to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/update_medication_request'
+      responses:
+        '200':
+          description: The medication was updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/medication'
+        '400':
+          description: The medication was not updated - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient permissions
+        '404':
+          description: The medication was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+        '422':
+          description: The medication validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+  /api/2026-01-01/medical-record/medications/{medication_id}/history:
+    get:
+      operationId: getMedicationHistory
+      summary: Get medication change history
+      description: 'Retrieves the complete change history for a medication, including:
+
+        - Who made each change
+
+        - What was modified
+
+        - When the change occurred
+
+        - Reason for the change (if provided)
+
+
+        Returns all history entries without pagination.
+
+        '
+      security:
+      - OAuth2:
+        - medications:read
+      tags:
+      - Medications
+      parameters:
+      - name: medication_id
+        in: path
+        required: true
+        description: The ID of the medication
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: The complete history of the medication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/medication_history_response'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient permissions
+        '404':
+          description: The medication was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+components:
+  schemas:
+    medication_code:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: medication_code.json
+      title: MedicationCode
+      type: object
+      required:
+      - text
+      properties:
+        coding:
+          type:
+          - array
+          - 'null'
+          items:
+            type: object
+            required:
+            - display
+            - code
+            - system
+            properties:
+              display:
+                type: string
+                description: Human-readable display name
+              code:
+                type: string
+                description: The medication code
+              system:
+                type: string
+                description: The coding system (e.g., 'http://snomed.info/sct')
+            additionalProperties: false
+          description: Array of coded values for the medication (optional — manually added meds won't have formal codes)
+        text:
+          type: string
+          description: Plain text representation of the medication name
+      additionalProperties: false
+    create_medication_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: create_medication_request.json
+      title: Create Medication Request
+      type: object
+      required:
+      - data
+      additionalProperties: true
+      properties:
+        data:
+          type: object
+          required:
+          - patient_id
+          - medication_code
+          - status
+          - source
+          allOf:
+          - $ref: '#/components/schemas/medication_editable_properties'
+          properties:
+            patient_id:
+              type: string
+              format: uuid
+              description: Reference to the patient
+            practitioner_id:
+              type: string
+              format: uuid
+              description: Reference to the practitioner
+          unevaluatedProperties: false
+    not_found_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: not_found_error_response.json
+      title: NotFoundError
+      type: object
+      properties: {}
+    bad_request_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: bad_request_error_response.json
+      title: BadRequest
+      type: object
+      properties: {}
+    medication_history_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: medication_history_response.json
+      title: Medication History Response
+      type: object
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          description: Array of history entries for the medication
+          items:
+            $ref: '#/components/schemas/medication_history_entry'
+      additionalProperties: false
+    medications_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: medications_response.json
+      title: MedicationsResponse
+      type: object
+      required:
+      - items
+      - pagination
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/medication'
+          description: Array of medication objects
+        pagination:
+          type: object
+          required:
+          - cursor
+          properties:
+            cursor:
+              type:
+              - string
+              - 'null'
+              description: Current cursor position
+            next_cursor:
+              type:
+              - string
+              - 'null'
+              description: Cursor for the next page
+            prev_cursor:
+              type:
+              - string
+              - 'null'
+              description: Cursor for the previous page
+            has_next_page:
+              type: boolean
+              description: Whether there are more items available
+          additionalProperties: false
+      additionalProperties: false
+    update_medication_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: update_medication_request.json
+      title: Update Medication Request
+      type: object
+      required:
+      - data
+      additionalProperties: true
+      properties:
+        data:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/medication_editable_properties'
+          unevaluatedProperties: false
+    medication_editable_properties:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: medication_editable_properties.json
+      title: Medication Editable Properties
+      description: Common editable properties for medication create and update operations
+      type: object
+      properties:
+        encounter_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: Reference to the encounter where medication was prescribed
+        medication_code:
+          $ref: '#/components/schemas/medication_code'
+        ingredients:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ingredient'
+          description: Array of ingredient objects (optional — not all medications have detailed ingredient info)
+        dose_form:
+          type:
+          - string
+          - 'null'
+          description: Pharmaceutical form (tablet, capsule, suspension, etc.)
+        route:
+          type:
+          - string
+          - 'null'
+          description: Route of administration (oral, IV, topical, etc.)
+        frequency:
+          type:
+          - string
+          - 'null'
+          description: Textual frequency (daily, bid, etc.)
+        quantity:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          description: Number of units (e.g., tablets, capsules) dispensed
+        period_start:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: When the medication course starts
+        period_end:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Planned end date (if any)
+        instructions:
+          type:
+          - string
+          - 'null'
+          description: Free-text administration instructions for the patient
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+          description: Lifecycle state of the medication
+        source:
+          type: string
+          enum:
+          - prescribed
+          - patient_reported
+          description: Origin of record – prescribed (from practitioner) or patient_reported (self-reported)
+        change_reason:
+          type:
+          - string
+          - 'null'
+          description: Selected reason for status change (e.g., adverse_reaction, completed, patient_request)
+        prescription_valid_until:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Expiry date after which repeats aren't valid
+        prescription_refills:
+          type:
+          - integer
+          - 'null'
+          minimum: 0
+          description: Allowed refill count
+        prescription_days_supply:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          description: Number of days that the dispensed medication is intended to last
+        prescription_reason:
+          type:
+          - string
+          - 'null'
+          description: Clinical indication or problem being treated
+    medication_history_entry:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: medication_history_entry.json
+      title: Medication History Entry
+      type: object
+      required:
+      - event
+      - occurred_at
+      - changes
+      properties:
+        event:
+          type: string
+          enum:
+          - create
+          - update
+          - destroy
+          description: The type of change that occurred
+        occurred_at:
+          type: string
+          format: date-time
+          description: When this change occurred (ISO 8601 format)
+        modified_by:
+          type:
+          - object
+          - 'null'
+          description: Information about the user who made this change
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: User's ID
+            name:
+              type: string
+              description: User's full name
+            email:
+              type: string
+              format: email
+              description: User's email address
+          required:
+          - id
+          - name
+          - email
+          additionalProperties: false
+        changes:
+          type: array
+          description: Array of field changes with before/after values
+          items:
+            type: object
+            properties:
+              attribute:
+                type: string
+                description: The field name that changed (e.g., 'instructions', 'status')
+              from:
+                description: The value before the change
+              to:
+                description: The value after the change
+            required:
+            - attribute
+            - from
+            - to
+            additionalProperties: false
+        reason:
+          type:
+          - string
+          - 'null'
+          description: Reason for the change (if provided, typically for status changes)
+      additionalProperties: false
+    ingredient:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: ingredient.json
+      title: Ingredient
+      type: object
+      properties:
+        name:
+          type:
+          - string
+          - 'null'
+          description: Name of the ingredient
+        strength:
+          type:
+          - string
+          - number
+          - 'null'
+          description: Strength or amount of the ingredient
+        strength_unit:
+          type:
+          - string
+          - 'null'
+          description: Unit of measurement for the strength (e.g., mg, mL, %)
+      additionalProperties: false
+    medication:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: medication.json
+      title: Medication
+      type: object
+      required:
+      - id
+      - patient_id
+      - practitioner_id
+      - medication_code
+      - status
+      - source
+      - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUIDv7 identifier for the medication
+        patient_id:
+          type: string
+          format: uuid
+          description: Reference to the patient
+        practitioner_id:
+          type: string
+          format: uuid
+          description: Reference to the practitioner
+        encounter_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: Reference to the encounter where medication was prescribed (optional)
+        medication_code:
+          $ref: '#/components/schemas/medication_code'
+        ingredients:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ingredient'
+          description: Array of ingredient objects (optional — not all medications have detailed ingredient info)
+        dose_form:
+          type:
+          - string
+          - 'null'
+          description: Pharmaceutical form (tablet, capsule, suspension, etc.) (optional)
+        route:
+          type:
+          - string
+          - 'null'
+          description: Route of administration (oral, IV, topical, etc.) (optional)
+        frequency:
+          type:
+          - string
+          - 'null'
+          description: Textual frequency (daily, bid, etc.) (optional)
+        quantity:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          description: Number of units (e.g., tablets, capsules) dispensed
+        period_start:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: When the medication course starts (optional)
+        period_end:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Planned end date (if any) (optional)
+        instructions:
+          type:
+          - string
+          - 'null'
+          description: Free-text administration instructions for the patient (optional)
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+          description: Lifecycle state of the medication
+        source:
+          type: string
+          enum:
+          - prescribed
+          - patient_reported
+          description: Origin of record – prescribed (from practitioner) or reported (self-reported)
+        change_reason:
+          type:
+          - string
+          - 'null'
+          description: Selected reason for status change (e.g., adverse_reaction, completed, patient_request)
+        prescription_valid_until:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Expiry date after which repeats aren't valid (optional)
+        prescription_refills:
+          type:
+          - integer
+          - 'null'
+          minimum: 0
+          description: Allowed refill count (optional)
+        prescription_days_supply:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          description: Number of days that the dispensed medication is intended to last (optional)
+        prescription_reason:
+          type:
+          - string
+          - 'null'
+          description: Clinical indication or problem being treated (optional)
+        created_at:
+          type: string
+          format: date-time
+          description: When the medication record was created
+      additionalProperties: false
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: 'OAuth2 authorization code flow with PKCE (Proof Key for Code Exchange) support.
+
+
+        **PKCE Flow Required**: All integrations must use PKCE flow for authentication.
+
+
+        **PKCE Benefits:**
+
+        - Enhanced security against authorization code interception attacks
+
+        - S256 code challenge method supported
+
+        - Industry best practice for OAuth2 implementations
+
+
+        **Implementation**: Use the authorization code flow with PKCE extension as defined in RFC 7636.
+
+        '
+      flows:
+        authorizationCode:
+          authorizationUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent
+          tokenUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token
+          scopes:
+            observations:read: Read observations
+            observations:create: Create observations
+            observations:update: Update observations
+            care_plans:read: Read care plans
+            care_plans:create: Create care plans
+            care_plans:update: Update care plans
+            patients:read: Read patient information
+            locations:read: Read location information
+            staff_members:read: Read staff member information
+            appointments:read: Read appointment information
+            companies:read: Read company information
+            document_uploads:read: Read document uploads
+            document_uploads:create: Create document uploads
+            disciplines:read: Read discipline information
+            treatments:read: Read treatment information
+            conversations:read: Read conversation information
+            conversations:write: Create and update conversations
+            messages:read: Read message information
+            messages:write: Create and update messages
+            partner_extensions:create: Create partner extensions
+            partner_extensions:delete: Delete partner extensions
+            extensions:install: Install extensions
+            extensions:uninstall: Uninstall extensions
+            webhooks:read: List webhook subscriptions
+            webhooks:create: Register a webhook subscription
+            webhooks:update: Update a webhook subscription
+            webhooks:delete: Deregister a webhook subscription
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

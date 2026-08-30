@@ -1,0 +1,626 @@
+openapi: 3.2.0
+info:
+  title: JDP Care Plans API
+  description: 'Open API specification for the JDP API
+
+
+    ## Rate Limits
+
+
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
+
+
+    Rate limit information is returned in response headers:
+
+    - `X-Throttle-Match`: Rate limit identifier
+
+    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
+
+
+    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
+
+
+    ### Affected Endpoints:
+
+    - `/api/2026-01-01/treatments`
+
+    - `/api/2026-01-01/appointments`
+
+    - `/api/2026-01-01/locations`
+
+    - `/api/2026-01-01/disciplines`
+
+    - `/api/2026-01-01/patients`
+
+    - `/api/2026-01-01/staff_members`
+
+    - `/api/2026-01-01/company`
+
+    - `/api/2026-01-01/medical-record/medications`'
+  version: '2026-01-01'
+servers:
+- url: https://jdpdocsdemo.jane.qa
+  description: Partner playground clinic
+security:
+- OAuth2: []
+tags:
+- name: CarePlans
+paths:
+  /api/2026-01-01/medical-record/care-plans:
+    post:
+      operationId: createCarePlan
+      summary: Create a care plan
+      description: Create a care plan
+      security:
+      - OAuth2:
+        - care_plans:create
+      tags:
+      - CarePlans
+      requestBody:
+        description: The care plan to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/create_care_plan_request'
+      responses:
+        '201':
+          description: The care plan was created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/care_plan'
+        '400':
+          description: The care plan was not created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+    get:
+      operationId: listCarePlans
+      summary: List care plans
+      description: List medical record care plans for the current user's accessible patients.
+      security:
+      - OAuth2:
+        - care_plans:read
+      tags:
+      - CarePlans
+      parameters:
+      - $ref: '#/components/parameters/page_limit'
+      - $ref: '#/components/parameters/page_cursor'
+      - name: sort
+        in: query
+        required: false
+        description: 'Comma-separated sort fields. Prefix with `-` for descending order (e.g. `-created_at`). Allowed: created_at, updated_at'
+        schema:
+          type: string
+          example: -created_at
+      - name: patient_id[eq]
+        in: query
+        required: false
+        description: Filter by patient public ID
+        schema:
+          type: string
+          format: uuid
+      - name: category[eq]
+        in: query
+        required: false
+        description: 'Filter by category. Allowed values: treatment_plan'
+        schema:
+          type: string
+          enum:
+          - treatment_plan
+      - name: encounter_id[eq]
+        in: query
+        required: false
+        description: Filter by encounter public ID
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: List of care plans
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/care_plans_response'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient permissions
+  /api/2026-01-01/medical-record/care-plans/{care_plan_id}/activities:
+    post:
+      operationId: createCarePlanActivity
+      summary: Create a care plan activity
+      description: Create a care plan activity
+      security:
+      - OAuth2:
+        - care_plans:create
+      parameters:
+      - name: care_plan_id
+        in: path
+        required: true
+        description: The ID of the care plan
+        schema:
+          type: string
+      tags:
+      - CarePlans
+      requestBody:
+        description: The care plan activity to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/create_care_plan_activity_request'
+      responses:
+        '201':
+          description: The care plan activity was created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/care_plan_activity'
+        '400':
+          description: The care plan activity was not created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+  /api/2026-01-01/medical-record/care-plans/{care_plan_id}:
+    get:
+      operationId: getCarePlan
+      summary: Get a care plan
+      description: Get a care plan by its ID
+      security:
+      - OAuth2:
+        - care_plans:read
+      tags:
+      - CarePlans
+      parameters:
+      - name: care_plan_id
+        in: path
+        required: true
+        description: The ID of the care plan
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The care plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/care_plan'
+        '404':
+          description: The care plan was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+    patch:
+      operationId: updateCarePlan
+      summary: Update a care plan
+      description: Update a care plan by its ID
+      security:
+      - OAuth2:
+        - care_plans:update
+      tags:
+      - CarePlans
+      parameters:
+      - name: care_plan_id
+        in: path
+        required: true
+        description: The ID of the care plan
+        schema:
+          type: string
+      requestBody:
+        description: The care plan to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/update_care_plan_request'
+      responses:
+        '200':
+          description: The care plan was updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/care_plan'
+        '400':
+          description: The care plan was not updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '404':
+          description: The care plan was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+        '422':
+          description: The care plan validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+  /api/2026-01-01/medical-record/care-plans/{care_plan_id}/activities/{care_plan_activity_id}:
+    get:
+      operationId: getCarePlanActivity
+      summary: Get a care plan activity
+      description: Get a care plan activity by its ID
+      security:
+      - OAuth2:
+        - care_plans:read
+      tags:
+      - CarePlans
+      parameters:
+      - name: care_plan_id
+        in: path
+        required: true
+        description: The ID of the care plan
+        schema:
+          type: string
+      - name: care_plan_activity_id
+        in: path
+        required: true
+        description: The ID of the care plan activity
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The care plan activity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/care_plan_activity'
+        '404':
+          description: The care plan activity was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+    patch:
+      operationId: updateCarePlanActivity
+      summary: Update a care plan activity
+      description: Update a care plan activity by its ID
+      security:
+      - OAuth2:
+        - care_plans:update
+      tags:
+      - CarePlans
+      parameters:
+      - name: care_plan_id
+        in: path
+        required: true
+        description: The ID of the care plan
+        schema:
+          type: string
+      - name: care_plan_activity_id
+        in: path
+        required: true
+        description: The ID of the care plan activity
+        schema:
+          type: string
+      requestBody:
+        description: The care plan activity to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/update_care_plan_activity_request'
+      responses:
+        '200':
+          description: The care plan activity was updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/care_plan_activity'
+        '400':
+          description: The care plan activity was not updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+        '404':
+          description: The care plan activity was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+        '422':
+          description: The care plan activity validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+components:
+  schemas:
+    care_plan_activity:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: care_plan_activity.json
+      title: CarePlanActivity
+      type: object
+      required:
+      - category
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUIDv7 identifier for the component
+        category:
+          type: string
+          enum:
+          - appointment
+          - exercise
+          - medication
+          - nutrition
+          description: The classification of the type of care plan activity
+        description:
+          type: string
+          description: The description of the care plan activity
+        progress:
+          type: string
+          description: The progress of the care plan activity
+        created_at:
+          type: string
+          format: date-time
+          description: When the care plan activity record was created
+        updated_at:
+          type: string
+          format: date-time
+          description: When the care plan activity record was updated
+      additionalProperties: false
+    update_care_plan_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: update_care_plan_request.json
+      title: Update Care Plan Request
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            encounter_id:
+              type: string
+              format: uuid
+            title:
+              type: string
+            description:
+              type: string
+            status:
+              type: string
+              enum:
+              - draft
+              - active
+              - on-hold
+              - revoked
+              - completed
+              - entered-in-error
+              - unknown
+            document_ids:
+              type: array
+              items:
+                type: string
+                format: uuid
+          additionalProperties: false
+    care_plans_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: care_plans_response.json
+      title: CarePlansResponse
+      type: object
+      required:
+      - items
+      - limit
+      - hasNextPage
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/care_plan'
+          description: Array of care plan objects
+        cursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor for fetching the next page of results
+        limit:
+          type: integer
+          description: Maximum number of items returned
+        links:
+          type: object
+          properties:
+            before:
+              type:
+              - string
+              - 'null'
+              description: URL for the previous page
+            after:
+              type:
+              - string
+              - 'null'
+              description: URL for the next page
+          additionalProperties: false
+        hasNextPage:
+          type: boolean
+          description: Whether there are more items available
+      additionalProperties: false
+    care_plan:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: care_plan.json
+      title: CarePlan
+      type: object
+      required:
+      - patient_id
+      - category
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUIDv7 identifier for the care plan
+        patient_id:
+          type: string
+          format: uuid
+          description: Reference to the patient
+        practitioner_id:
+          type: string
+          format: uuid
+          description: Reference to the practitioner who performed/recorded the observation
+        encounter_id:
+          type: string
+          format: uuid
+          description: Reference to the encounter where the care plan was made
+        category:
+          type: string
+          enum:
+          - treatment_plan
+          description: The classification of the type of care plan
+        title:
+          type: string
+          description: The title of the care plan
+        description:
+          type: string
+          description: The description of the care plan
+        status:
+          type: string
+          enum:
+          - draft
+          - active
+          - on-hold
+          - revoked
+          - completed
+          - entered-in-error
+          - unknown
+          description: The status of the care plan
+        created_at:
+          type: string
+          format: date-time
+          description: When the care plan record was created
+        updated_at:
+          type: string
+          format: date-time
+          description: When the care plan record was updated
+        activities:
+          type: array
+          items:
+            $ref: '#/components/schemas/care_plan_activity'
+          description: Array of care plan activities
+        document_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: Array of document upload IDs to attach to the care plan. All documents must exist and be verified.
+      additionalProperties: false
+    not_found_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: not_found_error_response.json
+      title: NotFoundError
+      type: object
+      properties: {}
+    bad_request_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: bad_request_error_response.json
+      title: BadRequest
+      type: object
+      properties: {}
+    create_care_plan_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: create_care_plan_request.json
+      title: Create Care Plan Request
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/care_plan'
+          description: The request data parameters
+    update_care_plan_activity_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: update_care_plan_activity_request.json
+      title: Update Care Plan Activity Request
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            category:
+              type: string
+              enum:
+              - appointment
+              - exercise
+              - medication
+              - nutrition
+            description:
+              type: string
+            progress:
+              type: string
+          additionalProperties: false
+    create_care_plan_activity_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: create_care_plan_activity_request.json
+      title: Create Care Plan Activity Request
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/care_plan_activity'
+          description: The request data parameters
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: 'OAuth2 authorization code flow with PKCE (Proof Key for Code Exchange) support.
+
+
+        **PKCE Flow Required**: All integrations must use PKCE flow for authentication.
+
+
+        **PKCE Benefits:**
+
+        - Enhanced security against authorization code interception attacks
+
+        - S256 code challenge method supported
+
+        - Industry best practice for OAuth2 implementations
+
+
+        **Implementation**: Use the authorization code flow with PKCE extension as defined in RFC 7636.
+
+        '
+      flows:
+        authorizationCode:
+          authorizationUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent
+          tokenUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token
+          scopes:
+            observations:read: Read observations
+            observations:create: Create observations
+            observations:update: Update observations
+            care_plans:read: Read care plans
+            care_plans:create: Create care plans
+            care_plans:update: Update care plans
+            patients:read: Read patient information
+            locations:read: Read location information
+            staff_members:read: Read staff member information
+            appointments:read: Read appointment information
+            companies:read: Read company information
+            document_uploads:read: Read document uploads
+            document_uploads:create: Create document uploads
+            disciplines:read: Read discipline information
+            treatments:read: Read treatment information
+            conversations:read: Read conversation information
+            conversations:write: Create and update conversations
+            messages:read: Read message information
+            messages:write: Create and update messages
+            partner_extensions:create: Create partner extensions
+            partner_extensions:delete: Delete partner extensions
+            extensions:install: Install extensions
+            extensions:uninstall: Uninstall extensions
+            webhooks:read: List webhook subscriptions
+            webhooks:create: Register a webhook subscription
+            webhooks:update: Update a webhook subscription
+            webhooks:delete: Deregister a webhook subscription
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,216 @@
+openapi: 3.2.0
+info:
+  title: JDP Document Uploads API
+  description: 'Open API specification for the JDP API
+
+
+    ## Rate Limits
+
+
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
+
+
+    Rate limit information is returned in response headers:
+
+    - `X-Throttle-Match`: Rate limit identifier
+
+    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
+
+
+    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
+
+
+    ### Affected Endpoints:
+
+    - `/api/2026-01-01/treatments`
+
+    - `/api/2026-01-01/appointments`
+
+    - `/api/2026-01-01/locations`
+
+    - `/api/2026-01-01/disciplines`
+
+    - `/api/2026-01-01/patients`
+
+    - `/api/2026-01-01/staff_members`
+
+    - `/api/2026-01-01/company`
+
+    - `/api/2026-01-01/medical-record/medications`'
+  version: '2026-01-01'
+servers:
+- url: https://jdpdocsdemo.jane.qa
+  description: Partner playground clinic
+security:
+- OAuth2: []
+tags:
+- name: DocumentUploads
+paths:
+  /api/2026-01-01/document-uploads/{document_id}:
+    get:
+      operationId: getDocumentUploads
+      summary: Get an uploaded document
+      description: Retrieve a document previously uploaded by the authenticated user. Only the user who originally uploaded the document can access it.
+      security:
+      - OAuth2:
+        - document_uploads:read
+      tags:
+      - DocumentUploads
+      parameters:
+      - name: document_id
+        in: path
+        required: true
+        description: The ID of the document
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/document_uploads_response'
+        '404':
+          description: The document was not found or does not belong to the authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not_found_error_response'
+  /api/2026-01-01/document-uploads:
+    post:
+      operationId: postDocumentUploads
+      summary: Upload a document
+      description: Upload a document file to receive a document ID that can be referenced in other API calls (e.g. attaching a document to a clinical record). The uploaded file is stored securely and a presigned URL is returned in the response for temporary access. Accepted file types are PDF, JPEG, and PNG. Maximum file size is 50 MB.
+      security:
+      - OAuth2:
+        - document_uploads:create
+      tags:
+      - DocumentUploads
+      requestBody:
+        description: The document to upload
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/document_uploads_request'
+            encoding:
+              file:
+                contentType: application/pdf, image/jpeg, image/png
+      responses:
+        '201':
+          description: The document was uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/document_uploads_response'
+        '400':
+          description: The document was not uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad_request_error_response'
+components:
+  schemas:
+    document_uploads_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: document_uploads_request.json
+      title: Document Uploads Request
+      type: object
+      required:
+      - file
+      properties:
+        file:
+          type: string
+          format: binary
+          description: 'The document file to upload. Accepted formats: PDF, JPEG, PNG. Maximum size: 50 MB.'
+    not_found_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: not_found_error_response.json
+      title: NotFoundError
+      type: object
+      properties: {}
+    bad_request_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: bad_request_error_response.json
+      title: BadRequest
+      type: object
+      properties: {}
+    document_uploads_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: document_uploads_response.json
+      title: Document Uploads Response
+      type: object
+      required:
+      - id
+      - file_path
+      - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identifier for the document uploaded.
+        file_path:
+          type: string
+          format: uri
+          description: Presigned URL providing temporary access to the uploaded document. This URL expires after 10 minutes. To retrieve a fresh URL, use the GET endpoint with the document ID.
+        created_at:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the document was uploaded.
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: 'OAuth2 authorization code flow with PKCE (Proof Key for Code Exchange) support.
+
+
+        **PKCE Flow Required**: All integrations must use PKCE flow for authentication.
+
+
+        **PKCE Benefits:**
+
+        - Enhanced security against authorization code interception attacks
+
+        - S256 code challenge method supported
+
+        - Industry best practice for OAuth2 implementations
+
+
+        **Implementation**: Use the authorization code flow with PKCE extension as defined in RFC 7636.
+
+        '
+      flows:
+        authorizationCode:
+          authorizationUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/auth?response_type=code&resource=https://jdpdocsdemo.jane.qa&prompt=consent
+          tokenUrl: https://login.id.janeapp.com/realms/jane_partner_sandbox/protocol/openid-connect/token
+          scopes:
+            observations:read: Read observations
+            observations:create: Create observations
+            observations:update: Update observations
+            care_plans:read: Read care plans
+            care_plans:create: Create care plans
+            care_plans:update: Update care plans
+            patients:read: Read patient information
+            locations:read: Read location information
+            staff_members:read: Read staff member information
+            appointments:read: Read appointment information
+            companies:read: Read company information
+            document_uploads:read: Read document uploads
+            document_uploads:create: Create document uploads
+            disciplines:read: Read discipline information
+            treatments:read: Read treatment information
+            conversations:read: Read conversation information
+            conversations:write: Create and update conversations
+            messages:read: Read message information
+            messages:write: Create and update messages
+            partner_extensions:create: Create partner extensions
+            partner_extensions:delete: Delete partner extensions
+            extensions:install: Install extensions
+            extensions:uninstall: Uninstall extensions
+            webhooks:read: List webhook subscriptions
+            webhooks:create: Register a webhook subscription
+            webhooks:update: Update a webhook subscription
+            webhooks:delete: Deregister a webhook subscription
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
