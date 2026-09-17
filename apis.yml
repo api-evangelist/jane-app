@@ -75,10 +75,10 @@ specificationVersion: '0.23'
 apis:
 - aid: jane-app:jane-patients-api
   name: Jane Patients API
-  description: Retrieve, list, and free-text search patient records for the practitioner's accessible
-    patients within a clinic. Free-text search is a POST-body endpoint so PII does not leak into query
-    strings. Part of the Jane Developer Platform REST API, authenticated with OAuth 2.0 (PKCE) and scoped
-    access.
+  description: >-
+    Retrieve, list, and free-text search patient records for the practitioner's accessible patients within
+    a clinic. Free-text search is a POST-body endpoint so PII does not leak into query strings. Part of
+    the Jane Developer Platform REST API, authenticated with OAuth 2.0 (PKCE) and scoped access.
   humanURL: https://developers.jane.app/reference
   tags:
   - Patients
@@ -92,8 +92,9 @@ apis:
     url: https://developers.jane.app/reference/searchpatients
 - aid: jane-app:jane-appointments-api
   name: Jane Appointments API
-  description: Retrieve and list one-on-one appointment bookings for a clinic, with filtering by patient,
-    staff member, location, treatment, and time window. Part of the Jane Developer Platform REST API.
+  description: >-
+    Retrieve and list one-on-one appointment bookings for a clinic, with filtering by patient, staff member,
+    location, treatment, and time window. Part of the Jane Developer Platform REST API.
   humanURL: https://developers.jane.app/reference
   tags:
   - Appointments
@@ -107,9 +108,10 @@ apis:
     url: https://developers.jane.app/reference/getanappointment
 - aid: jane-app:jane-scheduling-api
   name: Jane Practice and Scheduling API
-  description: Read clinic reference and scheduling data — locations, staff members, disciplines, treatments,
-    and company details — that underpin booking and practice configuration. Part of the Jane Developer
-    Platform REST API.
+  description: >-
+    Read clinic reference and scheduling data — locations, staff members, disciplines, treatments, and
+    company details — that underpin booking and practice configuration. Part of the Jane Developer Platform
+    REST API.
   humanURL: https://developers.jane.app/reference
   tags:
   - Scheduling
@@ -131,9 +133,10 @@ apis:
     url: https://developers.jane.app/reference/getcompany-1
 - aid: jane-app:jane-medical-records-api
   name: Jane Medical Records API
-  description: Create, read, update, and list clinical medical-record data for a patient — observations,
-    care plans and care plan activities, and medications (including full medication change history). Part
-    of the Jane Developer Platform REST API, gated by clinical scopes.
+  description: >-
+    Create, read, update, and list clinical medical-record data for a patient — observations, care plans
+    and care plan activities, and medications (including full medication change history). Part of the
+    Jane Developer Platform REST API, gated by clinical scopes.
   humanURL: https://developers.jane.app/reference
   tags:
   - Medical Records
@@ -152,9 +155,10 @@ apis:
     url: https://developers.jane.app/reference/getmedicationhistory
 - aid: jane-app:jane-documents-api
   name: Jane Documents API
-  description: Upload document files (PDF, JPEG, PNG up to 50 MB) to receive a document ID that can be
-    referenced in other API calls, and retrieve a previously uploaded document. Part of the Jane Developer
-    Platform REST API.
+  description: >-
+    Upload document files (PDF, JPEG, PNG up to 50 MB) to receive a document ID that can be referenced
+    in other API calls, and retrieve a previously uploaded document. Part of the Jane Developer Platform
+    REST API.
   humanURL: https://developers.jane.app/reference
   tags:
   - Documents
@@ -168,9 +172,10 @@ apis:
     url: https://developers.jane.app/reference/getdocumentuploads-1
 - aid: jane-app:jane-webhooks-api
   name: Jane Webhooks API
-  description: Register, list, retrieve, and deregister webhook subscriptions so partners receive signed
-    event notifications for a clinic. The signing secret is returned only once at registration. Part of
-    the Jane Developer Platform REST API.
+  description: >-
+    Register, list, retrieve, and deregister webhook subscriptions so partners receive signed event notifications
+    for a clinic. The signing secret is returned only once at registration. Part of the Jane Developer
+    Platform REST API.
   humanURL: https://developers.jane.app/reference
   tags:
   - Webhook
@@ -187,9 +192,10 @@ apis:
     url: https://developers.jane.app/reference/getwebhooks
 - aid: jane-app:jane-extensions-api
   name: Jane Extensions API
-  description: Create, read, update, delete, and list Jane Extensions, and browse the catalog of approved
-    extensions available to clinics. This is the management surface for the partner integrations built
-    on the Jane Developer Platform.
+  description: >-
+    Create, read, update, delete, and list Jane Extensions, and browse the catalog of approved extensions
+    available to clinics. This is the management surface for the partner integrations built on the Jane
+    Developer Platform.
   humanURL: https://developers.jane.app/reference
   tags:
   - Extensions
@@ -213,17 +219,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/jane-app-appointments-api-openapi.yml
-- aid: jane-app:jane-app-careplans-api
-  name: Jane Care Plans API
-  description: The CarePlans API from Jane — 4 operation(s) for careplans.
-  humanURL: https://developers.jane.app/reference
-  tags:
-  - Care Plans
-  tags_raw:
-  - CarePlans
-  properties:
-  - type: OpenAPI
-    url: openapi/jane-app-careplans-api-openapi.yml
 - aid: jane-app:jane-app-catalog-api
   name: Jane Catalog API
   description: The Catalog API from Jane — 2 operation(s) for catalog.
@@ -305,15 +300,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/jane-app-patients-api-openapi.yml
-- aid: jane-app:jane-app-staffmembers-api
-  name: Jane Staff Members API
-  description: The StaffMembers API from Jane — 2 operation(s) for staffmembers.
-  humanURL: https://developers.jane.app/reference
-  tags:
-  - StaffMembers
-  properties:
-  - type: OpenAPI
-    url: openapi/jane-app-staffmembers-api-openapi.yml
 - aid: jane-app:jane-app-treatments-api
   name: Jane Treatments API
   description: The Treatments API from Jane — 2 operation(s) for treatments.
@@ -334,6 +320,24 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/jane-app-webhooks-api-openapi.yml
+- aid: jane-app:jane-app-care-plans-api
+  name: Jane Care Plans API
+  description: The Care Plans API from Jane — 4 operation(s) for care plans.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - Care Plans
+  properties:
+  - type: OpenAPI
+    url: openapi/jane-app-care-plans-api-openapi.yml
+- aid: jane-app:jane-app-staff-members-api
+  name: Jane Staff Members API
+  description: The Staff Members API from Jane — 2 operation(s) for staff members.
+  humanURL: https://developers.jane.app/reference
+  tags:
+  - Staff Members
+  properties:
+  - type: OpenAPI
+    url: openapi/jane-app-staff-members-api-openapi.yml
 common:
 - type: CapabilityMap
   url: capabilities/jane-app-capability-edges.yml
