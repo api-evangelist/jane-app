@@ -115,6 +115,11 @@ apis:
   humanURL: https://developers.jane.app/reference
   tags:
   - Scheduling
+  - Location
+  - Staff
+  - Treatments
+  tags_raw:
+  - Scheduling
   - Locations
   - Staff
   - Treatments
@@ -269,6 +274,8 @@ apis:
   description: The Locations API from Jane — 2 operation(s) for locations.
   humanURL: https://developers.jane.app/reference
   tags:
+  - Location
+  tags_raw:
   - Locations
   properties:
   - type: OpenAPI
@@ -278,6 +285,8 @@ apis:
   description: The Medications API from Jane — 3 operation(s) for medications.
   humanURL: https://developers.jane.app/reference
   tags:
+  - Medication
+  tags_raw:
   - Medications
   properties:
   - type: OpenAPI
@@ -334,6 +343,8 @@ apis:
   description: The Staff Members API from Jane — 2 operation(s) for staff members.
   humanURL: https://developers.jane.app/reference
   tags:
+  - StaffMembers
+  tags_raw:
   - Staff Members
   properties:
   - type: OpenAPI
