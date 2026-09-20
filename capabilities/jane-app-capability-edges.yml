@@ -24,7 +24,8 @@ edges:
   reason: Appointment retrieval in a clinic practice management system maps to scheduling and appointment
     management under patient access. Read-only surface but unambiguous domain.
 - tag: CarePlans
-  spec_file: jane-app-careplans-api-openapi.yml
+  spec_file: jane-app-care-plans-api-openapi.yml
+  reanchored_from: jane-app-careplans-api-openapi.yml
   capability_id: BC-2820.20
   capability_id_l1: BC-2820
   capability_name: Case & Care Management
