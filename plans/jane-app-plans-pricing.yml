@@ -1,0 +1,70 @@
+# Pricing transcribed from the provider's own page — see provenance. Numbers are quoted, not derived.
+generated: '2026-09-20'
+method: searched
+source: https://jane.app/pricing
+sources:
+- https://jane.app/pricing
+provenance:
+  tool: planning/api-economics/harvest_pricing.py
+  run: 20260920T120546
+  grounding: every price_text was found verbatim in the fetched page text
+audience: business-product
+pricing_basis: tiered-subscription
+published: true
+note: 'Practice management SaaS pricing with tiers, per-practitioner licenses and add-ons. Also lists
+  payment processing rates: Credit Card Processing Online (2.85% + $0.25), In Person (2.6% + $0.10).'
+plan_count: 7
+currency: USD
+plans:
+- name: Balance
+  price_text: USD $54 / month
+  price: 54
+  currency: USD
+  period: month
+  unit: per account
+  included_quota: Single practitioner profile, Limited to 20 appointments / month
+- name: Practice
+  price_text: USD $79 / month
+  price: 79
+  currency: USD
+  period: month
+  unit: per account
+  included_quota: Includes 1 full-time practitioner; unlimited appointments and staff profiles
+  overage: additional per part-time / full-time practitioner fees
+- name: Thrive
+  price_text: USD $99 / month
+  price: 99
+  currency: USD
+  period: month
+  unit: per account
+  included_quota: Everything in Practice, includes 1 full-time practitioner
+  overage: additional per part-time / full-time practitioner fees
+- name: AI Scribe add-on
+  price_text: $15 /month per opted-in practitioner
+  price: 15
+  currency: USD
+  period: month
+  unit: per opted-in practitioner
+  included_quota: unlimited notes, or try it free with 5 notes
+- name: Group Telehealth add-on
+  price_text: $15 /month per opted-in practitioner
+  price: 15
+  currency: USD
+  period: month
+  unit: per opted-in practitioner
+  included_quota: up to 15 participants
+- name: Insurance Billing add-on
+  price_text: $20 / month +$5 / $2.50 per additional full / part-time practitioner
+  currency: USD
+  period: month
+  unit: per account
+  overage: +$5 / $2.50 per additional full / part-time practitioner
+- name: Jane Websites
+  price_text: $59 / month per clinic
+  price: 59
+  currency: USD
+  period: month
+  unit: per clinic
+rate_limit_statements:
+- Limited to 20 appointments / month
+- Limited to one practitioner license and 20 appointments per month.
