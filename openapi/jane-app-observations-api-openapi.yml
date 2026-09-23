@@ -7,36 +7,7 @@ info:
     ## Rate Limits
 
 
-    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
-
-
-    Rate limit information is returned in response headers:
-
-    - `X-Throttle-Match`: Rate limit identifier
-
-    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
-
-
-    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
-
-
-    ### Affected Endpoints:
-
-    - `/api/2026-01-01/treatments`
-
-    - `/api/2026-01-01/appointments`
-
-    - `/api/2026-01-01/locations`
-
-    - `/api/2026-01-01/disciplines`
-
-    - `/api/2026-01-01/patients`
-
-    - `/api/2026-01-01/staff_members`
-
-    - `/api/2026-01-01/company`
-
-    - `/api/2026-01-01/medical-record/medications`'
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.'
   version: '2026-01-01'
 servers:
 - url: https://jdpdocsdemo.jane.qa
@@ -50,7 +21,6 @@ paths:
     post:
       operationId: createObservation
       summary: Create an observation
-      description: Create an observation
       security:
       - OAuth2:
         - observations:create
@@ -216,6 +186,12 @@ paths:
                 $ref: '#/components/schemas/bad_request_error_response'
 components:
   schemas:
+    not_found_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: not_found_error_response.json
+      title: NotFoundError
+      type: object
+      properties: {}
     observations_response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: observations_response.json
@@ -257,53 +233,6 @@ components:
           type: boolean
           description: Whether there are more items available
       additionalProperties: false
-    create_observation_request:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: create_observation_request.json
-      title: Create Observation Request
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/observation'
-          description: The request data parameters
-    observation_value:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: observation_value.json
-      title: ObservationValue
-      type: object
-      required:
-      - code
-      - system
-      - value
-      - value_type
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: UUIDv7 identifier for the component
-        code:
-          type: string
-          description: The specific code for this component (e.g., LOINC or SNOMED CT code)
-        system:
-          type: string
-          description: The coding system used (e.g., 'http://loinc.org')
-        display:
-          type: string
-          description: Human-readable display name for the code
-        value:
-          type: string
-          description: The actual value of the component
-        value_type:
-          type: string
-          enum:
-          - string
-          - boolean
-          - numeric
-          description: The data type of the value
-        unit:
-          type: string
-          description: The unit for the value (if applicable)
-      additionalProperties: false
     update_observation_request:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: update_observation_request.json
@@ -331,6 +260,15 @@ components:
                 type: string
                 format: uuid
           additionalProperties: false
+    create_observation_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: create_observation_request.json
+      title: Create Observation Request
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/observation'
+          description: The request data parameters
     bad_request_error_response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: bad_request_error_response.json
@@ -396,12 +334,44 @@ components:
             format: uuid
           description: Array of document upload IDs to attach to the observation. All documents must exist and be verified.
       additionalProperties: false
-    not_found_error_response:
+    observation_value:
       $schema: https://json-schema.org/draft/2020-12/schema
-      $id: not_found_error_response.json
-      title: NotFoundError
+      $id: observation_value.json
+      title: ObservationValue
       type: object
-      properties: {}
+      required:
+      - code
+      - system
+      - value
+      - value_type
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUIDv7 identifier for the component
+        code:
+          type: string
+          description: The specific code for this component (e.g., LOINC or SNOMED CT code)
+        system:
+          type: string
+          description: The coding system used (e.g., 'http://loinc.org')
+        display:
+          type: string
+          description: Human-readable display name for the code
+        value:
+          type: string
+          description: The actual value of the component
+        value_type:
+          type: string
+          enum:
+          - string
+          - boolean
+          - numeric
+          description: The data type of the value
+        unit:
+          type: string
+          description: The unit for the value (if applicable)
+      additionalProperties: false
   securitySchemes:
     OAuth2:
       type: oauth2

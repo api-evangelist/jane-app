@@ -1,0 +1,52 @@
+{
+  "provider": "jane-app",
+  "sources": [
+    "_original/jane-app-jdp-openapi.yml"
+  ],
+  "outputs": [
+    "jane-app-appointments-api-openapi.yml",
+    "jane-app-careplans-api-openapi.yml",
+    "jane-app-catalog-api-openapi.yml",
+    "jane-app-company-api-openapi.yml",
+    "jane-app-disciplines-api-openapi.yml",
+    "jane-app-documentuploads-api-openapi.yml",
+    "jane-app-extensions-api-openapi.yml",
+    "jane-app-locations-api-openapi.yml",
+    "jane-app-medications-api-openapi.yml",
+    "jane-app-observations-api-openapi.yml",
+    "jane-app-patients-api-openapi.yml",
+    "jane-app-staffmembers-api-openapi.yml",
+    "jane-app-treatments-api-openapi.yml",
+    "jane-app-webhooks-api-openapi.yml"
+  ],
+  "archived": [
+    "deleted 2 superseded output(s) from the previous generation"
+  ],
+  "errors": [
+    "jane-app-jdp-openapi.yml: dangling $ref: #/components/parameters/page_cursor",
+    "jane-app-jdp-openapi.yml: dangling $ref: #/components/parameters/page_limit"
+  ],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "jane-app-jdp-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "superseded outputs removed: jane-app-care-plans-api-openapi.yml, jane-app-staff-members-api-openapi.yml",
+    "apis.yml register: written (+2 apis, 21 total)"
+  ],
+  "skipped": [
+    "jane-app-appointments-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "jane-app-care-plans-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "jane-app-catalog-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "jane-app-company-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "jane-app-disciplines-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "jane-app-documentuploads-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "jane-app-extensions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "jane-app-locations-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "jane-app-medications-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "jane-app-observations-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "jane-app-patients-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "jane-app-staff-members-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "jane-app-treatments-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "jane-app-webhooks-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

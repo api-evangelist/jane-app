@@ -7,36 +7,7 @@ info:
     ## Rate Limits
 
 
-    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
-
-
-    Rate limit information is returned in response headers:
-
-    - `X-Throttle-Match`: Rate limit identifier
-
-    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
-
-
-    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
-
-
-    ### Affected Endpoints:
-
-    - `/api/2026-01-01/treatments`
-
-    - `/api/2026-01-01/appointments`
-
-    - `/api/2026-01-01/locations`
-
-    - `/api/2026-01-01/disciplines`
-
-    - `/api/2026-01-01/patients`
-
-    - `/api/2026-01-01/staff_members`
-
-    - `/api/2026-01-01/company`
-
-    - `/api/2026-01-01/medical-record/medications`'
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.'
   version: '2026-01-01'
 servers:
 - url: https://jdpdocsdemo.jane.qa
@@ -111,6 +82,12 @@ paths:
                 $ref: '#/components/schemas/bad_request_error_response'
 components:
   schemas:
+    not_found_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: not_found_error_response.json
+      title: NotFoundError
+      type: object
+      properties: {}
     document_uploads_request:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: document_uploads_request.json
@@ -123,18 +100,6 @@ components:
           type: string
           format: binary
           description: 'The document file to upload. Accepted formats: PDF, JPEG, PNG. Maximum size: 50 MB.'
-    not_found_error_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: not_found_error_response.json
-      title: NotFoundError
-      type: object
-      properties: {}
-    bad_request_error_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: bad_request_error_response.json
-      title: BadRequest
-      type: object
-      properties: {}
     document_uploads_response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: document_uploads_response.json
@@ -157,6 +122,12 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the document was uploaded.
+    bad_request_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: bad_request_error_response.json
+      title: BadRequest
+      type: object
+      properties: {}
   securitySchemes:
     OAuth2:
       type: oauth2

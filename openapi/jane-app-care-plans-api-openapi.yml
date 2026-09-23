@@ -7,36 +7,7 @@ info:
     ## Rate Limits
 
 
-    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
-
-
-    Rate limit information is returned in response headers:
-
-    - `X-Throttle-Match`: Rate limit identifier
-
-    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
-
-
-    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
-
-
-    ### Affected Endpoints:
-
-    - `/api/2026-01-01/treatments`
-
-    - `/api/2026-01-01/appointments`
-
-    - `/api/2026-01-01/locations`
-
-    - `/api/2026-01-01/disciplines`
-
-    - `/api/2026-01-01/patients`
-
-    - `/api/2026-01-01/staff_members`
-
-    - `/api/2026-01-01/company`
-
-    - `/api/2026-01-01/medical-record/medications`'
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.'
   version: '2026-01-01'
 servers:
 - url: https://jdpdocsdemo.jane.qa
@@ -44,18 +15,17 @@ servers:
 security:
 - OAuth2: []
 tags:
-- name: CarePlans
+- name: Care Plans
 paths:
   /api/2026-01-01/medical-record/care-plans:
     post:
       operationId: createCarePlan
       summary: Create a care plan
-      description: Create a care plan
       security:
       - OAuth2:
         - care_plans:create
       tags:
-      - CarePlans
+      - Care Plans
       requestBody:
         description: The care plan to create
         required: true
@@ -84,7 +54,7 @@ paths:
       - OAuth2:
         - care_plans:read
       tags:
-      - CarePlans
+      - Care Plans
       parameters:
       - $ref: '#/components/parameters/page_limit'
       - $ref: '#/components/parameters/page_cursor'
@@ -138,7 +108,6 @@ paths:
     post:
       operationId: createCarePlanActivity
       summary: Create a care plan activity
-      description: Create a care plan activity
       security:
       - OAuth2:
         - care_plans:create
@@ -150,7 +119,7 @@ paths:
         schema:
           type: string
       tags:
-      - CarePlans
+      - Care Plans
       requestBody:
         description: The care plan activity to create
         required: true
@@ -180,7 +149,7 @@ paths:
       - OAuth2:
         - care_plans:read
       tags:
-      - CarePlans
+      - Care Plans
       parameters:
       - name: care_plan_id
         in: path
@@ -209,7 +178,7 @@ paths:
       - OAuth2:
         - care_plans:update
       tags:
-      - CarePlans
+      - Care Plans
       parameters:
       - name: care_plan_id
         in: path
@@ -258,7 +227,7 @@ paths:
       - OAuth2:
         - care_plans:read
       tags:
-      - CarePlans
+      - Care Plans
       parameters:
       - name: care_plan_id
         in: path
@@ -293,7 +262,7 @@ paths:
       - OAuth2:
         - care_plans:update
       tags:
-      - CarePlans
+      - Care Plans
       parameters:
       - name: care_plan_id
         in: path
@@ -341,73 +310,12 @@ paths:
                 $ref: '#/components/schemas/bad_request_error_response'
 components:
   schemas:
-    care_plan_activity:
+    not_found_error_response:
       $schema: https://json-schema.org/draft/2020-12/schema
-      $id: care_plan_activity.json
-      title: CarePlanActivity
+      $id: not_found_error_response.json
+      title: NotFoundError
       type: object
-      required:
-      - category
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: UUIDv7 identifier for the component
-        category:
-          type: string
-          enum:
-          - appointment
-          - exercise
-          - medication
-          - nutrition
-          description: The classification of the type of care plan activity
-        description:
-          type: string
-          description: The description of the care plan activity
-        progress:
-          type: string
-          description: The progress of the care plan activity
-        created_at:
-          type: string
-          format: date-time
-          description: When the care plan activity record was created
-        updated_at:
-          type: string
-          format: date-time
-          description: When the care plan activity record was updated
-      additionalProperties: false
-    update_care_plan_request:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: update_care_plan_request.json
-      title: Update Care Plan Request
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            encounter_id:
-              type: string
-              format: uuid
-            title:
-              type: string
-            description:
-              type: string
-            status:
-              type: string
-              enum:
-              - draft
-              - active
-              - on-hold
-              - revoked
-              - completed
-              - entered-in-error
-              - unknown
-            document_ids:
-              type: array
-              items:
-                type: string
-                format: uuid
-          additionalProperties: false
+      properties: {}
     care_plans_response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: care_plans_response.json
@@ -449,6 +357,24 @@ components:
           type: boolean
           description: Whether there are more items available
       additionalProperties: false
+    create_care_plan_activity_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: create_care_plan_activity_request.json
+      title: Create Care Plan Activity Request
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/care_plan_activity'
+          description: The request data parameters
+    create_care_plan_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: create_care_plan_request.json
+      title: Create Care Plan Request
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/care_plan'
+          description: The request data parameters
     care_plan:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: care_plan.json
@@ -516,27 +442,79 @@ components:
             format: uuid
           description: Array of document upload IDs to attach to the care plan. All documents must exist and be verified.
       additionalProperties: false
-    not_found_error_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: not_found_error_response.json
-      title: NotFoundError
-      type: object
-      properties: {}
     bad_request_error_response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: bad_request_error_response.json
       title: BadRequest
       type: object
       properties: {}
-    create_care_plan_request:
+    care_plan_activity:
       $schema: https://json-schema.org/draft/2020-12/schema
-      $id: create_care_plan_request.json
-      title: Create Care Plan Request
+      $id: care_plan_activity.json
+      title: CarePlanActivity
+      type: object
+      required:
+      - category
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUIDv7 identifier for the component
+        category:
+          type: string
+          enum:
+          - appointment
+          - exercise
+          - medication
+          - nutrition
+          description: The classification of the type of care plan activity
+        description:
+          type: string
+          description: The description of the care plan activity
+        progress:
+          type: string
+          description: The progress of the care plan activity
+        created_at:
+          type: string
+          format: date-time
+          description: When the care plan activity record was created
+        updated_at:
+          type: string
+          format: date-time
+          description: When the care plan activity record was updated
+      additionalProperties: false
+    update_care_plan_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: update_care_plan_request.json
+      title: Update Care Plan Request
       type: object
       properties:
         data:
-          $ref: '#/components/schemas/care_plan'
-          description: The request data parameters
+          type: object
+          properties:
+            encounter_id:
+              type: string
+              format: uuid
+            title:
+              type: string
+            description:
+              type: string
+            status:
+              type: string
+              enum:
+              - draft
+              - active
+              - on-hold
+              - revoked
+              - completed
+              - entered-in-error
+              - unknown
+            document_ids:
+              type: array
+              items:
+                type: string
+                format: uuid
+          additionalProperties: false
     update_care_plan_activity_request:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: update_care_plan_activity_request.json
@@ -558,15 +536,6 @@ components:
             progress:
               type: string
           additionalProperties: false
-    create_care_plan_activity_request:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: create_care_plan_activity_request.json
-      title: Create Care Plan Activity Request
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/care_plan_activity'
-          description: The request data parameters
   securitySchemes:
     OAuth2:
       type: oauth2

@@ -7,36 +7,7 @@ info:
     ## Rate Limits
 
 
-    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
-
-
-    Rate limit information is returned in response headers:
-
-    - `X-Throttle-Match`: Rate limit identifier
-
-    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
-
-
-    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
-
-
-    ### Affected Endpoints:
-
-    - `/api/2026-01-01/treatments`
-
-    - `/api/2026-01-01/appointments`
-
-    - `/api/2026-01-01/locations`
-
-    - `/api/2026-01-01/disciplines`
-
-    - `/api/2026-01-01/patients`
-
-    - `/api/2026-01-01/staff_members`
-
-    - `/api/2026-01-01/company`
-
-    - `/api/2026-01-01/medical-record/medications`'
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.'
   version: '2026-01-01'
 servers:
 - url: https://jdpdocsdemo.jane.qa
@@ -100,6 +71,30 @@ paths:
                 $ref: '#/components/schemas/errors'
 components:
   schemas:
+    unauthorized_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/unauthorized_error.json
+      type: object
+      required:
+      - error
+      title: UnauthorizedError
+      description: Error response generated when the request is not authorized
+      properties:
+        error:
+          type: string
+          description: Error message.
+    not_found_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/not_found_error.json
+      type: object
+      required:
+      - error
+      title: NotFoundError
+      description: Error response when the requested resource is not found.
+      properties:
+        error:
+          type: string
+          description: Error message.
     company:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /domains/company/schemas/company.json
@@ -183,6 +178,24 @@ components:
             plural_lowercase:
               description: 'Lowercase plural form. Ex. patients, clients, customers. Default: patients'
               type: string
+    invalid_request_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/invalid_request_error.json
+      type: object
+      required:
+      - error
+      - messages
+      title: InvalidRequestError
+      description: Error response when the request is invalid.
+      properties:
+        error:
+          type: string
+          description: Error message.
+        messages:
+          type: array
+          description: Array of error messages.
+          items:
+            type: string
     errors:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /components/responses/schemas/errors.json
@@ -202,48 +215,6 @@ components:
         message:
           type: string
           description: Indicates what the error is about
-    not_found_error:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/not_found_error.json
-      type: object
-      required:
-      - error
-      title: NotFoundError
-      description: Error response when the requested resource is not found.
-      properties:
-        error:
-          type: string
-          description: Error message.
-    unauthorized_error:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/unauthorized_error.json
-      type: object
-      required:
-      - error
-      title: UnauthorizedError
-      description: Error response generated when the request is not authorized
-      properties:
-        error:
-          type: string
-          description: Error message.
-    invalid_request_error:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/invalid_request_error.json
-      type: object
-      required:
-      - error
-      - messages
-      title: InvalidRequestError
-      description: Error response when the request is invalid.
-      properties:
-        error:
-          type: string
-          description: Error message.
-        messages:
-          type: array
-          description: Array of error messages.
-          items:
-            type: string
   securitySchemes:
     OAuth2:
       type: oauth2

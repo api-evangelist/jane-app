@@ -7,36 +7,7 @@ info:
     ## Rate Limits
 
 
-    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
-
-
-    Rate limit information is returned in response headers:
-
-    - `X-Throttle-Match`: Rate limit identifier
-
-    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
-
-
-    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
-
-
-    ### Affected Endpoints:
-
-    - `/api/2026-01-01/treatments`
-
-    - `/api/2026-01-01/appointments`
-
-    - `/api/2026-01-01/locations`
-
-    - `/api/2026-01-01/disciplines`
-
-    - `/api/2026-01-01/patients`
-
-    - `/api/2026-01-01/staff_members`
-
-    - `/api/2026-01-01/company`
-
-    - `/api/2026-01-01/medical-record/medications`'
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.'
   version: '2026-01-01'
 servers:
 - url: https://jdpdocsdemo.jane.qa
@@ -44,7 +15,7 @@ servers:
 security:
 - OAuth2: []
 tags:
-- name: StaffMembers
+- name: Staff Members
 paths:
   /api/2026-01-01/staff_members/{staff_member_id}:
     get:
@@ -52,7 +23,7 @@ paths:
       summary: Get a Staff Member
       description: Retrieve detailed staff member using their unique identifier
       tags:
-      - StaffMembers
+      - Staff Members
       security:
       - OAuth2:
         - staff_members:read
@@ -136,7 +107,7 @@ paths:
 
         Date-time filters (ex. `created_at`, `updated_at`) must:
 
-        - Use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date-time format
+        - Use ISO 8601 date-time format
 
         - Be **precise to the second** (e.g. `2025-01-01T12:00:00Z`)
 
@@ -149,11 +120,9 @@ paths:
 
         /staff_members?created_at[gte]=2025-01-01T00:00:00Z&created_at[lt]=2025-01-02T00:00:00Z
 
-        ```
-
-        '
+        ```'
       tags:
-      - StaffMembers
+      - Staff Members
       security:
       - OAuth2:
         - staff_members:read
@@ -240,6 +209,33 @@ paths:
                 $ref: '#/components/schemas/errors'
 components:
   schemas:
+    StringFilterSchema:
+      type: object
+      properties:
+        eq:
+          type: string
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2 (maximum 100 values)'
+        ne:
+          type: string
+          description: not equals
+        co:
+          type: string
+          description: 'contains. Performs partial match (case-insensitive for string fields). Example: ?field[co]=search_term'
+        gt:
+          type: string
+          description: greater than
+        gte:
+          type: string
+          description: greater than or equal to
+        lt:
+          type: string
+          description: less than
+        lte:
+          type: string
+          description: less than or equal to
+        sw:
+          type: string
+          description: 'starts with. Performs case-insensitive partial match for words in a string that begin with search term. Example: ?field[sw]=search_term'
     staff_members_response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /domains/staff_member/schemas/staff_members_response.json
@@ -274,6 +270,31 @@ components:
         hasNextPage:
           description: Whether there is a next page of staff members
           type: boolean
+    errors_message_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/errors_message_response.json
+      type: object
+      required:
+      - errors
+      title: ErrorMessages
+      description: API Standard - Error response generated when an operations fails
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            required:
+            - message
+            properties:
+              id:
+                type: string
+                description: Optional error identifier for specific handling (e.g., PATIENT_CONVERSATION_EXISTS)
+              path:
+                type: string
+                format: json-pointer
+                description: JSON Pointer to the location of the error, per RFC 6901 (e.g., /data/attributes/name)
+              message:
+                type: string
     DateTimeFilterSchema:
       type: object
       properties:
@@ -301,6 +322,25 @@ components:
           type: string
           format: date-time
           description: less than or equal to
+    errors:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/errors.json
+      type: object
+      required:
+      - object
+      - message
+      title: Error
+      description: Error response generated when an operations fails
+      properties:
+        object:
+          type: string
+          description: The string `error`
+        code:
+          type: string
+          description: Indicates the granularity of the error
+        message:
+          type: string
+          description: Indicates what the error is about
     staff_member-2:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /domains/staff/schemas/staff_member-2.json
@@ -348,77 +388,6 @@ components:
           type: string
       required:
       - id
-    StringFilterSchema:
-      type: object
-      properties:
-        eq:
-          type: string
-          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2 (maximum 100 values)'
-        ne:
-          type: string
-          description: not equals
-        co:
-          type: string
-          description: 'contains. Performs partial match (case-insensitive for string fields). Example: ?field[co]=search_term'
-        gt:
-          type: string
-          description: greater than
-        gte:
-          type: string
-          description: greater than or equal to
-        lt:
-          type: string
-          description: less than
-        lte:
-          type: string
-          description: less than or equal to
-        sw:
-          type: string
-          description: 'starts with. Performs case-insensitive partial match for words in a string that begin with search term. Example: ?field[sw]=search_term'
-    errors:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/errors.json
-      type: object
-      required:
-      - object
-      - message
-      title: Error
-      description: Error response generated when an operations fails
-      properties:
-        object:
-          type: string
-          description: The string `error`
-        code:
-          type: string
-          description: Indicates the granularity of the error
-        message:
-          type: string
-          description: Indicates what the error is about
-    errors_message_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/errors_message_response.json
-      type: object
-      required:
-      - errors
-      title: ErrorMessages
-      description: API Standard - Error response generated when an operations fails
-      properties:
-        errors:
-          type: array
-          items:
-            type: object
-            required:
-            - message
-            properties:
-              id:
-                type: string
-                description: Optional error identifier for specific handling (e.g., PATIENT_CONVERSATION_EXISTS)
-              path:
-                type: string
-                format: json-pointer
-                description: JSON Pointer to the location of the error, per RFC 6901 (e.g., /data/attributes/name)
-              message:
-                type: string
   securitySchemes:
     OAuth2:
       type: oauth2

@@ -7,36 +7,7 @@ info:
     ## Rate Limits
 
 
-    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
-
-
-    Rate limit information is returned in response headers:
-
-    - `X-Throttle-Match`: Rate limit identifier
-
-    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
-
-
-    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
-
-
-    ### Affected Endpoints:
-
-    - `/api/2026-01-01/treatments`
-
-    - `/api/2026-01-01/appointments`
-
-    - `/api/2026-01-01/locations`
-
-    - `/api/2026-01-01/disciplines`
-
-    - `/api/2026-01-01/patients`
-
-    - `/api/2026-01-01/staff_members`
-
-    - `/api/2026-01-01/company`
-
-    - `/api/2026-01-01/medical-record/medications`'
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.'
   version: '2026-01-01'
 servers:
 - url: https://jdpdocsdemo.jane.qa
@@ -104,6 +75,18 @@ paths:
                 $ref: '#/components/schemas/catalog_extensions_response'
 components:
   schemas:
+    unauthorized_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/unauthorized_error.json
+      type: object
+      required:
+      - error
+      title: UnauthorizedError
+      description: Error response generated when the request is not authorized
+      properties:
+        error:
+          type: string
+          description: Error message.
     forbidden_error:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /components/responses/schemas/forbidden_error.json
@@ -112,6 +95,18 @@ components:
       - error
       title: ForbiddenError
       description: Error response generated when the request is forbidden
+      properties:
+        error:
+          type: string
+          description: Error message.
+    not_found_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/not_found_error.json
+      type: object
+      required:
+      - error
+      title: NotFoundError
+      description: Error response when the requested resource is not found.
       properties:
         error:
           type: string
@@ -216,18 +211,6 @@ components:
           format: date-time
           readOnly: true
       additionalProperties: false
-    not_found_error:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/not_found_error.json
-      type: object
-      required:
-      - error
-      title: NotFoundError
-      description: Error response when the requested resource is not found.
-      properties:
-        error:
-          type: string
-          description: Error message.
     catalog_extensions_response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: catalog_extensions_response.json
@@ -271,18 +254,6 @@ components:
         hasNextPage:
           description: Whether there are more pages available
           type: boolean
-    unauthorized_error:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/unauthorized_error.json
-      type: object
-      required:
-      - error
-      title: UnauthorizedError
-      description: Error response generated when the request is not authorized
-      properties:
-        error:
-          type: string
-          description: Error message.
   securitySchemes:
     OAuth2:
       type: oauth2

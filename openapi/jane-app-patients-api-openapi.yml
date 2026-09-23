@@ -7,36 +7,7 @@ info:
     ## Rate Limits
 
 
-    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
-
-
-    Rate limit information is returned in response headers:
-
-    - `X-Throttle-Match`: Rate limit identifier
-
-    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
-
-
-    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
-
-
-    ### Affected Endpoints:
-
-    - `/api/2026-01-01/treatments`
-
-    - `/api/2026-01-01/appointments`
-
-    - `/api/2026-01-01/locations`
-
-    - `/api/2026-01-01/disciplines`
-
-    - `/api/2026-01-01/patients`
-
-    - `/api/2026-01-01/staff_members`
-
-    - `/api/2026-01-01/company`
-
-    - `/api/2026-01-01/medical-record/medications`'
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.'
   version: '2026-01-01'
 servers:
 - url: https://jdpdocsdemo.jane.qa
@@ -142,7 +113,7 @@ paths:
 
         Date-time filters (ex. `created_at`, `updated_at`) must:
 
-        - Use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date-time format
+        - Use ISO 8601 date-time format
 
         - Be **precise to the second** (e.g. `2025-01-01T12:00:00Z`)
 
@@ -158,9 +129,7 @@ paths:
 
         /patients?created_at[gte]=2025-01-01T00:00:00Z&created_at[lt]=2025-01-02T00:00:00Z
 
-        ```
-
-        '
+        ```'
       tags:
       - Patients
       security:
@@ -257,7 +226,54 @@ paths:
     post:
       operationId: searchPatients
       summary: Search patients by free text
-      description: "Free-text patient search across name, email, phone number, and patient number.\n\nThis is a POST-body endpoint specifically so PII (patient names, email, phone)\ndoes not leak into URL query strings, access logs, browser history, or referrer headers.\n\nScope is intentionally search-only: the body accepts `search`, `sort`, and `page`.\nStructured filters (`public_id`, `created_at`, `updated_at`) are not supported here —\nuse `GET /patients` for those. Combined search + structured filtering is a deliberate\nfollow-up if a consumer need materializes.\n\nFilter operators:\n- `search`: `co` (contains) only\n\nPagination: the response returns a `cursor` and `hasNextPage`. To fetch\nsubsequent pages, re-POST the same body with `page.cursor` set to the\nprevious response's `cursor`. The `links` object is omitted from this\nendpoint's response (GET-style pagination URLs would re-expose filter PII\nin query strings).\n\nExample body:\n```json\n{\n  \"search\": { \"co\": \"Jane Smith\" },\n  \"sort\": \"-created_at\",\n  \"page\": { \"limit\": 50 }\n}\n```\n"
+      description: 'Free-text patient search across name, email, phone number, and patient number.
+
+
+        This is a POST-body endpoint specifically so PII (patient names, email, phone)
+
+        does not leak into URL query strings, access logs, browser history, or referrer headers.
+
+
+        Scope is intentionally search-only: the body accepts `search`, `sort`, and `page`.
+
+        Structured filters (`public_id`, `created_at`, `updated_at`) are not supported here —
+
+        use `GET /patients` for those. Combined search + structured filtering is a deliberate
+
+        follow-up if a consumer need materializes.
+
+
+        Filter operators:
+
+        - `search`: `co` (contains) only
+
+
+        Pagination: the response returns a `cursor` and `hasNextPage`. To fetch
+
+        subsequent pages, re-POST the same body with `page.cursor` set to the
+
+        previous response''s `cursor`. The `links` object is omitted from this
+
+        endpoint''s response (GET-style pagination URLs would re-expose filter PII
+
+        in query strings).
+
+
+        Example body:
+
+        ```json
+
+        {
+
+        "search": { "co": "Jane Smith" },
+
+        "sort": "-created_at",
+
+        "page": { "limit": 50 }
+
+        }
+
+        ```'
       tags:
       - Patients
       security:
@@ -307,55 +323,6 @@ paths:
                 $ref: '#/components/schemas/errors'
 components:
   schemas:
-    patients_search_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /domains/patient/schemas/patients_search_response.json
-      title: PatientsSearchResponse
-      description: 'Paginated list of matching patients from POST /patients/search. Omits the `links` object that `GET /patients` returns: GET-style pagination URLs would re-serialize search terms into query strings and re-expose PII, which is the whole reason search moved to a POST body. Clients paginate by re-POSTing the same body with `page.cursor` set to the previous response''s `cursor`.'
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/patient-2'
-        cursor:
-          description: The Base64 encoded cursor for the next page. null if this is the last page.
-          type:
-          - string
-          - 'null'
-          example: eyJwYWdlIjozLCJzaXplIjo1fQ==
-        limit:
-          type: integer
-        hasNextPage:
-          description: Whether there is a next page of patients
-          type: boolean
-    DateTimeFilterSchema:
-      type: object
-      properties:
-        eq:
-          type: string
-          format: date-time
-          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
-        ne:
-          type: string
-          format: date-time
-          description: not equals
-        gt:
-          type: string
-          format: date-time
-          description: greater than
-        gte:
-          type: string
-          format: date-time
-          description: greater than or equal to
-        lt:
-          type: string
-          format: date-time
-          description: less than
-        lte:
-          type: string
-          format: date-time
-          description: less than or equal to
     patients_search_request:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /domains/patient/schemas/patients_search_request.json
@@ -447,37 +414,40 @@ components:
         sw:
           type: string
           description: 'starts with. Performs case-insensitive partial match for words in a string that begin with search term. Example: ?field[sw]=search_term'
-    errors:
+    unauthorized_error:
       $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/errors.json
-      type: object
-      required:
-      - object
-      - message
-      title: Error
-      description: Error response generated when an operations fails
-      properties:
-        object:
-          type: string
-          description: The string `error`
-        code:
-          type: string
-          description: Indicates the granularity of the error
-        message:
-          type: string
-          description: Indicates what the error is about
-    not_found_error:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/not_found_error.json
+      $id: /components/responses/schemas/unauthorized_error.json
       type: object
       required:
       - error
-      title: NotFoundError
-      description: Error response when the requested resource is not found.
+      title: UnauthorizedError
+      description: Error response generated when the request is not authorized
       properties:
         error:
           type: string
           description: Error message.
+    patients_search_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/patient/schemas/patients_search_response.json
+      title: PatientsSearchResponse
+      description: 'Paginated list of matching patients from POST /patients/search. Omits the `links` object that `GET /patients` returns: GET-style pagination URLs would re-serialize search terms into query strings and re-expose PII, which is the whole reason search moved to a POST body. Clients paginate by re-POSTing the same body with `page.cursor` set to the previous response''s `cursor`.'
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/patient-2'
+        cursor:
+          description: The Base64 encoded cursor for the next page. null if this is the last page.
+          type:
+          - string
+          - 'null'
+          example: eyJwYWdlIjozLCJzaXplIjo1fQ==
+        limit:
+          type: integer
+        hasNextPage:
+          description: Whether there is a next page of patients
+          type: boolean
     patient-2:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /domains/patient/schemas/patient-2.json
@@ -618,24 +588,70 @@ components:
           additionalProperties: false
       required:
       - id
+    not_found_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/not_found_error.json
+      type: object
+      required:
+      - error
+      title: NotFoundError
+      description: Error response when the requested resource is not found.
+      properties:
+        error:
+          type: string
+          description: Error message.
+    DateTimeFilterSchema:
+      type: object
+      properties:
+        eq:
+          type: string
+          format: date-time
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
+        ne:
+          type: string
+          format: date-time
+          description: not equals
+        gt:
+          type: string
+          format: date-time
+          description: greater than
+        gte:
+          type: string
+          format: date-time
+          description: greater than or equal to
+        lt:
+          type: string
+          format: date-time
+          description: less than
+        lte:
+          type: string
+          format: date-time
+          description: less than or equal to
+    errors:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/errors.json
+      type: object
+      required:
+      - object
+      - message
+      title: Error
+      description: Error response generated when an operations fails
+      properties:
+        object:
+          type: string
+          description: The string `error`
+        code:
+          type: string
+          description: Indicates the granularity of the error
+        message:
+          type: string
+          description: Indicates what the error is about
     error:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: error.json
       title: Error
       type: object
       properties: {}
-    unauthorized_error:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/unauthorized_error.json
-      type: object
-      required:
-      - error
-      title: UnauthorizedError
-      description: Error response generated when the request is not authorized
-      properties:
-        error:
-          type: string
-          description: Error message.
   securitySchemes:
     OAuth2:
       type: oauth2

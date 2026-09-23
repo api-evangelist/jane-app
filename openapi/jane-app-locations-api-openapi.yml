@@ -7,36 +7,7 @@ info:
     ## Rate Limits
 
 
-    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.
-
-
-    Rate limit information is returned in response headers:
-
-    - `X-Throttle-Match`: Rate limit identifier
-
-    - `Retry-After`: Number of seconds to wait before retrying (when rate limited)
-
-
-    When rate limits are exceeded, the API returns a 429 status code with a `Retry-After` header.
-
-
-    ### Affected Endpoints:
-
-    - `/api/2026-01-01/treatments`
-
-    - `/api/2026-01-01/appointments`
-
-    - `/api/2026-01-01/locations`
-
-    - `/api/2026-01-01/disciplines`
-
-    - `/api/2026-01-01/patients`
-
-    - `/api/2026-01-01/staff_members`
-
-    - `/api/2026-01-01/company`
-
-    - `/api/2026-01-01/medical-record/medications`'
+    All JDP API endpoints have a rate limit of **100 requests per minute** per endpoint per clinic.'
   version: '2026-01-01'
 servers:
 - url: https://jdpdocsdemo.jane.qa
@@ -148,7 +119,7 @@ paths:
 
         Date-time filters (ex. `created_at`, `updated_at`) must:
 
-        - Use [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date-time format
+        - Use ISO 8601 date-time format
 
         - Be **precise to the second** (e.g. `2025-01-01T12:00:00Z`)
 
@@ -161,9 +132,7 @@ paths:
 
         /locations?created_at[gte]=2025-01-01T00:00:00Z&created_at[lt]=2025-01-02T00:00:00Z
 
-        ```
-
-        '
+        ```'
       tags:
       - Locations
       security:
@@ -268,33 +237,33 @@ paths:
                 $ref: '#/components/schemas/errors'
 components:
   schemas:
-    DateTimeFilterSchema:
+    StringFilterSchema:
       type: object
       properties:
         eq:
           type: string
-          format: date-time
-          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2 (maximum 100 values)'
         ne:
           type: string
-          format: date-time
           description: not equals
+        co:
+          type: string
+          description: 'contains. Performs partial match (case-insensitive for string fields). Example: ?field[co]=search_term'
         gt:
           type: string
-          format: date-time
           description: greater than
         gte:
           type: string
-          format: date-time
           description: greater than or equal to
         lt:
           type: string
-          format: date-time
           description: less than
         lte:
           type: string
-          format: date-time
           description: less than or equal to
+        sw:
+          type: string
+          description: 'starts with. Performs case-insensitive partial match for words in a string that begin with search term. Example: ?field[sw]=search_term'
     location:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /domains/location/schemas/location.json
@@ -355,33 +324,33 @@ components:
           type: boolean
       required:
       - id
-    StringFilterSchema:
+    DateTimeFilterSchema:
       type: object
       properties:
         eq:
           type: string
-          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2 (maximum 100 values)'
+          format: date-time
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
         ne:
           type: string
+          format: date-time
           description: not equals
-        co:
-          type: string
-          description: 'contains. Performs partial match (case-insensitive for string fields). Example: ?field[co]=search_term'
         gt:
           type: string
+          format: date-time
           description: greater than
         gte:
           type: string
+          format: date-time
           description: greater than or equal to
         lt:
           type: string
+          format: date-time
           description: less than
         lte:
           type: string
+          format: date-time
           description: less than or equal to
-        sw:
-          type: string
-          description: 'starts with. Performs case-insensitive partial match for words in a string that begin with search term. Example: ?field[sw]=search_term'
     errors:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /components/responses/schemas/errors.json
