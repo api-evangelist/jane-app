@@ -211,6 +211,85 @@ paths:
                 $ref: '#/components/schemas/errors'
 components:
   schemas:
+    StringFilterSchema:
+      type: object
+      properties:
+        eq:
+          type: string
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2 (maximum 100 values)'
+        ne:
+          type: string
+          description: not equals
+        co:
+          type: string
+          description: 'contains. Performs partial match (case-insensitive for string fields). Example: ?field[co]=search_term'
+        gt:
+          type: string
+          description: greater than
+        gte:
+          type: string
+          description: greater than or equal to
+        lt:
+          type: string
+          description: less than
+        lte:
+          type: string
+          description: less than or equal to
+        sw:
+          type: string
+          description: 'starts with. Performs case-insensitive partial match for words in a string that begin with search term. Example: ?field[sw]=search_term'
+    errors:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/errors.json
+      type: object
+      required:
+      - object
+      - message
+      title: Error
+      description: Error response generated when an operations fails
+      properties:
+        object:
+          type: string
+          description: The string `error`
+        code:
+          type: string
+          description: Indicates the granularity of the error
+        message:
+          type: string
+          description: Indicates what the error is about
+    DateTimeFilterSchema:
+      type: object
+      properties:
+        eq:
+          type: string
+          format: date-time
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
+        ne:
+          type: string
+          format: date-time
+          description: not equals
+        gt:
+          type: string
+          format: date-time
+          description: greater than
+        gte:
+          type: string
+          format: date-time
+          description: greater than or equal to
+        lt:
+          type: string
+          format: date-time
+          description: less than
+        lte:
+          type: string
+          format: date-time
+          description: less than or equal to
+    bad_request_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: bad_request_error_response.json
+      title: BadRequest
+      type: object
+      properties: {}
     disciplines_response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /domains/discipline/schemas/disciplines_response.json
@@ -251,33 +330,6 @@ components:
       title: NotFoundError
       type: object
       properties: {}
-    StringFilterSchema:
-      type: object
-      properties:
-        eq:
-          type: string
-          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2 (maximum 100 values)'
-        ne:
-          type: string
-          description: not equals
-        co:
-          type: string
-          description: 'contains. Performs partial match (case-insensitive for string fields). Example: ?field[co]=search_term'
-        gt:
-          type: string
-          description: greater than
-        gte:
-          type: string
-          description: greater than or equal to
-        lt:
-          type: string
-          description: less than
-        lte:
-          type: string
-          description: less than or equal to
-        sw:
-          type: string
-          description: 'starts with. Performs case-insensitive partial match for words in a string that begin with search term. Example: ?field[sw]=search_term'
     discipline:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /domains/discipline/schemas/discipline.json
@@ -306,58 +358,6 @@ components:
           type: string
       required:
       - id
-    bad_request_error_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: bad_request_error_response.json
-      title: BadRequest
-      type: object
-      properties: {}
-    DateTimeFilterSchema:
-      type: object
-      properties:
-        eq:
-          type: string
-          format: date-time
-          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
-        ne:
-          type: string
-          format: date-time
-          description: not equals
-        gt:
-          type: string
-          format: date-time
-          description: greater than
-        gte:
-          type: string
-          format: date-time
-          description: greater than or equal to
-        lt:
-          type: string
-          format: date-time
-          description: less than
-        lte:
-          type: string
-          format: date-time
-          description: less than or equal to
-    errors:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/errors.json
-      type: object
-      required:
-      - object
-      - message
-      title: Error
-      description: Error response generated when an operations fails
-      properties:
-        object:
-          type: string
-          description: The string `error`
-        code:
-          type: string
-          description: Indicates the granularity of the error
-        message:
-          type: string
-          description: Indicates what the error is about
   securitySchemes:
     OAuth2:
       type: oauth2

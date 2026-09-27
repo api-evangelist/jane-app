@@ -215,6 +215,21 @@ paths:
           description: The service is temporarily unavailable
 components:
   schemas:
+    webhook-subscription-create:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: webhook-subscription-create.json
+      title: Create Webhook Subscription Request
+      type: object
+      required:
+      - event_topic
+      - target_url
+      properties:
+        event_topic:
+          type: string
+          description: The event topic to subscribe to
+        target_url:
+          type: string
+          description: The HTTPS URL that will receive webhook event payloads
     webhook-subscription-create-response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: webhook-subscription-create-response.json
@@ -338,21 +353,6 @@ components:
                 description: JSON Pointer to the location of the error, per RFC 6901 (e.g., /data/attributes/name)
               message:
                 type: string
-    webhook-subscription-create:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: webhook-subscription-create.json
-      title: Create Webhook Subscription Request
-      type: object
-      required:
-      - event_topic
-      - target_url
-      properties:
-        event_topic:
-          type: string
-          description: The event topic to subscribe to
-        target_url:
-          type: string
-          description: The HTTPS URL that will receive webhook event payloads
   securitySchemes:
     OAuth2:
       type: oauth2

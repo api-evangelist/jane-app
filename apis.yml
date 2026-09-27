@@ -343,8 +343,6 @@ apis:
   description: The Staff Members API from Jane — 2 operation(s) for staff members.
   humanURL: https://developers.jane.app/reference
   tags:
-  - StaffMembers
-  tags_raw:
   - Staff Members
   properties:
   - type: OpenAPI

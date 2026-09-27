@@ -236,19 +236,6 @@ paths:
                 $ref: '#/components/schemas/unprocessable_entity_error'
 components:
   schemas:
-    extension_delete_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: extension_delete_response.json
-      title: ExtensionDeleteResponse
-      description: Response for deleted extension
-      type: object
-      required:
-      - id
-      properties:
-        id:
-          description: ID of the deleted extension
-          type: string
-          format: uuid
     extension_request:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: extension_request.json
@@ -259,36 +246,6 @@ components:
         data:
           $ref: '#/components/schemas/extension'
           description: The extension to create or update
-    unauthorized_error:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/unauthorized_error.json
-      type: object
-      required:
-      - error
-      title: UnauthorizedError
-      description: Error response generated when the request is not authorized
-      properties:
-        error:
-          type: string
-          description: Error message.
-    forbidden_error:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/forbidden_error.json
-      type: object
-      required:
-      - error
-      title: ForbiddenError
-      description: Error response generated when the request is forbidden
-      properties:
-        error:
-          type: string
-          description: Error message.
-    bad_request_error_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: bad_request_error_response.json
-      title: BadRequest
-      type: object
-      properties: {}
     not_found_error:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /components/responses/schemas/not_found_error.json
@@ -301,14 +258,14 @@ components:
         error:
           type: string
           description: Error message.
-    unprocessable_entity_error:
+    forbidden_error:
       $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/unprocessable_entity_error.json
+      $id: /components/responses/schemas/forbidden_error.json
       type: object
       required:
       - error
-      title: UnprocessableEntityError
-      description: Error response generated when the request is not valid
+      title: ForbiddenError
+      description: Error response generated when the request is forbidden
       properties:
         error:
           type: string
@@ -418,6 +375,24 @@ components:
           format: date-time
           readOnly: true
       additionalProperties: false
+    unprocessable_entity_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/unprocessable_entity_error.json
+      type: object
+      required:
+      - error
+      title: UnprocessableEntityError
+      description: Error response generated when the request is not valid
+      properties:
+        error:
+          type: string
+          description: Error message.
+    bad_request_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: bad_request_error_response.json
+      title: BadRequest
+      type: object
+      properties: {}
     extensions_response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: extensions_response.json
@@ -432,6 +407,31 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/extension'
+    extension_delete_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: extension_delete_response.json
+      title: ExtensionDeleteResponse
+      description: Response for deleted extension
+      type: object
+      required:
+      - id
+      properties:
+        id:
+          description: ID of the deleted extension
+          type: string
+          format: uuid
+    unauthorized_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/unauthorized_error.json
+      type: object
+      required:
+      - error
+      title: UnauthorizedError
+      description: Error response generated when the request is not authorized
+      properties:
+        error:
+          type: string
+          description: Error message.
   securitySchemes:
     OAuth2:
       type: oauth2

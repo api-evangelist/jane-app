@@ -75,14 +75,14 @@ paths:
                 $ref: '#/components/schemas/catalog_extensions_response'
 components:
   schemas:
-    unauthorized_error:
+    not_found_error:
       $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/unauthorized_error.json
+      $id: /components/responses/schemas/not_found_error.json
       type: object
       required:
       - error
-      title: UnauthorizedError
-      description: Error response generated when the request is not authorized
+      title: NotFoundError
+      description: Error response when the requested resource is not found.
       properties:
         error:
           type: string
@@ -99,18 +99,49 @@ components:
         error:
           type: string
           description: Error message.
-    not_found_error:
+    catalog_extensions_response:
       $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/not_found_error.json
+      $id: catalog_extensions_response.json
+      title: CatalogExtensionsResponse
+      description: Response containing the catalog with all available approved extensions and pagination
       type: object
       required:
-      - error
-      title: NotFoundError
-      description: Error response when the requested resource is not found.
+      - items
       properties:
-        error:
-          type: string
-          description: Error message.
+        items:
+          description: Catalog extensions
+          type: array
+          items:
+            $ref: '#/components/schemas/catalog_extension'
+        cursor:
+          description: Pagination cursor for the current page
+          type:
+          - string
+          - 'null'
+        limit:
+          description: Maximum number of items per page
+          type: integer
+          minimum: 1
+        links:
+          description: Pagination links
+          type: object
+          properties:
+            before:
+              description: Cursor for the previous page
+              type:
+              - string
+              - 'null'
+            after:
+              description: Cursor for the next page
+              type:
+              - string
+              - 'null'
+          required:
+          - before
+          - after
+        hasNextPage:
+          description: Whether there are more pages available
+          type: boolean
     catalog_extension:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: catalog_extension.json
@@ -211,49 +242,18 @@ components:
           format: date-time
           readOnly: true
       additionalProperties: false
-    catalog_extensions_response:
+    unauthorized_error:
       $schema: https://json-schema.org/draft/2020-12/schema
-      $id: catalog_extensions_response.json
-      title: CatalogExtensionsResponse
-      description: Response containing the catalog with all available approved extensions and pagination
+      $id: /components/responses/schemas/unauthorized_error.json
       type: object
       required:
-      - items
+      - error
+      title: UnauthorizedError
+      description: Error response generated when the request is not authorized
       properties:
-        items:
-          description: Catalog extensions
-          type: array
-          items:
-            $ref: '#/components/schemas/catalog_extension'
-        cursor:
-          description: Pagination cursor for the current page
-          type:
-          - string
-          - 'null'
-        limit:
-          description: Maximum number of items per page
-          type: integer
-          minimum: 1
-        links:
-          description: Pagination links
-          type: object
-          properties:
-            before:
-              description: Cursor for the previous page
-              type:
-              - string
-              - 'null'
-            after:
-              description: Cursor for the next page
-              type:
-              - string
-              - 'null'
-          required:
-          - before
-          - after
-        hasNextPage:
-          description: Whether there are more pages available
-          type: boolean
+        error:
+          type: string
+          description: Error message.
   securitySchemes:
     OAuth2:
       type: oauth2

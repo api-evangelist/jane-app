@@ -236,6 +236,25 @@ components:
         sw:
           type: string
           description: 'starts with. Performs case-insensitive partial match for words in a string that begin with search term. Example: ?field[sw]=search_term'
+    errors:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/errors.json
+      type: object
+      required:
+      - object
+      - message
+      title: Error
+      description: Error response generated when an operations fails
+      properties:
+        object:
+          type: string
+          description: The string `error`
+        code:
+          type: string
+          description: Indicates the granularity of the error
+        message:
+          type: string
+          description: Indicates what the error is about
     staff_members_response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /domains/staff_member/schemas/staff_members_response.json
@@ -270,31 +289,6 @@ components:
         hasNextPage:
           description: Whether there is a next page of staff members
           type: boolean
-    errors_message_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/errors_message_response.json
-      type: object
-      required:
-      - errors
-      title: ErrorMessages
-      description: API Standard - Error response generated when an operations fails
-      properties:
-        errors:
-          type: array
-          items:
-            type: object
-            required:
-            - message
-            properties:
-              id:
-                type: string
-                description: Optional error identifier for specific handling (e.g., PATIENT_CONVERSATION_EXISTS)
-              path:
-                type: string
-                format: json-pointer
-                description: JSON Pointer to the location of the error, per RFC 6901 (e.g., /data/attributes/name)
-              message:
-                type: string
     DateTimeFilterSchema:
       type: object
       properties:
@@ -322,25 +316,6 @@ components:
           type: string
           format: date-time
           description: less than or equal to
-    errors:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/errors.json
-      type: object
-      required:
-      - object
-      - message
-      title: Error
-      description: Error response generated when an operations fails
-      properties:
-        object:
-          type: string
-          description: The string `error`
-        code:
-          type: string
-          description: Indicates the granularity of the error
-        message:
-          type: string
-          description: Indicates what the error is about
     staff_member-2:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /domains/staff/schemas/staff_member-2.json
@@ -388,6 +363,31 @@ components:
           type: string
       required:
       - id
+    errors_message_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/errors_message_response.json
+      type: object
+      required:
+      - errors
+      title: ErrorMessages
+      description: API Standard - Error response generated when an operations fails
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            required:
+            - message
+            properties:
+              id:
+                type: string
+                description: Optional error identifier for specific handling (e.g., PATIENT_CONVERSATION_EXISTS)
+              path:
+                type: string
+                format: json-pointer
+                description: JSON Pointer to the location of the error, per RFC 6901 (e.g., /data/attributes/name)
+              message:
+                type: string
   securitySchemes:
     OAuth2:
       type: oauth2

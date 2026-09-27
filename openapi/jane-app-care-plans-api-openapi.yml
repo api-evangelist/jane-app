@@ -310,71 +310,6 @@ paths:
                 $ref: '#/components/schemas/bad_request_error_response'
 components:
   schemas:
-    not_found_error_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: not_found_error_response.json
-      title: NotFoundError
-      type: object
-      properties: {}
-    care_plans_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: care_plans_response.json
-      title: CarePlansResponse
-      type: object
-      required:
-      - items
-      - limit
-      - hasNextPage
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/care_plan'
-          description: Array of care plan objects
-        cursor:
-          type:
-          - string
-          - 'null'
-          description: Cursor for fetching the next page of results
-        limit:
-          type: integer
-          description: Maximum number of items returned
-        links:
-          type: object
-          properties:
-            before:
-              type:
-              - string
-              - 'null'
-              description: URL for the previous page
-            after:
-              type:
-              - string
-              - 'null'
-              description: URL for the next page
-          additionalProperties: false
-        hasNextPage:
-          type: boolean
-          description: Whether there are more items available
-      additionalProperties: false
-    create_care_plan_activity_request:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: create_care_plan_activity_request.json
-      title: Create Care Plan Activity Request
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/care_plan_activity'
-          description: The request data parameters
-    create_care_plan_request:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: create_care_plan_request.json
-      title: Create Care Plan Request
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/care_plan'
-          description: The request data parameters
     care_plan:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: care_plan.json
@@ -442,12 +377,36 @@ components:
             format: uuid
           description: Array of document upload IDs to attach to the care plan. All documents must exist and be verified.
       additionalProperties: false
-    bad_request_error_response:
+    create_care_plan_request:
       $schema: https://json-schema.org/draft/2020-12/schema
-      $id: bad_request_error_response.json
-      title: BadRequest
+      $id: create_care_plan_request.json
+      title: Create Care Plan Request
       type: object
-      properties: {}
+      properties:
+        data:
+          $ref: '#/components/schemas/care_plan'
+          description: The request data parameters
+    update_care_plan_activity_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: update_care_plan_activity_request.json
+      title: Update Care Plan Activity Request
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            category:
+              type: string
+              enum:
+              - appointment
+              - exercise
+              - medication
+              - nutrition
+            description:
+              type: string
+            progress:
+              type: string
+          additionalProperties: false
     care_plan_activity:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: care_plan_activity.json
@@ -515,27 +474,68 @@ components:
                 type: string
                 format: uuid
           additionalProperties: false
-    update_care_plan_activity_request:
+    care_plans_response:
       $schema: https://json-schema.org/draft/2020-12/schema
-      $id: update_care_plan_activity_request.json
-      title: Update Care Plan Activity Request
+      $id: care_plans_response.json
+      title: CarePlansResponse
+      type: object
+      required:
+      - items
+      - limit
+      - hasNextPage
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/care_plan'
+          description: Array of care plan objects
+        cursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor for fetching the next page of results
+        limit:
+          type: integer
+          description: Maximum number of items returned
+        links:
+          type: object
+          properties:
+            before:
+              type:
+              - string
+              - 'null'
+              description: URL for the previous page
+            after:
+              type:
+              - string
+              - 'null'
+              description: URL for the next page
+          additionalProperties: false
+        hasNextPage:
+          type: boolean
+          description: Whether there are more items available
+      additionalProperties: false
+    bad_request_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: bad_request_error_response.json
+      title: BadRequest
+      type: object
+      properties: {}
+    create_care_plan_activity_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: create_care_plan_activity_request.json
+      title: Create Care Plan Activity Request
       type: object
       properties:
         data:
-          type: object
-          properties:
-            category:
-              type: string
-              enum:
-              - appointment
-              - exercise
-              - medication
-              - nutrition
-            description:
-              type: string
-            progress:
-              type: string
-          additionalProperties: false
+          $ref: '#/components/schemas/care_plan_activity'
+          description: The request data parameters
+    not_found_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: not_found_error_response.json
+      title: NotFoundError
+      type: object
+      properties: {}
   securitySchemes:
     OAuth2:
       type: oauth2

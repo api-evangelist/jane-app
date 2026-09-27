@@ -82,12 +82,6 @@ paths:
                 $ref: '#/components/schemas/bad_request_error_response'
 components:
   schemas:
-    not_found_error_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: not_found_error_response.json
-      title: NotFoundError
-      type: object
-      properties: {}
     document_uploads_request:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: document_uploads_request.json
@@ -126,6 +120,12 @@ components:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: bad_request_error_response.json
       title: BadRequest
+      type: object
+      properties: {}
+    not_found_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: not_found_error_response.json
+      title: NotFoundError
       type: object
       properties: {}
   securitySchemes:
