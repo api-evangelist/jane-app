@@ -186,53 +186,6 @@ paths:
                 $ref: '#/components/schemas/bad_request_error_response'
 components:
   schemas:
-    observation_value:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: observation_value.json
-      title: ObservationValue
-      type: object
-      required:
-      - code
-      - system
-      - value
-      - value_type
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: UUIDv7 identifier for the component
-        code:
-          type: string
-          description: The specific code for this component (e.g., LOINC or SNOMED CT code)
-        system:
-          type: string
-          description: The coding system used (e.g., 'http://loinc.org')
-        display:
-          type: string
-          description: Human-readable display name for the code
-        value:
-          type: string
-          description: The actual value of the component
-        value_type:
-          type: string
-          enum:
-          - string
-          - boolean
-          - numeric
-          description: The data type of the value
-        unit:
-          type: string
-          description: The unit for the value (if applicable)
-      additionalProperties: false
-    create_observation_request:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: create_observation_request.json
-      title: Create Observation Request
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/observation'
-          description: The request data parameters
     observations_response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: observations_response.json
@@ -274,45 +227,6 @@ components:
           type: boolean
           description: Whether there are more items available
       additionalProperties: false
-    bad_request_error_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: bad_request_error_response.json
-      title: BadRequest
-      type: object
-      properties: {}
-    update_observation_request:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: update_observation_request.json
-      title: Update Observation Request
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            encounter_id:
-              type: string
-              format: uuid
-            note:
-              type: string
-            issued_at:
-              type: string
-              format: date-time
-            values:
-              type: array
-              items:
-                $ref: '#/components/schemas/observation_value'
-            document_ids:
-              type: array
-              items:
-                type: string
-                format: uuid
-          additionalProperties: false
-    not_found_error_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: not_found_error_response.json
-      title: NotFoundError
-      type: object
-      properties: {}
     observation:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: observation.json
@@ -371,6 +285,92 @@ components:
             type: string
             format: uuid
           description: Array of document upload IDs to attach to the observation. All documents must exist and be verified.
+      additionalProperties: false
+    not_found_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: not_found_error_response.json
+      title: NotFoundError
+      type: object
+      properties: {}
+    create_observation_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: create_observation_request.json
+      title: Create Observation Request
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/observation'
+          description: The request data parameters
+    update_observation_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: update_observation_request.json
+      title: Update Observation Request
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            encounter_id:
+              type: string
+              format: uuid
+            note:
+              type: string
+            issued_at:
+              type: string
+              format: date-time
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/observation_value'
+            document_ids:
+              type: array
+              items:
+                type: string
+                format: uuid
+          additionalProperties: false
+    bad_request_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: bad_request_error_response.json
+      title: BadRequest
+      type: object
+      properties: {}
+    observation_value:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: observation_value.json
+      title: ObservationValue
+      type: object
+      required:
+      - code
+      - system
+      - value
+      - value_type
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUIDv7 identifier for the component
+        code:
+          type: string
+          description: The specific code for this component (e.g., LOINC or SNOMED CT code)
+        system:
+          type: string
+          description: The coding system used (e.g., 'http://loinc.org')
+        display:
+          type: string
+          description: Human-readable display name for the code
+        value:
+          type: string
+          description: The actual value of the component
+        value_type:
+          type: string
+          enum:
+          - string
+          - boolean
+          - numeric
+          description: The data type of the value
+        unit:
+          type: string
+          description: The unit for the value (if applicable)
       additionalProperties: false
   securitySchemes:
     OAuth2:

@@ -323,164 +323,6 @@ paths:
                 $ref: '#/components/schemas/errors'
 components:
   schemas:
-    StringFilterSchema:
-      type: object
-      properties:
-        eq:
-          type: string
-          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2 (maximum 100 values)'
-        ne:
-          type: string
-          description: not equals
-        co:
-          type: string
-          description: 'contains. Performs partial match (case-insensitive for string fields). Example: ?field[co]=search_term'
-        gt:
-          type: string
-          description: greater than
-        gte:
-          type: string
-          description: greater than or equal to
-        lt:
-          type: string
-          description: less than
-        lte:
-          type: string
-          description: less than or equal to
-        sw:
-          type: string
-          description: 'starts with. Performs case-insensitive partial match for words in a string that begin with search term. Example: ?field[sw]=search_term'
-    not_found_error:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/not_found_error.json
-      type: object
-      required:
-      - error
-      title: NotFoundError
-      description: Error response when the requested resource is not found.
-      properties:
-        error:
-          type: string
-          description: Error message.
-    errors:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/errors.json
-      type: object
-      required:
-      - object
-      - message
-      title: Error
-      description: Error response generated when an operations fails
-      properties:
-        object:
-          type: string
-          description: The string `error`
-        code:
-          type: string
-          description: Indicates the granularity of the error
-        message:
-          type: string
-          description: Indicates what the error is about
-    DateTimeFilterSchema:
-      type: object
-      properties:
-        eq:
-          type: string
-          format: date-time
-          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
-        ne:
-          type: string
-          format: date-time
-          description: not equals
-        gt:
-          type: string
-          format: date-time
-          description: greater than
-        gte:
-          type: string
-          format: date-time
-          description: greater than or equal to
-        lt:
-          type: string
-          format: date-time
-          description: less than
-        lte:
-          type: string
-          format: date-time
-          description: less than or equal to
-    patients_search_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /domains/patient/schemas/patients_search_response.json
-      title: PatientsSearchResponse
-      description: 'Paginated list of matching patients from POST /patients/search. Omits the `links` object that `GET /patients` returns: GET-style pagination URLs would re-serialize search terms into query strings and re-expose PII, which is the whole reason search moved to a POST body. Clients paginate by re-POSTing the same body with `page.cursor` set to the previous response''s `cursor`.'
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/patient-2'
-        cursor:
-          description: The Base64 encoded cursor for the next page. null if this is the last page.
-          type:
-          - string
-          - 'null'
-          example: eyJwYWdlIjozLCJzaXplIjo1fQ==
-        limit:
-          type: integer
-        hasNextPage:
-          description: Whether there is a next page of patients
-          type: boolean
-    unauthorized_error:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/unauthorized_error.json
-      type: object
-      required:
-      - error
-      title: UnauthorizedError
-      description: Error response generated when the request is not authorized
-      properties:
-        error:
-          type: string
-          description: Error message.
-    patients_search_request:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /domains/patient/schemas/patients_search_request.json
-      title: PatientsSearchRequest
-      description: Request body for POST /patients/search. Free-text search across patient name, email, phone, and patient number, carried in the body so PII does not leak into URLs. Only the `search` field is accepted at this endpoint — structured filtering (public_id, created_at, updated_at) belongs on GET /patients. Combined search + structured filtering is a deliberate follow-up if a consumer need materializes.
-      type: object
-      additionalProperties: false
-      required:
-      - search
-      properties:
-        search:
-          type: object
-          description: Free-text search across patient name, email, phone number, and patient number. Results follow the requested `sort` order (or default ordering when no `sort` is specified).
-          additionalProperties: false
-          properties:
-            co:
-              type: string
-              maxLength: 255
-              description: Contains-match search term. Maximum 255 characters.
-        sort:
-          type: string
-          description: 'Comma-separated list of fields to sort by. Prefix a field with ''-'' for descending order. Example: `-created_at,updated_at`.'
-        page:
-          type: object
-          description: Cursor-based pagination controls.
-          additionalProperties: false
-          properties:
-            cursor:
-              type: string
-            limit:
-              type: integer
-              minimum: 1
-              maximum: 1000
-    error:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: error.json
-      title: Error
-      type: object
-      properties: {}
     patient-2:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /domains/patient/schemas/patient-2.json
@@ -621,6 +463,45 @@ components:
           additionalProperties: false
       required:
       - id
+    DateTimeFilterSchema:
+      type: object
+      properties:
+        eq:
+          type: string
+          format: date-time
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
+        ne:
+          type: string
+          format: date-time
+          description: not equals
+        gt:
+          type: string
+          format: date-time
+          description: greater than
+        gte:
+          type: string
+          format: date-time
+          description: greater than or equal to
+        lt:
+          type: string
+          format: date-time
+          description: less than
+        lte:
+          type: string
+          format: date-time
+          description: less than or equal to
+    unauthorized_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/unauthorized_error.json
+      type: object
+      required:
+      - error
+      title: UnauthorizedError
+      description: Error response generated when the request is not authorized
+      properties:
+        error:
+          type: string
+          description: Error message.
     patients:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /domains/patient/schemas/patients.json
@@ -652,6 +533,125 @@ components:
         hasNextPage:
           description: Whether there is a next page of patients
           type: boolean
+    StringFilterSchema:
+      type: object
+      properties:
+        eq:
+          type: string
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2 (maximum 100 values)'
+        ne:
+          type: string
+          description: not equals
+        co:
+          type: string
+          description: 'contains. Performs partial match (case-insensitive for string fields). Example: ?field[co]=search_term'
+        gt:
+          type: string
+          description: greater than
+        gte:
+          type: string
+          description: greater than or equal to
+        lt:
+          type: string
+          description: less than
+        lte:
+          type: string
+          description: less than or equal to
+        sw:
+          type: string
+          description: 'starts with. Performs case-insensitive partial match for words in a string that begin with search term. Example: ?field[sw]=search_term'
+    errors:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/errors.json
+      type: object
+      required:
+      - object
+      - message
+      title: Error
+      description: Error response generated when an operations fails
+      properties:
+        object:
+          type: string
+          description: The string `error`
+        code:
+          type: string
+          description: Indicates the granularity of the error
+        message:
+          type: string
+          description: Indicates what the error is about
+    error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: error.json
+      title: Error
+      type: object
+      properties: {}
+    patients_search_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/patient/schemas/patients_search_response.json
+      title: PatientsSearchResponse
+      description: 'Paginated list of matching patients from POST /patients/search. Omits the `links` object that `GET /patients` returns: GET-style pagination URLs would re-serialize search terms into query strings and re-expose PII, which is the whole reason search moved to a POST body. Clients paginate by re-POSTing the same body with `page.cursor` set to the previous response''s `cursor`.'
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/patient-2'
+        cursor:
+          description: The Base64 encoded cursor for the next page. null if this is the last page.
+          type:
+          - string
+          - 'null'
+          example: eyJwYWdlIjozLCJzaXplIjo1fQ==
+        limit:
+          type: integer
+        hasNextPage:
+          description: Whether there is a next page of patients
+          type: boolean
+    not_found_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/not_found_error.json
+      type: object
+      required:
+      - error
+      title: NotFoundError
+      description: Error response when the requested resource is not found.
+      properties:
+        error:
+          type: string
+          description: Error message.
+    patients_search_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/patient/schemas/patients_search_request.json
+      title: PatientsSearchRequest
+      description: Request body for POST /patients/search. Free-text search across patient name, email, phone, and patient number, carried in the body so PII does not leak into URLs. Only the `search` field is accepted at this endpoint — structured filtering (public_id, created_at, updated_at) belongs on GET /patients. Combined search + structured filtering is a deliberate follow-up if a consumer need materializes.
+      type: object
+      additionalProperties: false
+      required:
+      - search
+      properties:
+        search:
+          type: object
+          description: Free-text search across patient name, email, phone number, and patient number. Results follow the requested `sort` order (or default ordering when no `sort` is specified).
+          additionalProperties: false
+          properties:
+            co:
+              type: string
+              maxLength: 255
+              description: Contains-match search term. Maximum 255 characters.
+        sort:
+          type: string
+          description: 'Comma-separated list of fields to sort by. Prefix a field with ''-'' for descending order. Example: `-created_at,updated_at`.'
+        page:
+          type: object
+          description: Cursor-based pagination controls.
+          additionalProperties: false
+          properties:
+            cursor:
+              type: string
+            limit:
+              type: integer
+              minimum: 1
+              maximum: 1000
   securitySchemes:
     OAuth2:
       type: oauth2

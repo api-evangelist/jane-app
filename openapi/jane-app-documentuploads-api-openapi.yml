@@ -82,18 +82,12 @@ paths:
                 $ref: '#/components/schemas/bad_request_error_response'
 components:
   schemas:
-    document_uploads_request:
+    bad_request_error_response:
       $schema: https://json-schema.org/draft/2020-12/schema
-      $id: document_uploads_request.json
-      title: Document Uploads Request
+      $id: bad_request_error_response.json
+      title: BadRequest
       type: object
-      required:
-      - file
-      properties:
-        file:
-          type: string
-          format: binary
-          description: 'The document file to upload. Accepted formats: PDF, JPEG, PNG. Maximum size: 50 MB.'
+      properties: {}
     document_uploads_response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: document_uploads_response.json
@@ -116,12 +110,18 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the document was uploaded.
-    bad_request_error_response:
+    document_uploads_request:
       $schema: https://json-schema.org/draft/2020-12/schema
-      $id: bad_request_error_response.json
-      title: BadRequest
+      $id: document_uploads_request.json
+      title: Document Uploads Request
       type: object
-      properties: {}
+      required:
+      - file
+      properties:
+        file:
+          type: string
+          format: binary
+          description: 'The document file to upload. Accepted formats: PDF, JPEG, PNG. Maximum size: 50 MB.'
     not_found_error_response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: not_found_error_response.json

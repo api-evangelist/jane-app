@@ -71,37 +71,18 @@ paths:
                 $ref: '#/components/schemas/errors'
 components:
   schemas:
-    not_found_error:
+    unauthorized_error:
       $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/not_found_error.json
+      $id: /components/responses/schemas/unauthorized_error.json
       type: object
       required:
       - error
-      title: NotFoundError
-      description: Error response when the requested resource is not found.
+      title: UnauthorizedError
+      description: Error response generated when the request is not authorized
       properties:
         error:
           type: string
           description: Error message.
-    errors:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/errors.json
-      type: object
-      required:
-      - object
-      - message
-      title: Error
-      description: Error response generated when an operations fails
-      properties:
-        object:
-          type: string
-          description: The string `error`
-        code:
-          type: string
-          description: Indicates the granularity of the error
-        message:
-          type: string
-          description: Indicates what the error is about
     company:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /domains/company/schemas/company.json
@@ -185,14 +166,33 @@ components:
             plural_lowercase:
               description: 'Lowercase plural form. Ex. patients, clients, customers. Default: patients'
               type: string
-    unauthorized_error:
+    errors:
       $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/unauthorized_error.json
+      $id: /components/responses/schemas/errors.json
+      type: object
+      required:
+      - object
+      - message
+      title: Error
+      description: Error response generated when an operations fails
+      properties:
+        object:
+          type: string
+          description: The string `error`
+        code:
+          type: string
+          description: Indicates the granularity of the error
+        message:
+          type: string
+          description: Indicates what the error is about
+    not_found_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/not_found_error.json
       type: object
       required:
       - error
-      title: UnauthorizedError
-      description: Error response generated when the request is not authorized
+      title: NotFoundError
+      description: Error response when the requested resource is not found.
       properties:
         error:
           type: string

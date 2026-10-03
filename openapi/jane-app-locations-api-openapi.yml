@@ -237,33 +237,33 @@ paths:
                 $ref: '#/components/schemas/errors'
 components:
   schemas:
-    StringFilterSchema:
+    DateTimeFilterSchema:
       type: object
       properties:
         eq:
           type: string
-          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2 (maximum 100 values)'
+          format: date-time
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
         ne:
           type: string
+          format: date-time
           description: not equals
-        co:
-          type: string
-          description: 'contains. Performs partial match (case-insensitive for string fields). Example: ?field[co]=search_term'
         gt:
           type: string
+          format: date-time
           description: greater than
         gte:
           type: string
+          format: date-time
           description: greater than or equal to
         lt:
           type: string
+          format: date-time
           description: less than
         lte:
           type: string
+          format: date-time
           description: less than or equal to
-        sw:
-          type: string
-          description: 'starts with. Performs case-insensitive partial match for words in a string that begin with search term. Example: ?field[sw]=search_term'
     locations:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /domains/location/schemas/locations.json
@@ -295,6 +295,33 @@ components:
         hasNextPage:
           description: Whether there is a next page of locations
           type: boolean
+    StringFilterSchema:
+      type: object
+      properties:
+        eq:
+          type: string
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2 (maximum 100 values)'
+        ne:
+          type: string
+          description: not equals
+        co:
+          type: string
+          description: 'contains. Performs partial match (case-insensitive for string fields). Example: ?field[co]=search_term'
+        gt:
+          type: string
+          description: greater than
+        gte:
+          type: string
+          description: greater than or equal to
+        lt:
+          type: string
+          description: less than
+        lte:
+          type: string
+          description: less than or equal to
+        sw:
+          type: string
+          description: 'starts with. Performs case-insensitive partial match for words in a string that begin with search term. Example: ?field[sw]=search_term'
     errors:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /components/responses/schemas/errors.json
@@ -374,33 +401,6 @@ components:
           type: boolean
       required:
       - id
-    DateTimeFilterSchema:
-      type: object
-      properties:
-        eq:
-          type: string
-          format: date-time
-          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
-        ne:
-          type: string
-          format: date-time
-          description: not equals
-        gt:
-          type: string
-          format: date-time
-          description: greater than
-        gte:
-          type: string
-          format: date-time
-          description: greater than or equal to
-        lt:
-          type: string
-          format: date-time
-          description: less than
-        lte:
-          type: string
-          format: date-time
-          description: less than or equal to
   securitySchemes:
     OAuth2:
       type: oauth2

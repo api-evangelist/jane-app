@@ -234,129 +234,44 @@ paths:
                 $ref: '#/components/schemas/not_found_error_response'
 components:
   schemas:
-    update_medication_request:
+    medications_response:
       $schema: https://json-schema.org/draft/2020-12/schema
-      $id: update_medication_request.json
-      title: Update Medication Request
-      type: object
-      required:
-      - data
-      additionalProperties: true
-      properties:
-        data:
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/medication_editable_properties'
-          unevaluatedProperties: false
-    medication_history_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: medication_history_response.json
-      title: Medication History Response
+      $id: medications_response.json
+      title: MedicationsResponse
       type: object
       required:
       - items
+      - pagination
       properties:
         items:
           type: array
-          description: Array of history entries for the medication
           items:
-            $ref: '#/components/schemas/medication_history_entry'
-      additionalProperties: false
-    ingredient:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: ingredient.json
-      title: Ingredient
-      type: object
-      properties:
-        name:
-          type:
-          - string
-          - 'null'
-          description: Name of the ingredient
-        strength:
-          type:
-          - string
-          - number
-          - 'null'
-          description: Strength or amount of the ingredient
-        strength_unit:
-          type:
-          - string
-          - 'null'
-          description: Unit of measurement for the strength (e.g., mg, mL, %)
-      additionalProperties: false
-    bad_request_error_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: bad_request_error_response.json
-      title: BadRequest
-      type: object
-      properties: {}
-    medication_history_entry:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: medication_history_entry.json
-      title: Medication History Entry
-      type: object
-      required:
-      - event
-      - occurred_at
-      - changes
-      properties:
-        event:
-          type: string
-          enum:
-          - create
-          - update
-          - destroy
-          description: The type of change that occurred
-        occurred_at:
-          type: string
-          format: date-time
-          description: When this change occurred (ISO 8601 format)
-        modified_by:
-          type:
-          - object
-          - 'null'
-          description: Information about the user who made this change
-          properties:
-            id:
-              type: string
-              format: uuid
-              description: User's ID
-            name:
-              type: string
-              description: User's full name
-            email:
-              type: string
-              format: email
-              description: User's email address
+            $ref: '#/components/schemas/medication'
+          description: Array of medication objects
+        pagination:
+          type: object
           required:
-          - id
-          - name
-          - email
+          - cursor
+          properties:
+            cursor:
+              type:
+              - string
+              - 'null'
+              description: Current cursor position
+            next_cursor:
+              type:
+              - string
+              - 'null'
+              description: Cursor for the next page
+            prev_cursor:
+              type:
+              - string
+              - 'null'
+              description: Cursor for the previous page
+            has_next_page:
+              type: boolean
+              description: Whether there are more items available
           additionalProperties: false
-        changes:
-          type: array
-          description: Array of field changes with before/after values
-          items:
-            type: object
-            properties:
-              attribute:
-                type: string
-                description: The field name that changed (e.g., 'instructions', 'status')
-              from:
-                description: The value before the change
-              to:
-                description: The value after the change
-            required:
-            - attribute
-            - from
-            - to
-            additionalProperties: false
-        reason:
-          type:
-          - string
-          - 'null'
-          description: Reason for the change (if provided, typically for status changes)
       additionalProperties: false
     medication_code:
       $schema: https://json-schema.org/draft/2020-12/schema
@@ -398,44 +313,19 @@ components:
       title: NotFoundError
       type: object
       properties: {}
-    medications_response:
+    medication_history_response:
       $schema: https://json-schema.org/draft/2020-12/schema
-      $id: medications_response.json
-      title: MedicationsResponse
+      $id: medication_history_response.json
+      title: Medication History Response
       type: object
       required:
       - items
-      - pagination
       properties:
         items:
           type: array
+          description: Array of history entries for the medication
           items:
-            $ref: '#/components/schemas/medication'
-          description: Array of medication objects
-        pagination:
-          type: object
-          required:
-          - cursor
-          properties:
-            cursor:
-              type:
-              - string
-              - 'null'
-              description: Current cursor position
-            next_cursor:
-              type:
-              - string
-              - 'null'
-              description: Cursor for the next page
-            prev_cursor:
-              type:
-              - string
-              - 'null'
-              description: Cursor for the previous page
-            has_next_page:
-              type: boolean
-              description: Whether there are more items available
-          additionalProperties: false
+            $ref: '#/components/schemas/medication_history_entry'
       additionalProperties: false
     medication_editable_properties:
       $schema: https://json-schema.org/draft/2020-12/schema
@@ -537,34 +427,6 @@ components:
           - string
           - 'null'
           description: Clinical indication or problem being treated
-    create_medication_request:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: create_medication_request.json
-      title: Create Medication Request
-      type: object
-      required:
-      - data
-      additionalProperties: true
-      properties:
-        data:
-          type: object
-          required:
-          - patient_id
-          - medication_code
-          - status
-          - source
-          allOf:
-          - $ref: '#/components/schemas/medication_editable_properties'
-          properties:
-            patient_id:
-              type: string
-              format: uuid
-              description: Reference to the patient
-            practitioner_id:
-              type: string
-              format: uuid
-              description: Reference to the practitioner
-          unevaluatedProperties: false
     medication:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: medication.json
@@ -689,6 +551,144 @@ components:
           format: date-time
           description: When the medication record was created
       additionalProperties: false
+    bad_request_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: bad_request_error_response.json
+      title: BadRequest
+      type: object
+      properties: {}
+    create_medication_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: create_medication_request.json
+      title: Create Medication Request
+      type: object
+      required:
+      - data
+      additionalProperties: true
+      properties:
+        data:
+          type: object
+          required:
+          - patient_id
+          - medication_code
+          - status
+          - source
+          allOf:
+          - $ref: '#/components/schemas/medication_editable_properties'
+          properties:
+            patient_id:
+              type: string
+              format: uuid
+              description: Reference to the patient
+            practitioner_id:
+              type: string
+              format: uuid
+              description: Reference to the practitioner
+          unevaluatedProperties: false
+    ingredient:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: ingredient.json
+      title: Ingredient
+      type: object
+      properties:
+        name:
+          type:
+          - string
+          - 'null'
+          description: Name of the ingredient
+        strength:
+          type:
+          - string
+          - number
+          - 'null'
+          description: Strength or amount of the ingredient
+        strength_unit:
+          type:
+          - string
+          - 'null'
+          description: Unit of measurement for the strength (e.g., mg, mL, %)
+      additionalProperties: false
+    medication_history_entry:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: medication_history_entry.json
+      title: Medication History Entry
+      type: object
+      required:
+      - event
+      - occurred_at
+      - changes
+      properties:
+        event:
+          type: string
+          enum:
+          - create
+          - update
+          - destroy
+          description: The type of change that occurred
+        occurred_at:
+          type: string
+          format: date-time
+          description: When this change occurred (ISO 8601 format)
+        modified_by:
+          type:
+          - object
+          - 'null'
+          description: Information about the user who made this change
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: User's ID
+            name:
+              type: string
+              description: User's full name
+            email:
+              type: string
+              format: email
+              description: User's email address
+          required:
+          - id
+          - name
+          - email
+          additionalProperties: false
+        changes:
+          type: array
+          description: Array of field changes with before/after values
+          items:
+            type: object
+            properties:
+              attribute:
+                type: string
+                description: The field name that changed (e.g., 'instructions', 'status')
+              from:
+                description: The value before the change
+              to:
+                description: The value after the change
+            required:
+            - attribute
+            - from
+            - to
+            additionalProperties: false
+        reason:
+          type:
+          - string
+          - 'null'
+          description: Reason for the change (if provided, typically for status changes)
+      additionalProperties: false
+    update_medication_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: update_medication_request.json
+      title: Update Medication Request
+      type: object
+      required:
+      - data
+      additionalProperties: true
+      properties:
+        data:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/medication_editable_properties'
+          unevaluatedProperties: false
   securitySchemes:
     OAuth2:
       type: oauth2

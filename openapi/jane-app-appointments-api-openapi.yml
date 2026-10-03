@@ -275,6 +275,92 @@ paths:
                 $ref: '#/components/schemas/errors'
 components:
   schemas:
+    DateTimeFilterSchema:
+      type: object
+      properties:
+        eq:
+          type: string
+          format: date-time
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
+        ne:
+          type: string
+          format: date-time
+          description: not equals
+        gt:
+          type: string
+          format: date-time
+          description: greater than
+        gte:
+          type: string
+          format: date-time
+          description: greater than or equal to
+        lt:
+          type: string
+          format: date-time
+          description: less than
+        lte:
+          type: string
+          format: date-time
+          description: less than or equal to
+    errors_message_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/errors_message_response.json
+      type: object
+      required:
+      - errors
+      title: ErrorMessages
+      description: API Standard - Error response generated when an operations fails
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            required:
+            - message
+            properties:
+              id:
+                type: string
+                description: Optional error identifier for specific handling (e.g., PATIENT_CONVERSATION_EXISTS)
+              path:
+                type: string
+                format: json-pointer
+                description: JSON Pointer to the location of the error, per RFC 6901 (e.g., /data/attributes/name)
+              message:
+                type: string
+    appointments_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/appointment/schemas/appointments_response.json
+      title: AppointmentsResponse
+      description: Response to a request for multiple appointments
+      type: object
+      properties:
+        items:
+          description: The list of appointments. Empty if there are none.
+          type: array
+          items:
+            $ref: '#/components/schemas/appointment'
+        limit:
+          description: The number of appointments to return
+          type: integer
+        links:
+          description: The links to the current and next pages of appointments
+          type: object
+          properties:
+            after:
+              type:
+              - string
+              - 'null'
+              description: URL for the next page of results. null if this is the last page.
+              example: /api/2026-01-01/appointments?page[cursor]=eyJwYWdlIjozLCJzaXplIjo1fQ==&page[limit]=5
+        hasNextPage:
+          description: Whether there is a next page of appointments
+          type: boolean
+        cursor:
+          description: The Base64 encoded cursor for the next page. null if this is the last page.
+          type:
+          - string
+          - 'null'
+          example: eyJwYWdlIjozLCJzaXplIjo1fQ==
     StringFilterSchema:
       type: object
       properties:
@@ -302,6 +388,31 @@ components:
         sw:
           type: string
           description: 'starts with. Performs case-insensitive partial match for words in a string that begin with search term. Example: ?field[sw]=search_term'
+    errors:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/errors.json
+      type: object
+      required:
+      - object
+      - message
+      title: Error
+      description: Error response generated when an operations fails
+      properties:
+        object:
+          type: string
+          description: The string `error`
+        code:
+          type: string
+          description: Indicates the granularity of the error
+        message:
+          type: string
+          description: Indicates what the error is about
+    IdFilterSchema:
+      type: object
+      properties:
+        eq:
+          type: string
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2 (maximum 100 values)'
     appointment:
       $schema: https://json-schema.org/draft/2020-12/schema
       type: object
@@ -374,117 +485,6 @@ components:
           - cancelled
           - archived
           description: The current state of the appointment.
-    errors:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/errors.json
-      type: object
-      required:
-      - object
-      - message
-      title: Error
-      description: Error response generated when an operations fails
-      properties:
-        object:
-          type: string
-          description: The string `error`
-        code:
-          type: string
-          description: Indicates the granularity of the error
-        message:
-          type: string
-          description: Indicates what the error is about
-    appointments_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /domains/appointment/schemas/appointments_response.json
-      title: AppointmentsResponse
-      description: Response to a request for multiple appointments
-      type: object
-      properties:
-        items:
-          description: The list of appointments. Empty if there are none.
-          type: array
-          items:
-            $ref: '#/components/schemas/appointment'
-        limit:
-          description: The number of appointments to return
-          type: integer
-        links:
-          description: The links to the current and next pages of appointments
-          type: object
-          properties:
-            after:
-              type:
-              - string
-              - 'null'
-              description: URL for the next page of results. null if this is the last page.
-              example: /api/2026-01-01/appointments?page[cursor]=eyJwYWdlIjozLCJzaXplIjo1fQ==&page[limit]=5
-        hasNextPage:
-          description: Whether there is a next page of appointments
-          type: boolean
-        cursor:
-          description: The Base64 encoded cursor for the next page. null if this is the last page.
-          type:
-          - string
-          - 'null'
-          example: eyJwYWdlIjozLCJzaXplIjo1fQ==
-    IdFilterSchema:
-      type: object
-      properties:
-        eq:
-          type: string
-          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2 (maximum 100 values)'
-    DateTimeFilterSchema:
-      type: object
-      properties:
-        eq:
-          type: string
-          format: date-time
-          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
-        ne:
-          type: string
-          format: date-time
-          description: not equals
-        gt:
-          type: string
-          format: date-time
-          description: greater than
-        gte:
-          type: string
-          format: date-time
-          description: greater than or equal to
-        lt:
-          type: string
-          format: date-time
-          description: less than
-        lte:
-          type: string
-          format: date-time
-          description: less than or equal to
-    errors_message_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/errors_message_response.json
-      type: object
-      required:
-      - errors
-      title: ErrorMessages
-      description: API Standard - Error response generated when an operations fails
-      properties:
-        errors:
-          type: array
-          items:
-            type: object
-            required:
-            - message
-            properties:
-              id:
-                type: string
-                description: Optional error identifier for specific handling (e.g., PATIENT_CONVERSATION_EXISTS)
-              path:
-                type: string
-                format: json-pointer
-                description: JSON Pointer to the location of the error, per RFC 6901 (e.g., /data/attributes/name)
-              message:
-                type: string
   securitySchemes:
     OAuth2:
       type: oauth2

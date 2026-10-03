@@ -211,6 +211,73 @@ paths:
                 $ref: '#/components/schemas/errors'
 components:
   schemas:
+    DateTimeFilterSchema:
+      type: object
+      properties:
+        eq:
+          type: string
+          format: date-time
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
+        ne:
+          type: string
+          format: date-time
+          description: not equals
+        gt:
+          type: string
+          format: date-time
+          description: greater than
+        gte:
+          type: string
+          format: date-time
+          description: greater than or equal to
+        lt:
+          type: string
+          format: date-time
+          description: less than
+        lte:
+          type: string
+          format: date-time
+          description: less than or equal to
+    disciplines_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /domains/discipline/schemas/disciplines_response.json
+      title: DisciplinesResponse
+      description: Response to a request for multiple disciplines
+      type: object
+      properties:
+        items:
+          description: The list of disciplines. Empty if there are none.
+          type: array
+          items:
+            $ref: '#/components/schemas/discipline'
+        cursor:
+          description: The Base64 encoded cursor for the next page. null if this is the last page.
+          type:
+          - string
+          - 'null'
+          example: eyJwYWdlIjozLCJzaXplIjo1fQ==
+        limit:
+          description: The maximum number of items per page
+          type: integer
+        links:
+          description: Navigation links for pagination
+          type: object
+          properties:
+            after:
+              type:
+              - string
+              - 'null'
+              description: URL for the next page of results. null if this is the last page.
+              example: /api/2026-01-01/disciplines?page[cursor]=eyJwYWdlIjozLCJzaXplIjo1fQ==&page[limit]=5
+        hasNextPage:
+          description: Whether there is a next page of disciplines
+          type: boolean
+    not_found_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: not_found_error_response.json
+      title: NotFoundError
+      type: object
+      properties: {}
     StringFilterSchema:
       type: object
       properties:
@@ -257,79 +324,6 @@ components:
         message:
           type: string
           description: Indicates what the error is about
-    DateTimeFilterSchema:
-      type: object
-      properties:
-        eq:
-          type: string
-          format: date-time
-          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
-        ne:
-          type: string
-          format: date-time
-          description: not equals
-        gt:
-          type: string
-          format: date-time
-          description: greater than
-        gte:
-          type: string
-          format: date-time
-          description: greater than or equal to
-        lt:
-          type: string
-          format: date-time
-          description: less than
-        lte:
-          type: string
-          format: date-time
-          description: less than or equal to
-    bad_request_error_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: bad_request_error_response.json
-      title: BadRequest
-      type: object
-      properties: {}
-    disciplines_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /domains/discipline/schemas/disciplines_response.json
-      title: DisciplinesResponse
-      description: Response to a request for multiple disciplines
-      type: object
-      properties:
-        items:
-          description: The list of disciplines. Empty if there are none.
-          type: array
-          items:
-            $ref: '#/components/schemas/discipline'
-        cursor:
-          description: The Base64 encoded cursor for the next page. null if this is the last page.
-          type:
-          - string
-          - 'null'
-          example: eyJwYWdlIjozLCJzaXplIjo1fQ==
-        limit:
-          description: The maximum number of items per page
-          type: integer
-        links:
-          description: Navigation links for pagination
-          type: object
-          properties:
-            after:
-              type:
-              - string
-              - 'null'
-              description: URL for the next page of results. null if this is the last page.
-              example: /api/2026-01-01/disciplines?page[cursor]=eyJwYWdlIjozLCJzaXplIjo1fQ==&page[limit]=5
-        hasNextPage:
-          description: Whether there is a next page of disciplines
-          type: boolean
-    not_found_error_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: not_found_error_response.json
-      title: NotFoundError
-      type: object
-      properties: {}
     discipline:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /domains/discipline/schemas/discipline.json
@@ -358,6 +352,12 @@ components:
           type: string
       required:
       - id
+    bad_request_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: bad_request_error_response.json
+      title: BadRequest
+      type: object
+      properties: {}
   securitySchemes:
     OAuth2:
       type: oauth2
