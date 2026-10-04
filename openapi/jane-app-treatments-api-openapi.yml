@@ -242,33 +242,6 @@ paths:
                 $ref: '#/components/schemas/errors_message_response'
 components:
   schemas:
-    DateTimeFilterSchema:
-      type: object
-      properties:
-        eq:
-          type: string
-          format: date-time
-          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
-        ne:
-          type: string
-          format: date-time
-          description: not equals
-        gt:
-          type: string
-          format: date-time
-          description: greater than
-        gte:
-          type: string
-          format: date-time
-          description: greater than or equal to
-        lt:
-          type: string
-          format: date-time
-          description: less than
-        lte:
-          type: string
-          format: date-time
-          description: less than or equal to
     errors_message_response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: /components/responses/schemas/errors_message_response.json
@@ -359,25 +332,12 @@ components:
         price_includes_tax:
           type: boolean
           description: Whether the price includes tax
-    errors:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/errors.json
+    IdFilterSchema:
       type: object
-      required:
-      - object
-      - message
-      title: Error
-      description: Error response generated when an operations fails
       properties:
-        object:
+        eq:
           type: string
-          description: The string `error`
-        code:
-          type: string
-          description: Indicates the granularity of the error
-        message:
-          type: string
-          description: Indicates what the error is about
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2 (maximum 100 values)'
     treatments_response:
       $schema: http://json-schema.org/draft-07/schema#
       $id: /domains/treatment/schemas/treatments_response.json
@@ -412,12 +372,52 @@ components:
         hasNextPage:
           description: Whether there is a next page of treatments
           type: boolean
-    IdFilterSchema:
+    errors:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/errors.json
+      type: object
+      required:
+      - object
+      - message
+      title: Error
+      description: Error response generated when an operations fails
+      properties:
+        object:
+          type: string
+          description: The string `error`
+        code:
+          type: string
+          description: Indicates the granularity of the error
+        message:
+          type: string
+          description: Indicates what the error is about
+    DateTimeFilterSchema:
       type: object
       properties:
         eq:
           type: string
-          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2 (maximum 100 values)'
+          format: date-time
+          description: 'equals. Multiple equal values are comma-separated: ?field[eq]=value1,value2'
+        ne:
+          type: string
+          format: date-time
+          description: not equals
+        gt:
+          type: string
+          format: date-time
+          description: greater than
+        gte:
+          type: string
+          format: date-time
+          description: greater than or equal to
+        lt:
+          type: string
+          format: date-time
+          description: less than
+        lte:
+          type: string
+          format: date-time
+          description: less than or equal to
   securitySchemes:
     OAuth2:
       type: oauth2

@@ -236,6 +236,97 @@ paths:
                 $ref: '#/components/schemas/unprocessable_entity_error'
 components:
   schemas:
+    not_found_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/not_found_error.json
+      type: object
+      required:
+      - error
+      title: NotFoundError
+      description: Error response when the requested resource is not found.
+      properties:
+        error:
+          type: string
+          description: Error message.
+    extension_delete_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: extension_delete_response.json
+      title: ExtensionDeleteResponse
+      description: Response for deleted extension
+      type: object
+      required:
+      - id
+      properties:
+        id:
+          description: ID of the deleted extension
+          type: string
+          format: uuid
+    extensions_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: extensions_response.json
+      title: ExtensionsResponse
+      description: Response containing a list of extensions
+      type: object
+      required:
+      - items
+      properties:
+        items:
+          description: List of extensions
+          type: array
+          items:
+            $ref: '#/components/schemas/extension'
+    bad_request_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: bad_request_error_response.json
+      title: BadRequest
+      type: object
+      properties: {}
+    unprocessable_entity_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/unprocessable_entity_error.json
+      type: object
+      required:
+      - error
+      title: UnprocessableEntityError
+      description: Error response generated when the request is not valid
+      properties:
+        error:
+          type: string
+          description: Error message.
+    extension_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: extension_request.json
+      title: ExtensionRequest
+      description: Request body for creating or updating an extension
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/extension'
+          description: The extension to create or update
+    forbidden_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/forbidden_error.json
+      type: object
+      required:
+      - error
+      title: ForbiddenError
+      description: Error response generated when the request is forbidden
+      properties:
+        error:
+          type: string
+          description: Error message.
+    unauthorized_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/unauthorized_error.json
+      type: object
+      required:
+      - error
+      title: UnauthorizedError
+      description: Error response generated when the request is not authorized
+      properties:
+        error:
+          type: string
+          description: Error message.
     extension:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: extension.json
@@ -341,97 +432,6 @@ components:
           format: date-time
           readOnly: true
       additionalProperties: false
-    extension_delete_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: extension_delete_response.json
-      title: ExtensionDeleteResponse
-      description: Response for deleted extension
-      type: object
-      required:
-      - id
-      properties:
-        id:
-          description: ID of the deleted extension
-          type: string
-          format: uuid
-    unauthorized_error:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/unauthorized_error.json
-      type: object
-      required:
-      - error
-      title: UnauthorizedError
-      description: Error response generated when the request is not authorized
-      properties:
-        error:
-          type: string
-          description: Error message.
-    forbidden_error:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/forbidden_error.json
-      type: object
-      required:
-      - error
-      title: ForbiddenError
-      description: Error response generated when the request is forbidden
-      properties:
-        error:
-          type: string
-          description: Error message.
-    not_found_error:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/not_found_error.json
-      type: object
-      required:
-      - error
-      title: NotFoundError
-      description: Error response when the requested resource is not found.
-      properties:
-        error:
-          type: string
-          description: Error message.
-    bad_request_error_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: bad_request_error_response.json
-      title: BadRequest
-      type: object
-      properties: {}
-    extensions_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: extensions_response.json
-      title: ExtensionsResponse
-      description: Response containing a list of extensions
-      type: object
-      required:
-      - items
-      properties:
-        items:
-          description: List of extensions
-          type: array
-          items:
-            $ref: '#/components/schemas/extension'
-    unprocessable_entity_error:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/unprocessable_entity_error.json
-      type: object
-      required:
-      - error
-      title: UnprocessableEntityError
-      description: Error response generated when the request is not valid
-      properties:
-        error:
-          type: string
-          description: Error message.
-    extension_request:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: extension_request.json
-      title: ExtensionRequest
-      description: Request body for creating or updating an extension
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/extension'
-          description: The extension to create or update
   securitySchemes:
     OAuth2:
       type: oauth2

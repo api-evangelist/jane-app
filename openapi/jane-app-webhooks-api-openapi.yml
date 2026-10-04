@@ -215,6 +215,78 @@ paths:
           description: The service is temporarily unavailable
 components:
   schemas:
+    errors_message_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/errors_message_response.json
+      type: object
+      required:
+      - errors
+      title: ErrorMessages
+      description: API Standard - Error response generated when an operations fails
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            required:
+            - message
+            properties:
+              id:
+                type: string
+                description: Optional error identifier for specific handling (e.g., PATIENT_CONVERSATION_EXISTS)
+              path:
+                type: string
+                format: json-pointer
+                description: JSON Pointer to the location of the error, per RFC 6901 (e.g., /data/attributes/name)
+              message:
+                type: string
+    webhook-subscription-response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: webhook-subscription-response.json
+      title: Webhook Subscription
+      type: object
+      required:
+      - id
+      - event_topic
+      - target_url
+      - clinic_guid
+      - status
+      - updated_at
+      - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the webhook subscription
+        event_topic:
+          type: string
+          enum:
+          - APPOINTMENT_BOOKED
+          - APPOINTMENT_CANCELLED
+          - APPOINTMENT_UNCANCELLED
+          - APPOINTMENT_RESCHEDULED
+          description: The event topic this subscription receives
+        target_url:
+          type: string
+          description: The HTTPS URL that receives webhook event payloads
+        clinic_guid:
+          type: integer
+          description: The clinic identifier this subscription belongs to
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+          description: Whether the subscription is currently active
+        updated_at:
+          type: string
+          format: date-time
+          description: When the subscription was last updated
+        created_at:
+          type: string
+          format: date-time
+          description: When the subscription was created
+      additionalProperties: false
     webhook-subscription-create-response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: webhook-subscription-create-response.json
@@ -281,78 +353,6 @@ components:
         target_url:
           type: string
           description: The HTTPS URL that will receive webhook event payloads
-    webhook-subscription-response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: webhook-subscription-response.json
-      title: Webhook Subscription
-      type: object
-      required:
-      - id
-      - event_topic
-      - target_url
-      - clinic_guid
-      - status
-      - updated_at
-      - created_at
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: Unique identifier for the webhook subscription
-        event_topic:
-          type: string
-          enum:
-          - APPOINTMENT_BOOKED
-          - APPOINTMENT_CANCELLED
-          - APPOINTMENT_UNCANCELLED
-          - APPOINTMENT_RESCHEDULED
-          description: The event topic this subscription receives
-        target_url:
-          type: string
-          description: The HTTPS URL that receives webhook event payloads
-        clinic_guid:
-          type: integer
-          description: The clinic identifier this subscription belongs to
-        status:
-          type: string
-          enum:
-          - active
-          - inactive
-          description: Whether the subscription is currently active
-        updated_at:
-          type: string
-          format: date-time
-          description: When the subscription was last updated
-        created_at:
-          type: string
-          format: date-time
-          description: When the subscription was created
-      additionalProperties: false
-    errors_message_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/errors_message_response.json
-      type: object
-      required:
-      - errors
-      title: ErrorMessages
-      description: API Standard - Error response generated when an operations fails
-      properties:
-        errors:
-          type: array
-          items:
-            type: object
-            required:
-            - message
-            properties:
-              id:
-                type: string
-                description: Optional error identifier for specific handling (e.g., PATIENT_CONVERSATION_EXISTS)
-              path:
-                type: string
-                format: json-pointer
-                description: JSON Pointer to the location of the error, per RFC 6901 (e.g., /data/attributes/name)
-              message:
-                type: string
   securitySchemes:
     OAuth2:
       type: oauth2

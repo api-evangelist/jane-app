@@ -75,6 +75,18 @@ paths:
                 $ref: '#/components/schemas/catalog_extensions_response'
 components:
   schemas:
+    not_found_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/not_found_error.json
+      type: object
+      required:
+      - error
+      title: NotFoundError
+      description: Error response when the requested resource is not found.
+      properties:
+        error:
+          type: string
+          description: Error message.
     catalog_extension:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: catalog_extension.json
@@ -175,30 +187,6 @@ components:
           format: date-time
           readOnly: true
       additionalProperties: false
-    unauthorized_error:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/unauthorized_error.json
-      type: object
-      required:
-      - error
-      title: UnauthorizedError
-      description: Error response generated when the request is not authorized
-      properties:
-        error:
-          type: string
-          description: Error message.
-    forbidden_error:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/forbidden_error.json
-      type: object
-      required:
-      - error
-      title: ForbiddenError
-      description: Error response generated when the request is forbidden
-      properties:
-        error:
-          type: string
-          description: Error message.
     catalog_extensions_response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: catalog_extensions_response.json
@@ -242,14 +230,26 @@ components:
         hasNextPage:
           description: Whether there are more pages available
           type: boolean
-    not_found_error:
+    forbidden_error:
       $schema: https://json-schema.org/draft/2020-12/schema
-      $id: /components/responses/schemas/not_found_error.json
+      $id: /components/responses/schemas/forbidden_error.json
       type: object
       required:
       - error
-      title: NotFoundError
-      description: Error response when the requested resource is not found.
+      title: ForbiddenError
+      description: Error response generated when the request is forbidden
+      properties:
+        error:
+          type: string
+          description: Error message.
+    unauthorized_error:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: /components/responses/schemas/unauthorized_error.json
+      type: object
+      required:
+      - error
+      title: UnauthorizedError
+      description: Error response generated when the request is not authorized
       properties:
         error:
           type: string

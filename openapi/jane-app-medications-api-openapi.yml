@@ -234,85 +234,79 @@ paths:
                 $ref: '#/components/schemas/not_found_error_response'
 components:
   schemas:
-    medications_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: medications_response.json
-      title: MedicationsResponse
-      type: object
-      required:
-      - items
-      - pagination
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/medication'
-          description: Array of medication objects
-        pagination:
-          type: object
-          required:
-          - cursor
-          properties:
-            cursor:
-              type:
-              - string
-              - 'null'
-              description: Current cursor position
-            next_cursor:
-              type:
-              - string
-              - 'null'
-              description: Cursor for the next page
-            prev_cursor:
-              type:
-              - string
-              - 'null'
-              description: Cursor for the previous page
-            has_next_page:
-              type: boolean
-              description: Whether there are more items available
-          additionalProperties: false
-      additionalProperties: false
-    medication_code:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: medication_code.json
-      title: MedicationCode
-      type: object
-      required:
-      - text
-      properties:
-        coding:
-          type:
-          - array
-          - 'null'
-          items:
-            type: object
-            required:
-            - display
-            - code
-            - system
-            properties:
-              display:
-                type: string
-                description: Human-readable display name
-              code:
-                type: string
-                description: The medication code
-              system:
-                type: string
-                description: The coding system (e.g., 'http://snomed.info/sct')
-            additionalProperties: false
-          description: Array of coded values for the medication (optional — manually added meds won't have formal codes)
-        text:
-          type: string
-          description: Plain text representation of the medication name
-      additionalProperties: false
     not_found_error_response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: not_found_error_response.json
       title: NotFoundError
       type: object
       properties: {}
+    medication_history_entry:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: medication_history_entry.json
+      title: Medication History Entry
+      type: object
+      required:
+      - event
+      - occurred_at
+      - changes
+      properties:
+        event:
+          type: string
+          enum:
+          - create
+          - update
+          - destroy
+          description: The type of change that occurred
+        occurred_at:
+          type: string
+          format: date-time
+          description: When this change occurred (ISO 8601 format)
+        modified_by:
+          type:
+          - object
+          - 'null'
+          description: Information about the user who made this change
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: User's ID
+            name:
+              type: string
+              description: User's full name
+            email:
+              type: string
+              format: email
+              description: User's email address
+          required:
+          - id
+          - name
+          - email
+          additionalProperties: false
+        changes:
+          type: array
+          description: Array of field changes with before/after values
+          items:
+            type: object
+            properties:
+              attribute:
+                type: string
+                description: The field name that changed (e.g., 'instructions', 'status')
+              from:
+                description: The value before the change
+              to:
+                description: The value after the change
+            required:
+            - attribute
+            - from
+            - to
+            additionalProperties: false
+        reason:
+          type:
+          - string
+          - 'null'
+          description: Reason for the change (if provided, typically for status changes)
+      additionalProperties: false
     medication_history_response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: medication_history_response.json
@@ -327,106 +321,6 @@ components:
           items:
             $ref: '#/components/schemas/medication_history_entry'
       additionalProperties: false
-    medication_editable_properties:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: medication_editable_properties.json
-      title: Medication Editable Properties
-      description: Common editable properties for medication create and update operations
-      type: object
-      properties:
-        encounter_id:
-          type:
-          - string
-          - 'null'
-          format: uuid
-          description: Reference to the encounter where medication was prescribed
-        medication_code:
-          $ref: '#/components/schemas/medication_code'
-        ingredients:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ingredient'
-          description: Array of ingredient objects (optional — not all medications have detailed ingredient info)
-        dose_form:
-          type:
-          - string
-          - 'null'
-          description: Pharmaceutical form (tablet, capsule, suspension, etc.)
-        route:
-          type:
-          - string
-          - 'null'
-          description: Route of administration (oral, IV, topical, etc.)
-        frequency:
-          type:
-          - string
-          - 'null'
-          description: Textual frequency (daily, bid, etc.)
-        quantity:
-          type:
-          - integer
-          - 'null'
-          minimum: 1
-          description: Number of units (e.g., tablets, capsules) dispensed
-        period_start:
-          type:
-          - string
-          - 'null'
-          format: date
-          description: When the medication course starts
-        period_end:
-          type:
-          - string
-          - 'null'
-          format: date
-          description: Planned end date (if any)
-        instructions:
-          type:
-          - string
-          - 'null'
-          description: Free-text administration instructions for the patient
-        status:
-          type: string
-          enum:
-          - active
-          - inactive
-          description: Lifecycle state of the medication
-        source:
-          type: string
-          enum:
-          - prescribed
-          - patient_reported
-          description: Origin of record – prescribed (from practitioner) or patient_reported (self-reported)
-        change_reason:
-          type:
-          - string
-          - 'null'
-          description: Selected reason for status change (e.g., adverse_reaction, completed, patient_request)
-        prescription_valid_until:
-          type:
-          - string
-          - 'null'
-          format: date
-          description: Expiry date after which repeats aren't valid
-        prescription_refills:
-          type:
-          - integer
-          - 'null'
-          minimum: 0
-          description: Allowed refill count
-        prescription_days_supply:
-          type:
-          - integer
-          - 'null'
-          minimum: 1
-          description: Number of days that the dispensed medication is intended to last
-        prescription_reason:
-          type:
-          - string
-          - 'null'
-          description: Clinical indication or problem being treated
     medication:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: medication.json
@@ -551,12 +445,160 @@ components:
           format: date-time
           description: When the medication record was created
       additionalProperties: false
+    medication_code:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: medication_code.json
+      title: MedicationCode
+      type: object
+      required:
+      - text
+      properties:
+        coding:
+          type:
+          - array
+          - 'null'
+          items:
+            type: object
+            required:
+            - display
+            - code
+            - system
+            properties:
+              display:
+                type: string
+                description: Human-readable display name
+              code:
+                type: string
+                description: The medication code
+              system:
+                type: string
+                description: The coding system (e.g., 'http://snomed.info/sct')
+            additionalProperties: false
+          description: Array of coded values for the medication (optional — manually added meds won't have formal codes)
+        text:
+          type: string
+          description: Plain text representation of the medication name
+      additionalProperties: false
+    medication_editable_properties:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: medication_editable_properties.json
+      title: Medication Editable Properties
+      description: Common editable properties for medication create and update operations
+      type: object
+      properties:
+        encounter_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: Reference to the encounter where medication was prescribed
+        medication_code:
+          $ref: '#/components/schemas/medication_code'
+        ingredients:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ingredient'
+          description: Array of ingredient objects (optional — not all medications have detailed ingredient info)
+        dose_form:
+          type:
+          - string
+          - 'null'
+          description: Pharmaceutical form (tablet, capsule, suspension, etc.)
+        route:
+          type:
+          - string
+          - 'null'
+          description: Route of administration (oral, IV, topical, etc.)
+        frequency:
+          type:
+          - string
+          - 'null'
+          description: Textual frequency (daily, bid, etc.)
+        quantity:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          description: Number of units (e.g., tablets, capsules) dispensed
+        period_start:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: When the medication course starts
+        period_end:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Planned end date (if any)
+        instructions:
+          type:
+          - string
+          - 'null'
+          description: Free-text administration instructions for the patient
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+          description: Lifecycle state of the medication
+        source:
+          type: string
+          enum:
+          - prescribed
+          - patient_reported
+          description: Origin of record – prescribed (from practitioner) or patient_reported (self-reported)
+        change_reason:
+          type:
+          - string
+          - 'null'
+          description: Selected reason for status change (e.g., adverse_reaction, completed, patient_request)
+        prescription_valid_until:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Expiry date after which repeats aren't valid
+        prescription_refills:
+          type:
+          - integer
+          - 'null'
+          minimum: 0
+          description: Allowed refill count
+        prescription_days_supply:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          description: Number of days that the dispensed medication is intended to last
+        prescription_reason:
+          type:
+          - string
+          - 'null'
+          description: Clinical indication or problem being treated
     bad_request_error_response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: bad_request_error_response.json
       title: BadRequest
       type: object
       properties: {}
+    update_medication_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: update_medication_request.json
+      title: Update Medication Request
+      type: object
+      required:
+      - data
+      additionalProperties: true
+      properties:
+        data:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/medication_editable_properties'
+          unevaluatedProperties: false
     create_medication_request:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: create_medication_request.json
@@ -585,6 +627,45 @@ components:
               format: uuid
               description: Reference to the practitioner
           unevaluatedProperties: false
+    medications_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: medications_response.json
+      title: MedicationsResponse
+      type: object
+      required:
+      - items
+      - pagination
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/medication'
+          description: Array of medication objects
+        pagination:
+          type: object
+          required:
+          - cursor
+          properties:
+            cursor:
+              type:
+              - string
+              - 'null'
+              description: Current cursor position
+            next_cursor:
+              type:
+              - string
+              - 'null'
+              description: Cursor for the next page
+            prev_cursor:
+              type:
+              - string
+              - 'null'
+              description: Cursor for the previous page
+            has_next_page:
+              type: boolean
+              description: Whether there are more items available
+          additionalProperties: false
+      additionalProperties: false
     ingredient:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: ingredient.json
@@ -608,87 +689,6 @@ components:
           - 'null'
           description: Unit of measurement for the strength (e.g., mg, mL, %)
       additionalProperties: false
-    medication_history_entry:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: medication_history_entry.json
-      title: Medication History Entry
-      type: object
-      required:
-      - event
-      - occurred_at
-      - changes
-      properties:
-        event:
-          type: string
-          enum:
-          - create
-          - update
-          - destroy
-          description: The type of change that occurred
-        occurred_at:
-          type: string
-          format: date-time
-          description: When this change occurred (ISO 8601 format)
-        modified_by:
-          type:
-          - object
-          - 'null'
-          description: Information about the user who made this change
-          properties:
-            id:
-              type: string
-              format: uuid
-              description: User's ID
-            name:
-              type: string
-              description: User's full name
-            email:
-              type: string
-              format: email
-              description: User's email address
-          required:
-          - id
-          - name
-          - email
-          additionalProperties: false
-        changes:
-          type: array
-          description: Array of field changes with before/after values
-          items:
-            type: object
-            properties:
-              attribute:
-                type: string
-                description: The field name that changed (e.g., 'instructions', 'status')
-              from:
-                description: The value before the change
-              to:
-                description: The value after the change
-            required:
-            - attribute
-            - from
-            - to
-            additionalProperties: false
-        reason:
-          type:
-          - string
-          - 'null'
-          description: Reason for the change (if provided, typically for status changes)
-      additionalProperties: false
-    update_medication_request:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: update_medication_request.json
-      title: Update Medication Request
-      type: object
-      required:
-      - data
-      additionalProperties: true
-      properties:
-        data:
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/medication_editable_properties'
-          unevaluatedProperties: false
   securitySchemes:
     OAuth2:
       type: oauth2

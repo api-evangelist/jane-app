@@ -88,6 +88,24 @@ components:
       title: BadRequest
       type: object
       properties: {}
+    not_found_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: not_found_error_response.json
+      title: NotFoundError
+      type: object
+      properties: {}
+    document_uploads_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: document_uploads_request.json
+      title: Document Uploads Request
+      type: object
+      required:
+      - file
+      properties:
+        file:
+          type: string
+          format: binary
+          description: 'The document file to upload. Accepted formats: PDF, JPEG, PNG. Maximum size: 50 MB.'
     document_uploads_response:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: document_uploads_response.json
@@ -110,24 +128,6 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the document was uploaded.
-    document_uploads_request:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: document_uploads_request.json
-      title: Document Uploads Request
-      type: object
-      required:
-      - file
-      properties:
-        file:
-          type: string
-          format: binary
-          description: 'The document file to upload. Accepted formats: PDF, JPEG, PNG. Maximum size: 50 MB.'
-    not_found_error_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: not_found_error_response.json
-      title: NotFoundError
-      type: object
-      properties: {}
   securitySchemes:
     OAuth2:
       type: oauth2

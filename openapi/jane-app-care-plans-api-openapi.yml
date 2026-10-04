@@ -310,6 +310,165 @@ paths:
                 $ref: '#/components/schemas/bad_request_error_response'
 components:
   schemas:
+    create_care_plan_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: create_care_plan_request.json
+      title: Create Care Plan Request
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/care_plan'
+          description: The request data parameters
+    update_care_plan_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: update_care_plan_request.json
+      title: Update Care Plan Request
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            encounter_id:
+              type: string
+              format: uuid
+            title:
+              type: string
+            description:
+              type: string
+            status:
+              type: string
+              enum:
+              - draft
+              - active
+              - on-hold
+              - revoked
+              - completed
+              - entered-in-error
+              - unknown
+            document_ids:
+              type: array
+              items:
+                type: string
+                format: uuid
+          additionalProperties: false
+    not_found_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: not_found_error_response.json
+      title: NotFoundError
+      type: object
+      properties: {}
+    create_care_plan_activity_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: create_care_plan_activity_request.json
+      title: Create Care Plan Activity Request
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/care_plan_activity'
+          description: The request data parameters
+    bad_request_error_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: bad_request_error_response.json
+      title: BadRequest
+      type: object
+      properties: {}
+    care_plan_activity:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: care_plan_activity.json
+      title: CarePlanActivity
+      type: object
+      required:
+      - category
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUIDv7 identifier for the component
+        category:
+          type: string
+          enum:
+          - appointment
+          - exercise
+          - medication
+          - nutrition
+          description: The classification of the type of care plan activity
+        description:
+          type: string
+          description: The description of the care plan activity
+        progress:
+          type: string
+          description: The progress of the care plan activity
+        created_at:
+          type: string
+          format: date-time
+          description: When the care plan activity record was created
+        updated_at:
+          type: string
+          format: date-time
+          description: When the care plan activity record was updated
+      additionalProperties: false
+    update_care_plan_activity_request:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: update_care_plan_activity_request.json
+      title: Update Care Plan Activity Request
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            category:
+              type: string
+              enum:
+              - appointment
+              - exercise
+              - medication
+              - nutrition
+            description:
+              type: string
+            progress:
+              type: string
+          additionalProperties: false
+    care_plans_response:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      $id: care_plans_response.json
+      title: CarePlansResponse
+      type: object
+      required:
+      - items
+      - limit
+      - hasNextPage
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/care_plan'
+          description: Array of care plan objects
+        cursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor for fetching the next page of results
+        limit:
+          type: integer
+          description: Maximum number of items returned
+        links:
+          type: object
+          properties:
+            before:
+              type:
+              - string
+              - 'null'
+              description: URL for the previous page
+            after:
+              type:
+              - string
+              - 'null'
+              description: URL for the next page
+          additionalProperties: false
+        hasNextPage:
+          type: boolean
+          description: Whether there are more items available
+      additionalProperties: false
     care_plan:
       $schema: https://json-schema.org/draft/2020-12/schema
       $id: care_plan.json
@@ -376,165 +535,6 @@ components:
             type: string
             format: uuid
           description: Array of document upload IDs to attach to the care plan. All documents must exist and be verified.
-      additionalProperties: false
-    update_care_plan_activity_request:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: update_care_plan_activity_request.json
-      title: Update Care Plan Activity Request
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            category:
-              type: string
-              enum:
-              - appointment
-              - exercise
-              - medication
-              - nutrition
-            description:
-              type: string
-            progress:
-              type: string
-          additionalProperties: false
-    not_found_error_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: not_found_error_response.json
-      title: NotFoundError
-      type: object
-      properties: {}
-    create_care_plan_activity_request:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: create_care_plan_activity_request.json
-      title: Create Care Plan Activity Request
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/care_plan_activity'
-          description: The request data parameters
-    care_plan_activity:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: care_plan_activity.json
-      title: CarePlanActivity
-      type: object
-      required:
-      - category
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: UUIDv7 identifier for the component
-        category:
-          type: string
-          enum:
-          - appointment
-          - exercise
-          - medication
-          - nutrition
-          description: The classification of the type of care plan activity
-        description:
-          type: string
-          description: The description of the care plan activity
-        progress:
-          type: string
-          description: The progress of the care plan activity
-        created_at:
-          type: string
-          format: date-time
-          description: When the care plan activity record was created
-        updated_at:
-          type: string
-          format: date-time
-          description: When the care plan activity record was updated
-      additionalProperties: false
-    create_care_plan_request:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: create_care_plan_request.json
-      title: Create Care Plan Request
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/care_plan'
-          description: The request data parameters
-    bad_request_error_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: bad_request_error_response.json
-      title: BadRequest
-      type: object
-      properties: {}
-    update_care_plan_request:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: update_care_plan_request.json
-      title: Update Care Plan Request
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            encounter_id:
-              type: string
-              format: uuid
-            title:
-              type: string
-            description:
-              type: string
-            status:
-              type: string
-              enum:
-              - draft
-              - active
-              - on-hold
-              - revoked
-              - completed
-              - entered-in-error
-              - unknown
-            document_ids:
-              type: array
-              items:
-                type: string
-                format: uuid
-          additionalProperties: false
-    care_plans_response:
-      $schema: https://json-schema.org/draft/2020-12/schema
-      $id: care_plans_response.json
-      title: CarePlansResponse
-      type: object
-      required:
-      - items
-      - limit
-      - hasNextPage
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/care_plan'
-          description: Array of care plan objects
-        cursor:
-          type:
-          - string
-          - 'null'
-          description: Cursor for fetching the next page of results
-        limit:
-          type: integer
-          description: Maximum number of items returned
-        links:
-          type: object
-          properties:
-            before:
-              type:
-              - string
-              - 'null'
-              description: URL for the previous page
-            after:
-              type:
-              - string
-              - 'null'
-              description: URL for the next page
-          additionalProperties: false
-        hasNextPage:
-          type: boolean
-          description: Whether there are more items available
       additionalProperties: false
   securitySchemes:
     OAuth2:
